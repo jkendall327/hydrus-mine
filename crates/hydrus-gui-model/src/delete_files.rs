@@ -6,7 +6,7 @@ use hydrus_store::content::DomainRoles;
 use hydrus_store::settings::{DeletionAction, DeletionPreferences};
 
 /// A permitted action, frozen to the files actionable when the dialog opened.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Choice {
     pub label: String,
     pub action: DeletionAction,
@@ -289,15 +289,11 @@ impl Draft {
     pub fn apply(&self, store: &Store) -> hydrus_store::Result<()> {
         self.apply_with_choice(store).map(|_| ())
     }
-    /// Report only rows whose target-domain membership actually changed in this write.
-    pub fn apply_with_choice(&self, store: &Store) -> hydrus_store::Result<Option<Choice>> {
-        let Some(choice) = self.choices.get(self.action).cloned() else {
-            return Ok(None);
-        };
-        let simple = self.simple;
+    /// The reason the dialog's choice gives (none: keep each file's own).
+    fn chosen_reason(&self) -> Option<String> {
         // (the simple dialog's reason panel is hidden, yet its default selection still
         // applies, as in the reference, where `_UpdateControls` re-enables the panel)
-        let reason = if self.reason_enabled() {
+        if self.reason_enabled() {
             self.reasons.get(self.reason).and_then(|r| match &r.reason {
                 Reason::Text(t) => Some(t.clone()),
                 Reason::Custom => Some(self.custom.clone()),
@@ -305,50 +301,117 @@ impl Draft {
             })
         } else {
             None
+        }
+    }
+
+    /// Remember the choice and reason, as the options say, merged into the
+    /// current settings so concurrent option edits survive.
+    fn remember(
+        &self,
+        w: &mut hydrus_store::content::ContentWriter<'_>,
+        action: &DeletionAction,
+        reason: Option<&String>,
+    ) -> hydrus_store::Result<()> {
+        let mut prefs: DeletionPreferences = hydrus_store::settings::get(w.conn())?;
+        // The reference identifies a previous user service by a 64-character
+        // hex key; its short builtin keys behave like special actions here.
+        let keep_previous = !self.includes_domains
+            && (prefs.last_action.is_none()
+                || matches!(&prefs.last_action, Some(DeletionAction::Domain(key)) if key.as_bytes().len() == 32));
+        if prefs.remember_action && !keep_previous {
+            prefs.last_action = Some(action.clone());
+        }
+        if prefs.remember_reason
+            && !self.simple
+            && let Some(reason) = reason.filter(|r| self.shared_reason.as_ref() != Some(*r))
+        {
+            prefs.last_reason = (*reason != self.default_reason).then(|| reason.clone());
+        }
+        hydrus_store::settings::set(w.conn(), &prefs)
+    }
+
+    /// Report only rows whose target-domain membership actually changed in this write.
+    pub fn apply_with_choice(&self, store: &Store) -> hydrus_store::Result<Option<Choice>> {
+        let Some(deferred) = self.deferred() else {
+            return Ok(None);
         };
-        let default_reason = self.default_reason.clone();
-        let shared_reason = self.shared_reason.clone();
-        let includes_domains = self.includes_domains;
+        let draft = self.clone();
         store.write_content(move |w| {
-            let roles = w.roles().clone();
-            let domain = match &choice.action {
-                DeletionAction::Domain(key) => store_service(w.conn(), key)?,
-                DeletionAction::Physical | DeletionAction::ClearRecord => roles.local_file_storage,
-            };
-            let reported = choice.clone();
-            let mut files = choice.files;
-            if matches!(
-                choice.action,
-                DeletionAction::Physical | DeletionAction::ClearRecord
-            ) {
-                let locked =
-                    hydrus_store::delete_lock::locked(w.conn(), roles.local_file_storage, &files)?;
-                files.retain(|file| !locked.contains(file));
-            }
-            let before = hydrus_store::media::current_domains(w.conn(), &files)?;
-            w.delete_files(domain, &files, reason.as_deref())?;
-            if choice.action == DeletionAction::ClearRecord {
-                w.clear_local_delete_records(Some(&files))?;
-            }
-            let mut prefs: DeletionPreferences = hydrus_store::settings::get(w.conn())?;
-            // The reference identifies a previous user service by a 64-character
-            // hex key; its short builtin keys behave like special actions here.
-            let keep_previous = !includes_domains && (prefs.last_action.is_none() || matches!(&prefs.last_action, Some(DeletionAction::Domain(key)) if key.as_bytes().len() == 32));
-            if prefs.remember_action && !keep_previous
-            {
-                prefs.last_action = Some(choice.action.clone());
-            }
-            if prefs.remember_reason
-                && !simple
-                && let Some(reason) = reason.filter(|r| shared_reason.as_ref() != Some(r))
-            {
-                prefs.last_reason = (reason != default_reason).then_some(reason);
-            }
-            hydrus_store::settings::set(w.conn(), &prefs)?;
-            let after = hydrus_store::media::current_domains(w.conn(), &files)?;
-            let files = files.into_iter().filter(|file| before.get(file).is_some_and(|domains| domains.contains(&domain)) && after.get(file).is_none_or(|domains| !domains.contains(&domain))).collect();
-            Ok(Some(Choice {files, ..reported}))
+            let deleted = deferred.apply(w)?;
+            draft.remember(w, &deferred.choice.action, deferred.reason.as_ref())?;
+            Ok(Some(Choice {
+                files: deleted,
+                ..deferred.choice
+            }))
         })
+    }
+
+    /// The dialog's choice, to apply later (the reference's
+    /// `just_get_content_update_packages`, as the duplicate filter asks):
+    /// nothing is deleted yet; the choice and reason are remembered now, as
+    /// the dialog's OK remembers them.
+    pub fn defer(&self, store: &Store) -> hydrus_store::Result<Option<Deferred>> {
+        let Some(deferred) = self.deferred() else {
+            return Ok(None);
+        };
+        let draft = self.clone();
+        let remembered = deferred.clone();
+        store.write_content(move |w| {
+            draft.remember(w, &remembered.choice.action, remembered.reason.as_ref())
+        })?;
+        Ok(Some(deferred))
+    }
+
+    fn deferred(&self) -> Option<Deferred> {
+        Some(Deferred {
+            choice: self.choices.get(self.action).cloned()?,
+            reason: self.chosen_reason(),
+        })
+    }
+}
+
+/// A deletion chosen in the dialog and not yet applied.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Deferred {
+    pub choice: Choice,
+    pub reason: Option<String>,
+}
+
+impl Deferred {
+    /// Delete the files as chosen, in `w`'s transaction (the delete lock
+    /// keeps its files from physical deletion); the files that left the
+    /// chosen domain.
+    pub fn apply(
+        &self,
+        w: &mut hydrus_store::content::ContentWriter<'_>,
+    ) -> hydrus_store::Result<Vec<HashId>> {
+        let roles = w.roles().clone();
+        let domain = match &self.choice.action {
+            DeletionAction::Domain(key) => store_service(w.conn(), key)?,
+            DeletionAction::Physical | DeletionAction::ClearRecord => roles.local_file_storage,
+        };
+        let mut files = self.choice.files.clone();
+        if matches!(
+            self.choice.action,
+            DeletionAction::Physical | DeletionAction::ClearRecord
+        ) {
+            let locked =
+                hydrus_store::delete_lock::locked(w.conn(), roles.local_file_storage, &files)?;
+            files.retain(|file| !locked.contains(file));
+        }
+        let before = hydrus_store::media::current_domains(w.conn(), &files)?;
+        w.delete_files(domain, &files, self.reason.as_deref())?;
+        if self.choice.action == DeletionAction::ClearRecord {
+            w.clear_local_delete_records(Some(&files))?;
+        }
+        let after = hydrus_store::media::current_domains(w.conn(), &files)?;
+        Ok(files
+            .into_iter()
+            .filter(|file| {
+                before.get(file).is_some_and(|domains| domains.contains(&domain))
+                    && after.get(file).is_none_or(|domains| !domains.contains(&domain))
+            })
+            .collect())
     }
 }
 

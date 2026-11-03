@@ -383,6 +383,7 @@ mod files_io_file_menu;
 mod files_io_folder_editors;
 mod files_io_import_review;
 mod filter_top_hover;
+mod duplicate_filter_delete;
 mod formula_exchange;
 mod import_additional_tags;
 mod import_external_programs;

@@ -80,6 +80,79 @@ pub fn open_with_choice(
     guard: Guard,
     applied: AppliedChoice,
 ) -> Result<Option<DeleteFilesWindow>, String> {
+    open_accepting(
+        slot,
+        store,
+        files,
+        suggested,
+        default_reason,
+        guard,
+        Rc::new(move |draft: &Draft, store: &Store| {
+            let choice = draft.apply_with_choice(store).map_err(|e| e.to_string())?;
+            let applied = applied.clone();
+            Ok(Box::new(move || {
+                if let Some(choice) = choice {
+                    applied(&choice);
+                }
+            }) as Box<dyn FnOnce()>)
+        }),
+    )
+}
+
+/// The dialog's choice, not applied: `chosen` gets it to apply later (the
+/// reference's `just_get_content_update_packages`, as the duplicate filter
+/// asks for it). The choice and reason are remembered on OK, as when
+/// applied.
+pub fn open_deferred(
+    slot: &Slot,
+    store: &Arc<Store>,
+    files: &[hydrus_core::HashId],
+    suggested: Option<&DeletionAction>,
+    default_reason: &str,
+    guard: Guard,
+    chosen: Rc<dyn Fn(hydrus_gui_model::delete_files::Deferred)>,
+) -> Result<Option<DeleteFilesWindow>, String> {
+    open_accepting(
+        slot,
+        store,
+        files,
+        suggested,
+        default_reason,
+        guard,
+        Rc::new(move |draft: &Draft, store: &Store| {
+            let deferred = draft.defer(store).map_err(|e| e.to_string())?;
+            let chosen = chosen.clone();
+            Ok(Box::new(move || {
+                if let Some(deferred) = deferred {
+                    chosen(deferred);
+                }
+            }) as Box<dyn FnOnce()>)
+        }),
+    )
+}
+
+/// What OK does with the draft: apply or freeze it, then (after the dialog
+/// closes) tell its owner.
+type Accept = Rc<dyn Fn(&Draft, &Store) -> Result<Box<dyn FnOnce()>, String>>;
+
+thread_local! {
+    static LAST: RefCell<Option<slint::Weak<DeleteFilesWindow>>> = const { RefCell::new(None) };
+}
+
+/// The dialog last opened, while it is open (for tests).
+pub fn last_opened() -> Option<DeleteFilesWindow> {
+    LAST.with(|l| l.borrow().as_ref().and_then(slint::Weak::upgrade))
+}
+
+fn open_accepting(
+    slot: &Slot,
+    store: &Arc<Store>,
+    files: &[hydrus_core::HashId],
+    suggested: Option<&DeletionAction>,
+    default_reason: &str,
+    guard: Guard,
+    accept: Accept,
+) -> Result<Option<DeleteFilesWindow>, String> {
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(Some(window.clone_strong()));
     }
@@ -98,10 +171,8 @@ pub fn open_with_choice(
         return Err("No valid delete choices!".into());
     }
     if draft.already_resolved(preferences.confirm_trash) {
-        if guard()
-            && let Some(choice) = draft.apply_with_choice(store).map_err(|e| e.to_string())?
-        {
-            applied(&choice);
+        if guard() {
+            accept(&draft, store)?();
         }
         return Ok(None);
     }
@@ -210,12 +281,11 @@ pub fn open_with_choice(
                 return;
             }
             draft.borrow_mut().custom = window.get_custom().to_string();
-            match draft.borrow().apply_with_choice(&store) {
-                Ok(choice) => {
+            let accepted = accept(&draft.borrow(), &store);
+            match accepted {
+                Ok(then) => {
                     close();
-                    if let Some(choice) = choice {
-                        applied(&choice);
-                    }
+                    then();
                 }
                 Err(error) => {
                     window.set_error(error.to_string().into());
@@ -232,6 +302,7 @@ pub fn open_with_choice(
         slint::CloseRequestResponse::HideWindow
     });
     *slot.borrow_mut() = Some(window.clone_strong());
+    LAST.with(|l| *l.borrow_mut() = Some(window.as_weak()));
     window.show().map_err(|e| e.to_string())?;
     window.set_radio_focus(initial_radio);
     Ok(Some(window))

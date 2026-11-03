@@ -283,6 +283,11 @@ export component DuplicateFilterWindow inherits Window {
                 root.decide("skip");
                 return accept;
             }
+            // (the 'media' shortcut set's delete key: this file, or both?)
+            if (event.text == Key.Delete && !event.modifiers.shift) {
+                root.delete();
+                return accept;
+            }
             if (event.text == " ") {
                 root.toggle-pause();
                 return accept;
