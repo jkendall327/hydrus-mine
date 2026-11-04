@@ -337,6 +337,13 @@ pub(crate) fn open(
         .map(|q| q.kind);
     let watcher = kind == Some(QueueKind::Watcher);
     let window = crate::app_title::new::<crate::FileLogWindow>().map_err(|e| e.to_string())?;
+    // (from a page, a frame of its own, kept as it closes; from a dialog,
+    // a `DialogNullipotent`, whose close is its OK)
+    let ended = if from_page {
+        crate::dialog::Dialog::named_frame(&window, store, "gallery_import_log")
+    } else {
+        crate::dialog::Dialog::new(&window)
+    };
     let alive = Rc::new(Cell::new(true));
     window.set_window_title(if watcher { "check log" } else { "search log" }.into());
     let state = Rc::new(RefCell::new(State {
@@ -404,12 +411,6 @@ pub(crate) fn open(
             state.borrow().imports.cancel();
             state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
-                // (as the reference's log opened from a page: from a
-                // dialog, it is a regular dialog)
-                if from_page {
-                    let store = state.borrow().store.clone();
-                    crate::windows::save_named(window.window(), &store, "gallery_import_log");
-                }
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -572,20 +573,40 @@ pub(crate) fn open(
         }
     });
     window.on_close_window({
+        let ended = ended.clone();
+        move || ended.accept()
+    });
+    // (its menu, then a question up, takes Escape (in the .slint handler,
+    // the menu) and the window's close first, as their own modal windows
+    // in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if slint::Model::row_count(&w.get_menu_panes()) > 0 {
+                w.invoke_menu_dismissed();
+                return slint::Model::row_count(&w.get_menu_panes()) == 0;
+            }
+            if w.get_asking() {
+                w.invoke_cancelled();
+                return !w.get_asking();
+            }
+            false
+        }
+    });
+    // (its import and export windows are modal children)
+    ended.modal_child({
+        let state = state.clone();
+        move || state.borrow().imports.has_open() || state.borrow().exports.has_open()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
     });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
-    });
     show(&window, &state.borrow());
-    if from_page {
-        crate::windows::place_frame(&window, store, "gallery_import_log");
-    }
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

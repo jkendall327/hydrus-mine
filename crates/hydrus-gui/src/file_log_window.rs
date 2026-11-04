@@ -551,8 +551,16 @@ fn open_source(
         frame,
     } = owner;
     let window = crate::app_title::new::<crate::FileLogWindow>().map_err(|e| e.to_string())?;
+    // (from a page, a frame of its own, kept as it closes; from a dialog, or
+    // as a folder's copy, an ordinary dialog: a `DialogNullipotent`, whose
+    // close is its OK, or the copy's `DialogEdit`)
+    let ended = match frame {
+        Some(frame) => crate::dialog::Dialog::named_frame(&window, store, frame),
+        None => crate::dialog::Dialog::new(&window),
+    };
     let alive = Rc::new(Cell::new(true));
-    window.set_staged(applied.is_some());
+    let applied_given = applied.is_some();
+    window.set_staged(applied_given);
     let state = Rc::new(RefCell::new(State {
         store: store.clone(),
         source,
@@ -617,10 +625,6 @@ fn open_source(
             }
             state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
-                if let Some(frame) = frame {
-                    let store = state.borrow().store.clone();
-                    crate::windows::save_named(window.window(), &store, frame);
-                }
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -630,7 +634,7 @@ fn open_source(
     window.on_apply({
         let alive = alive.clone();
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let refresh = refresh.clone();
         move || {
             if !alive.get() || state.borrow().asking.is_some() || state.borrow().exports.has_open()
@@ -644,7 +648,7 @@ fn open_source(
             match result {
                 Ok(seeds) => {
                     applied(seeds);
-                    close();
+                    ended.accept();
                 }
                 Err(error) => {
                     state.borrow_mut().asking =
@@ -978,21 +982,49 @@ fn open_source(
             refresh(false);
         }
     });
+    // (its close button: a folder's copy cancelled, else its OK)
+    let staged = applied_given;
     window.on_close_window({
+        let ended = ended.clone();
+        move || {
+            if staged {
+                ended.cancel();
+            } else {
+                ended.accept();
+            }
+        }
+    });
+    // (its menu, then a question up, takes Escape (in the .slint handler,
+    // the menu) and the window's close first, as their own modal windows
+    // in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if slint::Model::row_count(&w.get_menu_panes()) > 0 {
+                w.invoke_menu_dismissed();
+                return slint::Model::row_count(&w.get_menu_panes()) == 0;
+            }
+            if w.get_asking() {
+                w.invoke_cancelled();
+                return !w.get_asking();
+            }
+            false
+        }
+    });
+    // (its export windows are modal children)
+    ended.modal_child({
+        let state = state.clone();
+        move || state.borrow().exports.has_open()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
     });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
-    });
     show(&window, &state.borrow());
-    if let Some(frame) = frame {
-        crate::windows::place_frame(&window, store, frame);
-    }
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

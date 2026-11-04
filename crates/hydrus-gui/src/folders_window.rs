@@ -337,8 +337,8 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         store,
         &slots.import_list,
         hydrus_store::folder_activity::Kind::Import,
-        Rc::new(move |window, lease| {
-            open_import_folders_ready(&owned_store, &owned_slots, window, lease)
+        Rc::new(move |window, ended, lease| {
+            open_import_folders_ready(&owned_store, &owned_slots, window, ended, lease)
         }),
     )
 }
@@ -347,6 +347,7 @@ fn open_import_folders_ready(
     store: &Arc<Store>,
     slots: &Slots,
     window: FoldersWindow,
+    ended: crate::dialog::Dialog<FoldersWindow>,
     lease: hydrus_store::folder_activity::Edit,
 ) -> Result<(), String> {
     let lease = Rc::new(RefCell::new(Some(lease)));
@@ -485,7 +486,7 @@ fn open_import_folders_ready(
     window.on_apply({
         let state = state.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let slots = slots.clone();
         let lease = lease.clone();
         move || {
@@ -511,19 +512,36 @@ fn open_import_folders_ready(
                 }
                 Err(e) => eprintln!("could not save the import folders: {e}"),
             }
-            close();
+            ended.accept();
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
+    });
+    // (its import folder editor is a modal children)
+    ended.modal_child({
+        let edit = slots.import_edit.clone();
+        move || edit.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     show_import_list(&window, &state.borrow());
     if let Err(error) = window.show() {
@@ -738,6 +756,8 @@ fn open_import_folder(
 ) -> Result<ImportFolderWindow, String> {
     let slot = &slots.import_edit;
     let window = crate::app_title::new::<crate::ImportFolderWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     // New folders can review an empty cache before they receive a live queue.
     window.set_has_file_log(true);
     let s = &folder.settings;
@@ -1014,12 +1034,12 @@ fn open_import_folder(
     });
     let finish = {
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let done = done.clone();
         move || {
             let folder = state.borrow().folder.clone();
             done(folder);
-            close();
+            ended.accept();
         }
     };
     // its filename tagging: a tag service's options added (once a
@@ -1238,15 +1258,37 @@ fn open_import_folder(
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
+    });
+    // (its filename tagging, import options, file log and sidecars are modal children)
+    ended.modal_child({
+        let slots = slots.clone();
+        move || {
+            slots.filename_tagging.borrow().is_some()
+                || slots.import_options.borrow().is_some()
+                || slots.log.borrow().is_some()
+                || slots.sidecars.routers.borrow().is_some()
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
@@ -1307,8 +1349,8 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         store,
         &slots.export_list,
         hydrus_store::folder_activity::Kind::Export,
-        Rc::new(move |window, lease| {
-            open_export_folders_ready(&owned_store, &owned_slots, window, lease)
+        Rc::new(move |window, ended, lease| {
+            open_export_folders_ready(&owned_store, &owned_slots, window, ended, lease)
         }),
     )
 }
@@ -1317,6 +1359,7 @@ fn open_export_folders_ready(
     store: &Arc<Store>,
     slots: &Slots,
     window: FoldersWindow,
+    ended: crate::dialog::Dialog<FoldersWindow>,
     lease: hydrus_store::folder_activity::Edit,
 ) -> Result<(), String> {
     let lease = Rc::new(RefCell::new(Some(lease)));
@@ -1441,7 +1484,7 @@ fn open_export_folders_ready(
     window.on_apply({
         let state = state.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let slots = slots.clone();
         move || {
             if state.borrow().closed || slots.export_edit.borrow().is_some() {
@@ -1452,19 +1495,36 @@ fn open_export_folders_ready(
             if let Err(e) = store.write(move |ctx| settings::set(ctx.conn(), &folders)) {
                 eprintln!("could not save the export folders: {e}");
             }
-            close();
+            ended.accept();
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
+    });
+    // (its export folder editor is a modal children)
+    ended.modal_child({
+        let edit = slots.export_edit.clone();
+        move || edit.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     show_export_list(&window, &state.borrow(), &text);
     if let Err(error) = window.show() {
@@ -1513,6 +1573,8 @@ fn open_export_folder(
     done: &Rc<dyn Fn(ExportFolder)>,
 ) -> Result<ExportFolderWindow, String> {
     let window = crate::app_title::new::<crate::ExportFolderWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_types_text(EXPORT_TYPES_TEXT.into());
     window.set_sidecars_text(SIDECARS_TEXT.into());
     window.set_name(folder.name.clone().into());
@@ -1804,7 +1866,7 @@ fn open_export_folder(
     let check = {
         let state = state.clone();
         let show = show.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let done = done.clone();
         let active = active.clone();
         move || {
@@ -1818,7 +1880,7 @@ fn open_export_folder(
             } else {
                 let folder = state.borrow().folder.clone();
                 done(folder);
-                close();
+                ended.accept();
             }
         }
     };
@@ -1878,15 +1940,32 @@ fn open_export_folder(
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
+    });
+    // (its sidecars editor is a modal children)
+    ended.modal_child({
+        let routers = sidecars.routers.clone();
+        move || routers.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.show().map_err(|e| e.to_string())?;
     Ok(window)

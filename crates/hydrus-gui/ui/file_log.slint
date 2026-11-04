@@ -13,6 +13,9 @@ import { MenuPane, MenuPanes } from "@hydrus_ui_core";
 import { Asking } from "@hydrus_ui_core";
 
 export component FileLogWindow inherits Window {
+    // (Escape goes to the dialog helper: cancelled, as the reference's
+    // `keyPressEvent`)
+    callback escape();
     in property <string> window-title: "file log";
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
@@ -56,12 +59,12 @@ export component FileLogWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
+                // (its menu first; a question up is then cancelled by the
+                // dialog helper)
                 if (root.menu-panes.length > 0) {
                     root.menu-dismissed();
-                } else if (root.asking) {
-                    root.cancelled();
                 } else {
-                    root.close-window();
+                    root.escape();
                 }
                 return accept;
             }
