@@ -2818,9 +2818,15 @@ downloader formulae, manage tag display and search, manage downloader
 display, manage url classes and gallery url generators with their
 definition editors, manage parsers, regex favourites, manage logins with
 its credentials editor, manage login scripts, manage http headers with
-its value editor, edit api access permissions and the API request wait
-(dialogs: kept when applied; the request wait's close is its OK, as a
-`DialogNullipotent`'s), and help > about, tag display sync, detailed file
+its value editor, edit api access permissions, the API request wait, edit
+import and export folders with their folder editors, a file or search log
+opened from a dialog or as a folder's copy, edit import options with its
+external program entry, the metadata migration routers, router and
+source/destination editors, database locations with its max size and run
+time editors, a rating's "edit value", edit rules with a rule's and a
+comparator's editors, and the predicate editor (dialogs: kept when
+applied; the request wait's, a dialog's log's and database locations'
+close is their OK, as a `DialogNullipotent`'s), and help > about, tag display sync, detailed file
 metadata, migrate tags, the auto-resolution review, the login test
 result, file maintenance, bandwidth, network jobs, the vacuum review,
 review files to import, "what is this object?", review session cookies
