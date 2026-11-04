@@ -325,6 +325,12 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
             ended.cancel();
         }
     });
+    // (Escape: nothing while a favourite's editor, modal in the reference,
+    // is open)
+    ended.escape_first({
+        let edit = slots.edit.clone();
+        move || edit.borrow().is_some()
+    });
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();
@@ -1399,6 +1405,24 @@ fn open_edit(
         let ended = ended.clone();
         move || {
             ended.cancel();
+        }
+    });
+    // (Escape: the locations question answered no first; nothing while its
+    // predicate editor, modal in the reference, is open)
+    ended.escape_first({
+        let weak = window.as_weak();
+        let child = child.clone();
+        move || {
+            if child.borrow().is_some() {
+                return true;
+            }
+            match weak.upgrade() {
+                Some(window) if window.get_selecting_locations() => {
+                    window.invoke_locations_answered(false);
+                    true
+                }
+                _ => false,
+            }
         }
     });
     // (whatever ends it, through the dialog helper)

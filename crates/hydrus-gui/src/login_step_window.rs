@@ -807,6 +807,19 @@ pub fn open(
             }
         }
     });
+    // (Escape: "Remove all selected?" answered no first; nothing while a
+    // child, modal in the reference, is open)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(window) if window.get_child_open() => true,
+            Some(window) if window.get_deleting() => {
+                window.invoke_action("back".into());
+                true
+            }
+            _ => false,
+        }
+    });
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();

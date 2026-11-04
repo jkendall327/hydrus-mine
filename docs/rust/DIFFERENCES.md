@@ -2802,10 +2802,11 @@ command, external command and call, media view options, tag filter,
 incremental tagging, open-externally calls, export to png(s), login step,
 edit service and manage services, tag siblings and parents, and simple
 downloader formulae editors (dialogs: kept when applied), and help > about
-(a frame: kept a moment after a move or resize). Of these, manage services,
-tag siblings and parents and favourite searches are driven through their
-frame in `regular_dialog.rs`; the others share the same helper and their
-own suites. "manage granularity" waits for its close button (the
+(a frame: kept a moment after a move or resize). Each of these is driven as a
+user opens it and ended by a real Escape, its cancel and its apply in
+`tests/gui/dialog_sweep.rs`, which each later batch extends; there too, a
+question or inline editor within a dialog takes Escape first and a modal
+child (the reference's) holds it, the dialog staying open. "manage granularity" waits for its close button (the
 reference's `DialogNullipotent` keeps its frame by it). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape,

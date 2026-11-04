@@ -96,10 +96,10 @@ export component TagRelationshipsWindow inherits Window {
     callback apply();
     callback cancel();
     callback answered(bool);
-    // (the keyboard to the left tag input to start with, so Escape and the
-    // rest reach the window's keys)
-    forward-focus: left-entry;
-    FocusScope {
+    // (the window's keys have the keyboard to start with, so Escape and
+    // the rest reach them; no input is focused, as the reference's opens)
+    forward-focus: keys;
+    keys := FocusScope {
         capture-key-pressed(event) => {
             if event.text == Key.Escape {
                 if root.question != "" { root.answered(false); } else if !left-entry.escape-results() && !right-entry.escape-results() { root.escape(); }

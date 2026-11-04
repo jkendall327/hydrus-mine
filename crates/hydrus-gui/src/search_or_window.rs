@@ -561,11 +561,11 @@ fn open_with(
     window.on_apply({
         let state = state.clone();
         let weak = window.as_weak();
-        let close = close.clone();
         let ended = ended.clone();
         move || {
+            // (its owner gone: ended as cancelled, through the helper)
             if !state.owned() {
-                close();
+                ended.cancel_confirmed();
                 return;
             }
             if !state.valid() || state.blocked() {

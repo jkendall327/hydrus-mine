@@ -28,7 +28,9 @@ export component TagBannerWindow inherits Window {
     callback changed(); callback colour-edited(bool,int,int);
     callback row-clicked(int,bool,bool); callback action(string);
     callback prompt-accepted(); callback prompt-cancelled(); callback answer(bool);
-    FocusScope {
+    // (the keys the window's to start with, so Escape reaches them)
+    forward-focus: keys;
+    keys := FocusScope {
         key-pressed(event)=>{if event.text==Key.Escape {if root.asking {root.prompt-cancelled();} else if root.confirming {root.answer(false);} else {root.escape();} return accept;} reject}
         VerticalLayout {
             padding:12px; spacing:8px;

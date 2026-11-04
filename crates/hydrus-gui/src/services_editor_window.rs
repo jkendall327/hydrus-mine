@@ -515,6 +515,17 @@ fn edit(
             ended.cancel();
         }
     });
+    // (Escape: the counter's "edit value" question answered no first)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(window) if window.get_counter_editing() => {
+                window.invoke_counter_answered(false);
+                true
+            }
+            _ => false,
+        }
+    });
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();
@@ -815,6 +826,12 @@ pub fn open(
         move || {
             ended.cancel();
         }
+    });
+    // (Escape: nothing while a service's editor, modal in the reference,
+    // is open)
+    ended.escape_first({
+        let slots = slots.clone();
+        move || slots.edit.borrow().is_some()
     });
     // (whatever ends it, through the dialog helper)
     ended.on_closed({

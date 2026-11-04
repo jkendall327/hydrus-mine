@@ -84,6 +84,8 @@ export component MediaViewWindow inherits Window {
     callback actions-changed();
     callback apply();
     callback cancel();
+    // (the keys the window's to start with, so Escape reaches them)
+    forward-focus: keys;
     keys := FocusScope {
         key-pressed(e) => { if e.text == Key.Escape { root.escape(); return accept; } reject }
         VerticalLayout {

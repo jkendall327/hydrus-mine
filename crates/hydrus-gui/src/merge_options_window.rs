@@ -574,6 +574,24 @@ pub fn open(
             ended.cancel();
         }
     });
+    // (Escape: the note settings box closed first; nothing while the tag
+    // filter, a modal child in the reference, is open)
+    ended.escape_first({
+        let weak = window.as_weak();
+        let filter_slot = filter_slot.clone();
+        move || {
+            if filter_slot.borrow().is_some() {
+                return true;
+            }
+            match weak.upgrade() {
+                Some(window) if window.get_note_settings_open() => {
+                    window.invoke_note_settings_done(false);
+                    true
+                }
+                _ => false,
+            }
+        }
+    });
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();

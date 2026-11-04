@@ -875,8 +875,9 @@ fn menu_ordinary() -> Vec<(&'static str, Opener)> {
         ("manage tag siblings", |c| tags(c, "siblings")),
         ("manage tag parents", |c| tags(c, "parents")),
         ("edit favourite searches", |c| {
+            // ("manage favourite searches": the list alone)
             c.ui.invoke_favourites_menu_requested(10.0, 100.0);
-            c.ui.invoke_menu_line_clicked(0, 2, 0.0, 0.0, 0.0);
+            c.ui.invoke_menu_line_clicked(0, 0, 0.0, 0.0, 0.0);
             let w = c
                 .bound
                 .favourites

@@ -541,6 +541,17 @@ pub fn open(
             ended.cancel();
         }
     });
+    // (Escape: the "add defaults" questions cancelled first)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_defaults_step() != 0 => {
+                w.invoke_defaults_cancelled();
+                true
+            }
+            _ => false,
+        }
+    });
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();
