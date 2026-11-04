@@ -281,11 +281,15 @@ fn a_silent_daemon_disables_the_command_controls_after_five_seconds() {
     windows::hold_now(None);
     // A daemon that returns re-enables the controls on the same request.
     daemon.start_heartbeat();
+    // (refreshed until a review loads after the daemon's first new
+    // heartbeat: the window is a snapshot, so one refresh that loads before
+    // that heartbeat lands, as on a busy machine, would never re-enable them)
     refresh_until(&jobs, || {
-        jobs.get_can_act() || jobs.get_rows().row_count() == 1
+        jobs.get_rows().row_count() == 1 && {
+            jobs.invoke_row_clicked(0, false, false);
+            jobs.get_can_act()
+        }
     });
-    jobs.invoke_row_clicked(0, false, false);
-    until(|| jobs.get_can_act());
     jobs.invoke_cancel_jobs();
     assert!(matches!(daemon.finished(fetch), Err(NetError::Cancelled)));
     jobs.invoke_close_clicked();
