@@ -2392,9 +2392,13 @@ fn every_helper_frame_keeps_its_frame_as_it_is_resized_and_nothing_as_it_closes(
                     assert!(window.is_visible(), "{name}: opened");
                     // the user resizes it; a moment later it is kept
                     window.set_size(slint::LogicalSize::new(moved.0 as f32, moved.1 as f32));
-                    spin(std::time::Duration::from_millis(700));
                     let mut after_move = recorded_frame(&recorded["after_move"]);
                     after_move.last_position = Some(windows::state(window).position);
+                    // (kept a moment after: waited for, however busy the machine)
+                    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+                    while frame(&store) != after_move && std::time::Instant::now() < deadline {
+                        spin(std::time::Duration::from_millis(20));
+                    }
                     assert_eq!(frame(&store), after_move, "{name}: kept as it was resized");
                     // as it closes, nothing more
                     keep(&store, baseline.clone());
@@ -2579,7 +2583,9 @@ fn network_jobs_wait_on_their_rules_editor_and_take_escape_after_a_menu() {
         slint::LogicalPosition::new(20.0, 560.0),
         slint::platform::PointerEventButton::Left,
     );
-    spin(std::time::Duration::from_millis(50));
+    until("the menu is dismissed", || {
+        jobs.get_menu_panes().row_count() == 0
+    });
     assert_eq!(
         jobs.get_menu_panes().row_count(),
         0,
