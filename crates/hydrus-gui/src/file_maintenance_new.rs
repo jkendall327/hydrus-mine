@@ -437,6 +437,12 @@ mod tests {
             old.get_new_question(),
             model::schedule_question(JobType::Blurhash, 1001).unwrap()
         );
+        // (the close answers the question no first, as the reference's
+        // modal question keeps the window's close from passing it; the next
+        // close ends the window)
+        old.window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(old.get_new_question().is_empty());
         old.window()
             .dispatch_event(slint::platform::WindowEvent::CloseRequested);
         assert!(

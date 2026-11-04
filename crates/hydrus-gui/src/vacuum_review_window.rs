@@ -687,6 +687,11 @@ mod tests {
         open_using(&first_store, &slot, Rc::new(|| true), accept.clone()).unwrap();
         let previous = slot.window().unwrap();
         start_question(&previous);
+        // (the close answers the question no first; the next ends it)
+        previous
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(previous.get_question().is_empty());
         previous
             .window()
             .dispatch_event(slint::platform::WindowEvent::CloseRequested);
