@@ -527,7 +527,7 @@ fn domain_menu_credentials_stage_activation_and_persist_only_at_parent_apply() {
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
 
-fn recorded_result(row: &serde_json::Value) -> hydrus_net::login::TestResult {
+pub(crate) fn recorded_result(row: &serde_json::Value) -> hydrus_net::login::TestResult {
     hydrus_net::login::TestResult {
         name: row[0].as_str().unwrap().to_owned(),
         url: row[1].as_str().unwrap().to_owned(),

@@ -5727,7 +5727,10 @@ The ordinary dialogs that end through the shared dialog helper (so far
 services, tag siblings and parents, favourite searches, and the other
 editors listed in DIFFERENCES.md) keep `regular_dialog` as the
 reference's do: when applied, never when cancelled (cancel, Escape) or
-closed by their window; and the ordinary frames on it (so far help > about)
+closed by their window; and the ordinary frames on it (help > about, tag
+display sync, detailed file metadata, migrate tags, the auto-resolution
+review, the login test result, file maintenance, bandwidth, network jobs,
+the vacuum review, review files to import and "what is this object?")
 keep it a moment after each move or resize, nothing more as they close, and
 close on Escape (`tests/gui/regular_dialog.rs`, replaying
 `regular_dialog.json`). The dialogs with frames of their own (manage

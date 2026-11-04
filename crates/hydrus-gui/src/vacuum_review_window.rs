@@ -50,7 +50,6 @@ impl Slot {
             state.close();
         }
     }
-    #[cfg(test)]
     fn window(&self) -> Option<VacuumReviewWindow> {
         self.0
             .current
@@ -59,6 +58,16 @@ impl Slot {
             .and_then(|open| open.state.window.upgrade())
     }
 }
+impl crate::Bound {
+    /// The open "review vacuum data" window, for tests.
+    #[must_use]
+    // (the Bound's field is underscored: it is held, never read, outside tests)
+    #[allow(clippy::used_underscore_binding)]
+    pub fn vacuum_review(&self) -> Option<VacuumReviewWindow> {
+        self._vacuum_review_owner.0.window()
+    }
+}
+
 /// Only the final shared Bound owner retires the slot; callback clones do not own it.
 pub(crate) struct Owner(Slot);
 impl Owner {

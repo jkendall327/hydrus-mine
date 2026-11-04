@@ -12,6 +12,8 @@ export component ReviewImportsWindow inherits Window {
     // (Escape, once nothing within takes it, goes to the dialog helper:
     // cancelled, as the reference's `keyPressEvent`)
     callback escape();
+    // (the window's keys hold the focus it opens with)
+    forward-focus: keys;
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;

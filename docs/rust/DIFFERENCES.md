@@ -2814,12 +2814,19 @@ predicate, favourite searches and favourite search, shortcut set and
 command, external command and call, media view options, tag filter,
 incremental tagging, open-externally calls, export to png(s), login step,
 edit service and manage services, tag siblings and parents, and simple
-downloader formulae editors (dialogs: kept when applied), and help > about
-(a frame: kept a moment after a move or resize). Each of these is driven as a
-user opens it and ended by a real Escape, its cancel and its apply in
-`tests/gui/dialog_sweep.rs`, which each later batch extends; there too, a
+downloader formulae editors (dialogs: kept when applied), and help > about,
+tag display sync, detailed file metadata, migrate tags, the auto-resolution
+review, the login test result, file maintenance, bandwidth, network jobs,
+the vacuum review, review files to import and "what is this object?"
+(frames: kept a moment after a move or resize). Each of these is driven as a
+user opens it in `tests/gui/dialog_sweep.rs`, which each later batch
+extends: a dialog ended by a real Escape, its cancel and its apply, a frame
+resized and then ended by its close button, its window's close and a real
+Escape; there too, a
 question or inline editor within a dialog takes Escape first and a modal
-child (the reference's) holds it, the dialog staying open. "manage granularity" waits for its close button (the
+child (the reference's) holds it, the dialog staying open (in a frame, migrate
+tags' and the vacuum review's questions answered no, bandwidth waiting on its
+rules editor). "manage granularity" waits for its close button (the
 reference's `DialogNullipotent` keeps its frame by it). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape,
