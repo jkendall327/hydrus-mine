@@ -209,6 +209,8 @@ fn read(w: &FormulaWindow, e: &mut FormulaEditor) {
 }
 /// Edit a formula in isolation. Apply returns the typed draft; Cancel leaves
 /// the original unchanged. Recursive children use separate slots at each depth.
+/// (`EditFormulaPanel`'s own `DialogEdit` on `deeply_nested_dialog`, as
+/// its formula's editor and a nested or zipper formula's children open.)
 pub fn open(
     store: &Arc<Store>,
     formula: &Formula,
@@ -216,8 +218,26 @@ pub fn open(
     slots: &Slots,
     applied: Rc<dyn Fn(Formula)>,
 ) -> Result<FormulaWindow, slint::PlatformError> {
+    open_keyed(store, formula, test_data, slots, applied, true)
+}
+
+/// [`open`], kept by `deeply_nested_dialog` if `nested`, else by
+/// `regular_dialog` (the simple downloader's "edit formula" dialog).
+pub(crate) fn open_keyed(
+    store: &Arc<Store>,
+    formula: &Formula,
+    test_data: FormulaTestData,
+    slots: &Slots,
+    applied: Rc<dyn Fn(Formula)>,
+    nested: bool,
+) -> Result<FormulaWindow, slint::PlatformError> {
     slots.strings.set_store(store);
     let w = crate::app_title::new::<crate::FormulaWindow>()?;
+    let ended = if nested {
+        crate::dialog::Dialog::keyed(&w, "deeply_nested_dialog")
+    } else {
+        crate::dialog::Dialog::new(&w)
+    };
     let active = Rc::new(Cell::new(true));
     let fetch = crate::parser_test_fetch::Slot::default();
     w.set_fetch_url(
@@ -401,6 +421,7 @@ pub fn open(
         let state = state.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
+        let ended = ended.clone();
         move |mode| {
             use hydrus_gui_model::formula_exchange as ex;
             if blocked() {
@@ -408,7 +429,7 @@ pub fn open(
             }
             let formula = state.borrow().formula.clone();
             let said = |(title, text): hydrus_gui_model::auto_resolution_exchange::Message| {
-                crate::debug_actions::message(&title, &text);
+                ended.message(&title, &text);
             };
             let replace = |result: Result<Formula, _>| match result {
                 Ok(formula) => {
@@ -940,10 +961,12 @@ pub fn open(
             }
         }
     });
+    let accepted = Rc::new(Cell::new(false));
     w.on_apply({
         let weak = w.as_weak();
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
+        let accepted = accepted.clone();
         let blocked = blocked.clone();
         move || {
             if blocked() {
@@ -954,7 +977,8 @@ pub fn open(
                 let value = state.borrow().value();
                 match value {
                     Ok(f) => {
-                        close(true);
+                        accepted.set(true);
+                        ended.accept();
                         applied(f);
                     }
                     Err(e) => w.set_veto(e.into()),
@@ -963,13 +987,32 @@ pub fn open(
         }
     });
     w.on_cancel({
-        let close = close.clone();
-        move || close(false)
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    w.window().on_close_requested(move || {
-        close(false);
-        slint::CloseRequestResponse::HideWindow
+    // (its remove question takes Escape and the window's close first; a
+    // child editor, modal in the reference, holds it)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_deleting() {
+                return false;
+            }
+            w.invoke_cancelled();
+            true
+        }
     });
+    ended.modal_child({
+        let slots = slots.clone();
+        move || slots.has_children()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close(accepted.get()));
     refresh();
     w.show()?;
     Ok(w)
@@ -993,6 +1036,8 @@ fn open_rule(
     applied: Rc<dyn Fn(Rule)>,
 ) -> Result<FormulaRuleWindow, slint::PlatformError> {
     let w = crate::app_title::new::<crate::FormulaRuleWindow>()?;
+    // (the formula's "edit rule" `DialogEdit` on `deeply_nested_dialog`)
+    let ended = crate::dialog::Dialog::keyed(&w, "deeply_nested_dialog");
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
@@ -1165,7 +1210,7 @@ fn open_rule(
     w.on_apply({
         let weak = w.as_weak();
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let blocked = blocked.clone();
         move || {
             if blocked() {
@@ -1175,18 +1220,23 @@ fn open_rule(
                 read_rule(&w, &mut state.borrow_mut());
             }
             let r = state.borrow().value();
-            close();
+            ended.accept();
             applied(r);
         }
     });
     w.on_cancel({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    w.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (a string match editor, modal in the reference, holds it)
+    ended.modal_child({
+        let strings = slots.strings.clone();
+        move || strings.has_open()
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     refresh();
     w.show()?;
     Ok(w)

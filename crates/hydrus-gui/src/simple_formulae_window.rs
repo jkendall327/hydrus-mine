@@ -344,12 +344,15 @@ pub fn open(
                     }
                 }
             });
-            match crate::formula_window::open(
+            // (the simple downloader's "edit formula" dialog, kept by
+            // `regular_dialog`)
+            match crate::formula_window::open_keyed(
                 &store,
                 &formula,
                 crate::formula_window::FormulaTestData::default(),
                 &slots.formula,
                 put,
+                false,
             ) {
                 Ok(w) => {
                     w.on_closed({

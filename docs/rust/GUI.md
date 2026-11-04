@@ -5739,8 +5739,13 @@ keep it a moment after each move or resize, nothing more as they close, and
 close on Escape (`tests/gui/regular_dialog.rs`, replaying
 `regular_dialog.json`). The dialogs with frames of their own (manage
 subscriptions, edit subscription, manage tags, URLs, times and notes, the
-import's filename tagging, the choice dialogs) end the same way by their own
-frames, Escape cancelling them; manage notes and manage tags with changes
+import's filename tagging, the choice dialogs, and the deeply nested editors:
+the string processor, string match, converter and conversion, formula and
+rule, parser, login script and credential definition editors, by
+`deeply_nested_dialog`; the parser picker and advanced delete files, by
+`quick_select_dialog`; the frame location editor, by `quick_entry_dialog`)
+end the same way by their own frames, Escape cancelling them; review
+services keeps its own as it closes; manage notes and manage tags with changes
 ask before Escape or cancel discards them, and a write that fails leaves the
 dialog open, saying why. In a tag input, Escape first clears the results'
 selection, then any typed text, before it reaches the dialog. Those windows are

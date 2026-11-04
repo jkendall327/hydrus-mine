@@ -269,6 +269,9 @@ pub fn open_script(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::LoginScriptWindow>()?;
+    // (the login scripts' "edit login script" `DialogEdit` on
+    // `deeply_nested_dialog`)
+    let ended = crate::dialog::Dialog::keyed(&window, "deeply_nested_dialog");
     window.set_name(script.name.as_str().into());
     let state = Rc::new(RefCell::new(ScriptState {
         script: script.clone(),
@@ -730,7 +733,7 @@ pub fn open_script(
         let step_slot = slots.step.clone();
         let store = store.clone();
         let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let edit = edit.clone();
         let deleting = deleting.clone();
         move |action| {
@@ -741,7 +744,7 @@ pub fn open_script(
                 return;
             };
             if action == "cancel" {
-                close();
+                ended.cancel();
                 return;
             }
             if action == "cancel-test" {
@@ -1067,7 +1070,7 @@ pub fn open_script(
                         return;
                     }
                     match applied(script) {
-                        Ok(()) => close(),
+                        Ok(()) => ended.accept(),
                         Err(error) => window.set_error(error.into()),
                     }
                 }
@@ -1121,10 +1124,29 @@ pub fn open_script(
             }
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (a question up takes Escape and the window's close first: back, as
+    // its own modal question in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return false;
+            };
+            if window.get_question().is_empty() {
+                return false;
+            }
+            window.invoke_action("back".into());
+            true
+        }
     });
+    // (its credential, step, example, test and string match windows are
+    // modal children)
+    ended.modal_child({
+        let weak = window.as_weak();
+        move || weak.upgrade().is_some_and(|window| window.get_child_open())
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show()?;
     *slots.script.borrow_mut() = Some(window.clone_strong());
     Ok(window)

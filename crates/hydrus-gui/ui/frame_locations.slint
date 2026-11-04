@@ -61,6 +61,7 @@ export component FrameLocationWindow inherits Window {
     in-out property <bool> fullscreen;
     callback apply();
     callback cancel();
+    forward-focus: keys;
     keys:=FocusScope {
         key-pressed(e)=>{if e.text==Key.Escape{root.escape();return accept;}if e.text==Key.Return{root.apply();return accept;}reject}
         VerticalLayout {

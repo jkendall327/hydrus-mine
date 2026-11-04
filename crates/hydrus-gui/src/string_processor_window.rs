@@ -230,6 +230,9 @@ pub fn open(
 ) -> Result<StringProcessorWindow, slint::PlatformError> {
     slots.set_store(store);
     let window = crate::app_title::new::<crate::StringProcessorWindow>()?;
+    // (`StringProcessorButton`'s `DialogEdit` on `deeply_nested_dialog`:
+    // placed by it, and kept by it when applied)
+    let ended = crate::dialog::Dialog::keyed(&window, "deeply_nested_dialog");
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
@@ -262,6 +265,7 @@ pub fn open(
         let store = store.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
+        let ended = ended.clone();
         move |action| {
             use hydrus_gui_model::processing_exchange as ex;
             if blocked() {
@@ -274,7 +278,7 @@ pub fn open(
                         state.borrow_mut().editor.add(step);
                     }
                     refresh();
-                    crate::debug_actions::messages(import.messages);
+                    ended.messages(import.messages);
                 };
             let result = match action.as_str() {
                 // (the reference's export is enabled only on a selection)
@@ -380,7 +384,7 @@ pub fn open(
                 return;
             }
             let editor = state.borrow().editor.clone();
-            open_step(&store, &editor, index, &step, &slots, put.clone());
+            open_step(&store, &editor, index, &step, &slots, put.clone(), None);
             let step = slots
                 .step
                 .borrow()
@@ -577,28 +581,43 @@ pub fn open(
     });
     window.on_apply({
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let blocked = blocked.clone();
         move || {
             if blocked() {
                 return;
             }
             let value = state.borrow().editor.value();
-            close();
+            ended.accept();
             applied(value);
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
     });
+    // (its add choice or delete question takes Escape and the window's
+    // close first; a step or converter editor, modal in the reference,
+    // holds it)
+    ended.escape_first({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move || {
+            if state.borrow_mut().asking.take().is_none() {
+                return false;
+            }
+            refresh();
+            true
+        }
+    });
+    ended.modal_child({
+        let slots = slots.clone();
+        move || slots.has_processor_children()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     show(&window, &state.borrow());
     window.show()?;
     Ok(window)
@@ -950,6 +969,7 @@ fn open_step(
     step: &ProcessingStep,
     slots: &Slots,
     put: Rc<dyn Fn(Option<usize>, ProcessingStep)>,
+    key: Option<&'static str>,
 ) {
     let step_editor = match step {
         ProcessingStep::Split {
@@ -993,11 +1013,12 @@ fn open_step(
             }
             let applied: Rc<dyn Fn(StringConverter)> =
                 Rc::new(move |converter| put(index, ProcessingStep::Convert(converter)));
-            match open_converter(
+            match open_converter_keyed(
                 converter,
                 Some(editor.example_text_for(step)),
                 slots,
                 applied,
+                key,
             ) {
                 Ok(w) => *slots.converter.borrow_mut() = Some(w),
                 Err(e) => eprintln!("could not open the string converter: {e}"),
@@ -1013,6 +1034,9 @@ fn open_step(
     let Ok(window) = crate::app_title::new::<crate::StringStepWindow>() else {
         return;
     };
+    // (the processor's "edit processing step" `DialogEdit`, kept by
+    // `regular_dialog`; a string match's own, by `deeply_nested_dialog`)
+    let ended = dialog(&window, key);
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
@@ -1139,7 +1163,7 @@ fn open_step(
     window.on_apply({
         let weak = window.as_weak();
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let blocked = blocked.clone();
         move || {
             if blocked() {
@@ -1148,7 +1172,7 @@ fn open_step(
             let value = state.borrow().value();
             match value {
                 Ok(step) => {
-                    close();
+                    ended.accept();
                     put(index, step);
                 }
                 Err(veto) => {
@@ -1160,16 +1184,19 @@ fn open_step(
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
     });
+    // (a tag filter editor or the regex favourites, modal in the
+    // reference, hold it)
+    ended.modal_child({
+        let slots = slots.clone();
+        move || slots.has_step_children()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     if window.show().is_ok() {
         *slots.step.borrow_mut() = Some(window);
     }
@@ -1198,6 +1225,8 @@ pub fn open_match(
                 applied(m);
             }
         }),
+        // (`StringMatchButton`'s `DialogEdit` on `deeply_nested_dialog`)
+        Some("deeply_nested_dialog"),
     );
     if let Some(window) = slots.step.borrow().as_ref() {
         window.set_window_title("edit string match".into());
@@ -1242,7 +1271,21 @@ pub fn open_converter(
     slots: &Slots,
     applied: Rc<dyn Fn(StringConverter)>,
 ) -> Result<StringConverterWindow, slint::PlatformError> {
+    // (`StringConverterButton`'s `DialogEdit` on `deeply_nested_dialog`)
+    open_converter_keyed(converter, example, slots, applied, Some("deeply_nested_dialog"))
+}
+
+/// [`open_converter`], kept by `key` (none: `regular_dialog`, as the
+/// processor's "edit processing step" dialog is).
+fn open_converter_keyed(
+    converter: &StringConverter,
+    example: Option<String>,
+    slots: &Slots,
+    applied: Rc<dyn Fn(StringConverter)>,
+    key: Option<&'static str>,
+) -> Result<StringConverterWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::StringConverterWindow>()?;
+    let ended = dialog(&window, key);
     let active = Rc::new(Cell::new(true));
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
         let active = active.clone();
@@ -1493,31 +1536,57 @@ pub fn open_converter(
     });
     window.on_apply({
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let blocked = blocked.clone();
         move || {
             if blocked() {
                 return;
             }
             let value = state.borrow().0.value();
-            close();
+            ended.accept();
             applied(value);
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
     });
+    // (its delete question takes Escape and the window's close first; a
+    // conversion editor or the regex favourites, modal in the reference,
+    // hold it)
+    ended.escape_first({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move || {
+            if !std::mem::take(&mut state.borrow_mut().1) {
+                return false;
+            }
+            refresh();
+            true
+        }
+    });
+    ended.modal_child({
+        let slots = slots.clone();
+        move || slots.has_converter_children()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     refresh();
     window.show()?;
     Ok(window)
+}
+
+/// A dialog kept by `key`, or by `regular_dialog`.
+fn dialog<C: crate::dialog::Escapes + 'static>(
+    window: &C,
+    key: Option<&'static str>,
+) -> crate::dialog::Dialog<C> {
+    match key {
+        Some(key) => crate::dialog::Dialog::keyed(window, key),
+        None => crate::dialog::Dialog::new(window),
+    }
 }
 
 fn show_conversion(window: &ConversionWindow, editor: &ConversionEditor, asking: Option<&str>) {
@@ -1600,6 +1669,9 @@ fn open_conversion(
     done: Rc<dyn Fn(Conversion) -> Result<(), String>>,
 ) -> Result<ConversionWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::ConversionWindow>()?;
+    // (the converter's "edit conversion" `DialogEdit` on
+    // `deeply_nested_dialog`)
+    let ended = crate::dialog::Dialog::keyed(&window, "deeply_nested_dialog");
     let active = Rc::new(Cell::new(true));
     window.set_window_title(CONVERSION_TITLE.into());
     window.set_regex_components(strings(
@@ -1642,7 +1714,7 @@ fn open_conversion(
     });
     let finish: Rc<dyn Fn()> = Rc::new({
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         let weak = window.as_weak();
         move || {
@@ -1651,7 +1723,7 @@ fn open_conversion(
             }
             let value = state.borrow().0.value();
             match done(value) {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(error) => {
                     if let Some(window) = weak.upgrade() {
                         window.set_error(error.into());
@@ -1708,16 +1780,27 @@ fn open_conversion(
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
     });
+    // (its question takes Escape and the window's close first)
+    ended.escape_first({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move || {
+            if state.borrow().1.is_none() {
+                return false;
+            }
+            if let Some(window) = weak.upgrade() {
+                window.invoke_cancelled();
+            }
+            true
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show()?;
     Ok(window)
 }
