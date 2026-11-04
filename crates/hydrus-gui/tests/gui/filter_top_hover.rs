@@ -603,8 +603,7 @@ fn open_duplicates(o: &crate::auto_resolution_review::Opened) -> hydrus_gui::Dup
     window
 }
 
-// (untagged: the duplicate filter's trash button does not yet ask to
-// delete one file or both, DIFFERENCES.md)
+// leaf: audit-media-duplicate-filter-top-hover
 #[test]
 fn the_duplicate_filter_s_top_hover_is_the_reference_s() {
     let recorded = hydrus_testkit::fixture_json("viewer_top_hover.json");
@@ -629,6 +628,18 @@ fn the_duplicate_filter_s_top_hover_is_the_reference_s() {
         &mut |press, recorded| {
             let what = format!("{} ({})", press.icon, press.button);
             let shown = recorded["before"]["shown"].as_str().unwrap();
+            // the trash button asks, as the reference's `_Delete` (whose
+            // answers duplicate_filter_delete.rs replays): forgotten here
+            if press.button == "left" && press.did.iter().any(|d| d["pub"] == "canvas_delete") {
+                assert_eq!(
+                    window.get_question(),
+                    "Delete just this file, or both?",
+                    "{what}"
+                );
+                widgets::click(window.window(), "forget it");
+                widgets::settle();
+                assert!(window.get_question().is_empty(), "{what}: forgotten");
+            }
             assert_eq!(
                 hydrus_gui::shown_pair()
                     .map(|(a, _)| o.hex[&a].clone())

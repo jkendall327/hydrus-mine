@@ -42,7 +42,13 @@ enum Asking {
     CustomType,
     /// A custom action's deletions.
     CustomDelete,
+    /// The trash button or delete key: this file, or both (`_Delete`).
+    Delete,
 }
+
+/// The trash button's and delete key's question and answers (`_Delete`).
+const DELETE_QUESTION: &str = "Delete just this file, or both?";
+const DELETE_ANSWERS: [&str; 3] = ["delete just this one", "delete both", "forget it"];
 
 /// A custom action's decisions, as its question lists them (sorted, as the
 /// reference's select dialog sorts them).
@@ -147,6 +153,8 @@ struct State {
     merge_options: crate::merge_options_window::Slot,
     /// The top hover's zoom switch command, read as the window opened.
     zoom_switch: i32,
+    /// The delete files dialog, while open.
+    deletion: crate::delete_files_window::Slot,
 }
 
 impl Drop for State {
@@ -550,6 +558,7 @@ pub(crate) fn open_filter_with_hooks(
         custom: None,
         merge_options: Rc::default(),
         zoom_switch,
+        deletion: Rc::default(),
     }));
     *current_cell.borrow_mut() = Rc::downgrade(&state);
     {
@@ -797,6 +806,56 @@ pub(crate) fn open_filter_with_hooks(
         move || inboxed(false)
     });
     window.on_inbox(move || inboxed(true));
+    // the trash button and the delete key: this file, or both? (`_Delete`)
+    window.on_delete({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            let Some(window) = weak.upgrade() else { return };
+            let mut state = state.borrow_mut();
+            if !state.viewing_stats.active()
+                || state.model.current().is_none()
+                || !window.get_question().is_empty()
+                || window.get_deleting()
+            {
+                return;
+            }
+            ask(
+                &window,
+                &mut state,
+                Asking::Delete,
+                DELETE_QUESTION,
+                &DELETE_ANSWERS,
+            );
+        }
+    });
+    // a trashed file's undelete button (`_Undelete`)
+    window.on_undelete({
+        let update = update.clone();
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            if !state.borrow().viewing_stats.active()
+                || weak
+                    .upgrade()
+                    .is_none_or(|window| !window.get_question().is_empty() || window.get_deleting())
+            {
+                return;
+            }
+            let (store, pair) = {
+                let state = state.borrow();
+                (state.model.store().clone(), state.model.current())
+            };
+            let Some((shown, _)) = pair else { return };
+            let update = update.clone();
+            crate::undelete::undelete(
+                &store,
+                &[shown],
+                &|question, then| crate::undelete::ask_yes_no(&question, then),
+                Rc::new(move || update(&|_| None)),
+            );
+        }
+    });
     // its volume control, as the media viewer's
     let show_audio = {
         let weak = window.as_weak();
@@ -869,6 +928,10 @@ pub(crate) fn open_filter_with_hooks(
             if let Some(editor) = state.borrow().merge_options.borrow_mut().take() {
                 let _ = editor.hide();
             }
+            // (an open delete files dialog goes with the filter, deciding
+            // nothing)
+            let deletion = state.borrow().deletion.clone();
+            crate::delete_files_window::cancel(&deletion);
             let _ = window.hide();
             if !slot
                 .borrow()
@@ -921,6 +984,84 @@ pub(crate) fn open_filter_with_hooks(
             }
             let asking = state.borrow().asking;
             match (asking, answer) {
+                (Asking::Delete, i) => {
+                    update(&|_| Some(Ok(Step::Showing)));
+                    let (store, pair, domain) = {
+                        let state = state.borrow();
+                        (
+                            state.model.store().clone(),
+                            state.model.current(),
+                            state.model.suggested_domain(),
+                        )
+                    };
+                    // ("forget it": nothing)
+                    let both = match i {
+                        0 => false,
+                        1 => true,
+                        _ => return,
+                    };
+                    let Some((shown, other)) = pair else { return };
+                    let (files, reason) = if both {
+                        (
+                            vec![shown, other],
+                            "Deleted manually in Duplicate Filter, along with its potential duplicate.",
+                        )
+                    } else {
+                        (vec![shown], "Deleted manually in Duplicate Filter.")
+                    };
+                    // (suggesting the filter's file domain, as the
+                    // reference's location context does)
+                    let suggested = domain.map(hydrus_store::settings::DeletionAction::Domain);
+                    let guard: crate::delete_files_window::Guard = Rc::new({
+                        let state = Rc::downgrade(&state);
+                        move || {
+                            state
+                                .upgrade()
+                                .is_some_and(|state| state.borrow().viewing_stats.active())
+                        }
+                    });
+                    // (on the pair it was asked for, while it is still shown)
+                    let chosen = Rc::new({
+                        let update = update.clone();
+                        let files = files.clone();
+                        move |deferred: hydrus_gui_model::delete_files::Deferred| {
+                            update(&|state| {
+                                if state.model.current() != Some((shown, other)) {
+                                    return None;
+                                }
+                                Some(state.model.decide_deletion(files.clone(), deferred.clone()))
+                            });
+                        }
+                    });
+                    // (modal, as the reference's dialog is: the filter takes
+                    // no input while it is open)
+                    let closed = Rc::new({
+                        let weak = weak.clone();
+                        move || {
+                            if let Some(window) = weak.upgrade() {
+                                window.set_deleting(false);
+                            }
+                        }
+                    });
+                    let slot = state.borrow().deletion.clone();
+                    match crate::delete_files_window::open_deferred(
+                        &slot,
+                        &store,
+                        &files,
+                        suggested.as_ref(),
+                        reason,
+                        guard,
+                        crate::delete_files_window::Deferring { chosen, closed },
+                    ) {
+                        Ok(Some(_)) => {
+                            if let Some(window) = weak.upgrade() {
+                                window.set_deleting(true);
+                            }
+                        }
+                        Ok(None) => {}
+                        Err(e) => eprintln!("could not ask to delete: {e}"),
+                    }
+                }
                 (Asking::CustomType, i) => {
                     let chosen = usize::try_from(i).ok().and_then(|i| CUSTOM_TYPES.get(i));
                     update(&|_| Some(Ok(Step::Showing)));
@@ -1021,15 +1162,12 @@ pub(crate) fn open_filter_with_hooks(
                 // (not forgetting: the reference's dialog is as it was)
                 (Asking::Forget, _) => {
                     if let Some(window) = weak.upgrade() {
-                        let pending = state.borrow().model.pending();
+                        let question = state.borrow().model.close_question();
                         ask(
                             &window,
                             &mut state.borrow_mut(),
                             Asking::Close,
-                            &format!(
-                                "commit {} decisions?",
-                                hydrus_core::numbers::human_int(pending as u64)
-                            ),
+                            &question,
                             &["commit", "forget", "back to filtering"],
                         );
                     }
@@ -1053,10 +1191,7 @@ pub(crate) fn open_filter_with_hooks(
                 return;
             }
             if let Some(window) = weak.upgrade() {
-                let question = format!(
-                    "commit {} decisions?",
-                    hydrus_core::numbers::human_int(pending as u64)
-                );
+                let question = state.borrow().model.close_question();
                 ask(
                     &window,
                     &mut state.borrow_mut(),

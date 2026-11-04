@@ -1760,7 +1760,11 @@ the place ("File One - 1/6 - no decisions yet"), next and show a different
 pair, then the file's archive and metadata buttons and the media viewer's
 zoom and window buttons as in the archive/delete filter, its zoom options
 menu saying that the media size and pan are locked, and the file's info
-line; `oracle/record_viewer_top_hover.py`; as the window resizes, the
+line; its trash button, or the delete key, asks "Delete just this file, or
+both?", then the delete files dialog, and the deletion is the pair's
+decision ("2/6 - 1 deletes"), done when the batch commits, as the
+reference's is (`oracle/record_duplicate_filter_delete.py`); going back
+undoes it; `oracle/record_viewer_top_hover.py`; as the window resizes, the
 file's zoom follows "recenter media on window resize" and the zoom locks,
 as in the media viewer) beside the
 reference's comparison statements and score (`hydrus-duplicates`'s port,

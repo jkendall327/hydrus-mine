@@ -20,6 +20,8 @@ use hydrus_duplicates::statements::{self, FastComparison};
 use hydrus_search::media::FileFacts;
 use hydrus_store::Store;
 use hydrus_store::delete_lock::Reinbox;
+
+use crate::delete_files::Deferred;
 use hydrus_store::duplicates::auto::{Rule, RuleAction};
 use hydrus_store::duplicates::{
     self, ComparisonScores, DuplicateFilterSettings, DuplicateMergeSettings, MergeOptions,
@@ -46,6 +48,9 @@ pub enum Decision {
     /// Skipped because a file of it was already merged or deleted in this
     /// batch, or can't be shown.
     AutoSkip,
+    /// Its files deleted, one or both, as the delete files dialog chose
+    /// (`DuplicatePairDecisionDeletion`), when the batch commits.
+    Deletion,
 }
 
 impl Decision {
@@ -85,6 +90,11 @@ struct Decided {
     decision: Decision,
     /// A custom action's own merge options, in place of the client's.
     merge: Option<MergeOptions>,
+    /// A deletion's choice, applied when the batch commits, and the files
+    /// it was asked for (`media`: skipped for the rest of the batch, and
+    /// inboxed first, as the delete lock's option says, whatever the dialog
+    /// could act on).
+    deletion: Option<(Vec<HashId>, Deferred)>,
 }
 
 /// Where the filter is after a step.
@@ -401,6 +411,9 @@ impl DuplicateFilter {
                 }
             }
             // (approved or not, as the reference does)
+            if let Some((files, _)) = &d.deletion {
+                used.extend(files.iter().copied());
+            }
             if let (Decision::Review { .. }, Some((_, rule))) = (d.decision, &self.rule) {
                 if matches!(rule.action, RuleAction::Better | RuleAction::SameQuality)
                     || rule.delete_a
@@ -433,15 +446,49 @@ impl DuplicateFilter {
                 b,
                 decision: Decision::AutoSkip,
                 merge: None,
+                deletion: None,
             });
             self.index += 1;
         }
         self.end_of_batch()
     }
 
-    /// How many decisions wait to be committed.
+    /// How many decisions and deletions wait to be committed.
     pub fn pending(&self) -> usize {
-        self.committable()
+        self.committable() + self.deletes()
+    }
+
+    /// How many deletions wait to be committed (`_GetNumCommittableDeletes`).
+    fn deletes(&self) -> usize {
+        self.decisions
+            .iter()
+            .filter(|d| d.decision == Decision::Deletion)
+            .count()
+    }
+
+    /// "2 decisions and 1 deletes", as the reference counts what waits.
+    fn pending_parts(&self) -> Vec<String> {
+        let mut parts = Vec::new();
+        let committable = self.committable();
+        if committable > 0 {
+            parts.push(format!(
+                "{} decisions",
+                hydrus_core::numbers::human_int(committable as u64)
+            ));
+        }
+        let deletes = self.deletes();
+        if deletes > 0 {
+            parts.push(format!(
+                "{} deletes",
+                hydrus_core::numbers::human_int(deletes as u64)
+            ));
+        }
+        parts
+    }
+
+    /// The question closing asks with work pending ("commit 2 deletes?").
+    pub fn close_question(&self) -> String {
+        format!("commit {}?", self.pending_parts().join(" and "))
     }
 
     fn committable(&self) -> usize {
@@ -457,7 +504,7 @@ impl DuplicateFilter {
     }
 
     fn end_of_batch(&self) -> End {
-        let committable = self.committable();
+        let committable = self.committable() + self.deletes();
         if committable > 0 {
             let auto_skips = self
                 .decisions
@@ -472,8 +519,8 @@ impl DuplicateFilter {
                 return End::AutoCommit;
             }
             return End::Ask(format!(
-                "commit {} decisions and continue?",
-                hydrus_core::numbers::human_int(committable as u64)
+                "commit {} and continue?",
+                self.pending_parts().join(" and ")
             ));
         }
         if self
@@ -543,6 +590,29 @@ impl DuplicateFilter {
             b,
             decision,
             merge: None,
+            deletion: None,
+        });
+        self.index += 1;
+        self.next()
+    }
+
+    /// Delete one or both of the pair shown, as the delete files dialog
+    /// chose (`_Delete`): recorded as the pair's decision, the files
+    /// deleted when the batch commits; on to the next pair.
+    pub fn decide_deletion(
+        &mut self,
+        files: Vec<HashId>,
+        deletion: Deferred,
+    ) -> anyhow::Result<Step> {
+        let Some((a, b)) = self.current() else {
+            return Ok(Step::Finished);
+        };
+        self.decisions.push(Decided {
+            a,
+            b,
+            decision: Decision::Deletion,
+            merge: None,
+            deletion: Some((files, deletion)),
         });
         self.index += 1;
         self.next()
@@ -570,6 +640,7 @@ impl DuplicateFilter {
                 delete_b,
             },
             merge,
+            deletion: None,
         });
         self.index += 1;
         self.next()
@@ -609,13 +680,18 @@ impl DuplicateFilter {
         let work: Vec<Decided> = self
             .decisions
             .iter()
-            .filter(|d| matches!(d.decision, Decision::Relationship { .. }))
+            .filter(|d| {
+                matches!(
+                    d.decision,
+                    Decision::Relationship { .. } | Decision::Deletion
+                )
+            })
             .cloned()
             .collect();
         let merge_settings: DuplicateMergeSettings =
             self.store.read(hydrus_store::settings::get)?;
         let merge_alternates = self.settings.merge_alternates;
-        if self.committable() > 0 {
+        if self.pending() > 0 {
             self.done_work = true;
         }
         if let Some((rule_id, _)) = &self.rule {
@@ -632,6 +708,17 @@ impl DuplicateFilter {
         }
         self.store.write_content(move |w| {
             for d in &work {
+                if let Some((files, deletion)) = &d.deletion {
+                    // (inboxed first, so archived files may go, if the
+                    // delete lock's option says)
+                    let lock: hydrus_store::delete_lock::DeleteLock =
+                        hydrus_store::settings::get(w.conn())?;
+                    if lock.reinbox_after_duplicate_filter {
+                        w.inbox(files)?;
+                    }
+                    deletion.apply(w)?;
+                    continue;
+                }
                 let Decision::Relationship {
                     relationship,
                     delete_a,
@@ -682,14 +769,11 @@ impl DuplicateFilter {
         } else {
             "File Two"
         };
-        let committable = self.committable();
-        let decisions = if committable == 0 {
+        let parts = self.pending_parts();
+        let decisions = if parts.is_empty() {
             "no decisions yet".to_owned()
         } else {
-            format!(
-                "{} decisions",
-                hydrus_core::numbers::human_int(committable as u64)
-            )
+            parts.join(", ")
         };
         format!(
             "{label} - {}/{} - {decisions}",
@@ -712,6 +796,19 @@ impl DuplicateFilter {
 
     pub fn store(&self) -> &Arc<Store> {
         &self.store
+    }
+
+    /// The file domain the delete dialog suggests (`_location_context`):
+    /// the search's, if it is one domain; none for pairs given or under
+    /// review, whose filter searches every local file domain.
+    pub fn suggested_domain(&self) -> Option<hydrus_core::ServiceKey> {
+        if self.given.is_some() || self.rule.is_some() {
+            return None;
+        }
+        let current = self.query.search_1.location.current();
+        (current.len() == 1)
+            .then(|| current.iter().next().cloned())
+            .flatten()
     }
 
     pub fn scores(&self) -> &ComparisonScores {
