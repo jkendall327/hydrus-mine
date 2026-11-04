@@ -722,6 +722,29 @@ fn build(
         Some(sidecars) => crate::dialog::Dialog::named(&window, &sidecars.store, FRAME),
         None => crate::dialog::Dialog::new(&window),
     };
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            // (the regex menu, then the quick namespace editor or the
+            // delete question: Escape takes these in the .slint handler,
+            // the window's close here)
+            if w.get_regex_panes().row_count() > 0 {
+                w.invoke_regex_dismissed();
+                return w.get_regex_panes().row_count() == 0;
+            }
+            if w.get_rule_child() || w.get_rule_delete() {
+                w.invoke_rule_cancel();
+                return !w.get_rule_child() && !w.get_rule_delete();
+            }
+            false
+        }
+    });
     // (the reference's defaults: the filename's namespace "filename")
     let misc: [(bool, String); 7] = std::array::from_fn(|i| {
         (

@@ -33,7 +33,7 @@ export component SimpleFormulaeWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.naming { root.name-cancelled(); return accept; } if root.question != "" { root.cancelled(); return accept; } if root.editing-formula { return accept; }
+                if root.editing-formula { return accept; }
                 root.escape();
                 return accept;
             }

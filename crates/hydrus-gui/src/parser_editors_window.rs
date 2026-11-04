@@ -1284,6 +1284,24 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
     }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
     let w = crate::app_title::new::<crate::ParserListWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&w);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_answered(false);
+                return w.get_question().is_empty();
+            }
+            false
+        }
+    });
     w.set_links(links);
     w.set_columns(ModelRc::new(VecModel::from(
         (if links {
@@ -1480,7 +1498,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         let active = active.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move |action| {
             if blocked() {
                 return;
@@ -1496,9 +1514,11 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                             .draft
                             .save(&store)
                             .map_err(|e| e.to_string())?;
-                        close();
+                        ended.accept();
                     }
-                    "cancel" => close(),
+                    "cancel" => {
+                        ended.cancel();
+                    }
                     "delete" => {
                         let mut s = state.borrow_mut();
                         let keys = s
@@ -1706,13 +1726,17 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
         }
     });
     w.on_force_close({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || ended.cancel_confirmed()
     });
-    w.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::KeepWindowShown
+    // (its parser editor, the parser picker and the import/export window
+    // are modal children)
+    ended.modal_child({
+        let blocked = blocked.clone();
+        move || blocked()
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     refresh();
     w.show().map_err(|e| e.to_string())?;
     *slot.borrow_mut() = Some(w.clone_strong());

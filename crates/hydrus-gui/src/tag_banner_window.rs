@@ -74,6 +74,26 @@ pub fn open(
     }
     let window = crate::app_title::new::<crate::TagBannerWindow>()?;
     let ended = crate::dialog::Dialog::new(&window);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if w.get_asking() {
+                w.invoke_prompt_cancelled();
+                return !w.get_asking();
+            }
+            if w.get_confirming() {
+                w.invoke_answer(false);
+                return !w.get_confirming();
+            }
+            false
+        }
+    });
     let editor = Rc::new(RefCell::new(Editor::new(value, presentation)));
     let active = Rc::new(Cell::new(true));
     let pending: Rc<RefCell<Option<Prompt>>> = Rc::default();

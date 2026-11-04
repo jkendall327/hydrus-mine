@@ -181,6 +181,24 @@ pub fn open_credentials(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::LoginCredentialsWindow>()?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_action("back".into());
+                return w.get_question().is_empty();
+            }
+            false
+        }
+    });
     let editor = Rc::new(RefCell::new(CredentialsEditor::new(
         definitions,
         credentials,
@@ -230,7 +248,7 @@ pub fn open_credentials(
         let weak = window.as_weak();
         let editor = editor.clone();
         let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move |action| {
             if !active.get() {
                 return;
@@ -239,21 +257,23 @@ pub fn open_credentials(
                 return;
             };
             match action.as_str() {
-                "cancel" => close(),
+                "cancel" => {
+                    ended.cancel();
+                }
                 "back" => window.set_question("".into()),
                 "apply" if window.get_question().is_empty() => {
                     if let Some(question) = editor.borrow().warning() {
                         window.set_question(question.into());
                     } else {
                         match applied(editor.borrow().value()) {
-                            Ok(()) => close(),
+                            Ok(()) => ended.accept(),
                             Err(error) => window.set_error(error.into()),
                         }
                     }
                 }
                 "confirm" if !window.get_question().is_empty() => {
                     match applied(editor.borrow().value()) {
-                        Ok(()) => close(),
+                        Ok(()) => ended.accept(),
                         Err(error) => window.set_error(error.into()),
                     }
                 }
@@ -261,10 +281,8 @@ pub fn open_credentials(
             }
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
-    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show()?;
     *slot.borrow_mut() = Some(window.clone_strong());
     Ok(window)

@@ -29,31 +29,44 @@ export component DownloaderDisplayWindow inherits Window {
     callback answer(int);
     callback apply-clicked();
     callback cancel-clicked();
-    VerticalBox {
-        padding: 12px; spacing: 8px;
-        ComboBox { model: ["downloaders selector", "media viewer urls"]; current-index <=> root.tab; enabled: root.question == ""; selected(_) => { root.tab-changed(); } }
-        Text { text: root.tab == 0 ? "Choose which downloaders appear in the main selector list." : "Choose which URL classes appear as links in the media viewer."; color: Theme.text; wrap: word-wrap; }
-        ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
-            row-clicked(r,c,s) => { if root.question == "" { root.row-clicked(r,c,s); } }
-            row-activated(r) => { if root.question == "" { root.row-clicked(r,false,false); root.edit-clicked(); } }
-            sort(c,a) => { if root.question == "" { root.sort(c,a); } }
-        }
-        Btn { text: "edit"; enabled: root.can-edit && root.question == ""; clicked => { root.edit-clicked(); } }
-        if root.tab == 1: CheckBox { text: "show urls that do not have a matching url class?: "; checked <=> root.show-unmatched; enabled: root.question == ""; }
-        if root.question != "": VerticalBox {
-            Text { text: root.question-title; color: Theme.text; font-weight: 700; }
-            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-            HorizontalLayout {
-                Btn { text: "yes"; clicked => { root.answer(1); } }
-                Btn { text: "no"; clicked => { root.answer(0); } }
-                Btn { text: "cancel"; clicked => { root.answer(-1); } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
+            reject
         }
-        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        HorizontalLayout {
-            Rectangle { horizontal-stretch: 1; }
-            Btn { text: "apply"; enabled: root.question == ""; clicked => { root.apply-clicked(); } }
-            Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
+        VerticalBox {
+            padding: 12px; spacing: 8px;
+            ComboBox { model: ["downloaders selector", "media viewer urls"]; current-index <=> root.tab; enabled: root.question == ""; selected(_) => { root.tab-changed(); } }
+            Text { text: root.tab == 0 ? "Choose which downloaders appear in the main selector list." : "Choose which URL classes appear as links in the media viewer."; color: Theme.text; wrap: word-wrap; }
+            ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
+                row-clicked(r,c,s) => { if root.question == "" { root.row-clicked(r,c,s); } }
+                row-activated(r) => { if root.question == "" { root.row-clicked(r,false,false); root.edit-clicked(); } }
+                sort(c,a) => { if root.question == "" { root.sort(c,a); } }
+            }
+            Btn { text: "edit"; enabled: root.can-edit && root.question == ""; clicked => { root.edit-clicked(); } }
+            if root.tab == 1: CheckBox { text: "show urls that do not have a matching url class?: "; checked <=> root.show-unmatched; enabled: root.question == ""; }
+            if root.question != "": VerticalBox {
+                Text { text: root.question-title; color: Theme.text; font-weight: 700; }
+                Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+                HorizontalLayout {
+                    Btn { text: "yes"; clicked => { root.answer(1); } }
+                    Btn { text: "no"; clicked => { root.answer(0); } }
+                    Btn { text: "cancel"; clicked => { root.answer(-1); } }
+                }
+            }
+            Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            HorizontalLayout {
+                Rectangle { horizontal-stretch: 1; }
+                Btn { text: "apply"; enabled: root.question == ""; clicked => { root.apply-clicked(); } }
+                Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
+            }
         }
     }
 }

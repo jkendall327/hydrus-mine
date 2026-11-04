@@ -100,6 +100,24 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
     }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
     let w = crate::app_title::new::<crate::DownloaderDisplayWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&w);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_answer(-1);
+                return w.get_question().is_empty();
+            }
+            false
+        }
+    });
     w.set_show_unmatched(draft.show_unmatched);
     let state = Rc::new(RefCell::new(State {
         draft,
@@ -220,20 +238,18 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
         }
     });
     w.on_cancel_clicked({
-        let close = close.clone();
-        move || close()
-    });
-    w.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     w.on_apply_clicked({
         let store = store.clone();
         let weak = w.as_weak();
         let s = state;
+        let ended = ended.clone();
         move || {
             if !active.get() {
                 return;
@@ -247,7 +263,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
             }
             s.draft.show_unmatched = w.get_show_unmatched();
             match s.draft.save(&store) {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(e) => w.set_error(e.to_string().into()),
             }
         }

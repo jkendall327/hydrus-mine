@@ -398,6 +398,11 @@ pub struct CookieDraft {
     existed: bool,
 }
 impl CookieDraft {
+    /// Whether its cookies differ from the jar it was read from.
+    #[must_use]
+    pub fn changed(&self) -> bool {
+        self.cookies != self.original
+    }
     /// Read the current cookie jar.
     pub fn new(store: &Store, session: NetworkContext) -> hydrus_store::Result<Self> {
         let (cookies, existed) = store.read(|c| {

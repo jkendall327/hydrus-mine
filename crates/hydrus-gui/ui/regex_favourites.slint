@@ -27,59 +27,78 @@ export component RegexFavouritesWindow inherits Window {
     callback action(string);
     callback closed();
     in property <[MenuPane]> favourite-panes;
+    // (once its favourites menu closes, however it closes, the window's
+    // keys take the focus back from it, so Escape reaches it again)
+    property <bool> menu-open: root.favourite-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { escape-keys.focus(); }
+    }
     callback favourite-menu(length,length);
     callback favourite-dismissed();
     callback favourite-placed(int,length,length,length);
     callback favourite-line-hovered(int,int,length,length,length);
     callback favourite-line-clicked(int,int,length,length,length);
-    VerticalLayout {
-        padding: 12px;
-        spacing: 8px;
-        ListTable {
-            vertical-stretch: 1;
-            columns: [{title: "regex", width: 330px, stretch: true}, {title: "description", width: 330px, stretch: true}];
-            rows: root.rows;
-            row-clicked(row, ctrl, shift) => { if !root.editing && !root.deleting { root.row-clicked(row, ctrl, shift); } }
-            row-activated(row) => { if !root.editing && !root.deleting { root.row-activated(row); } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout {
-            spacing: 6px;
-            Btn { text: "add"; enabled: !root.editing && !root.deleting; clicked => { root.action("add"); } }
-            Btn { text: "edit"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("edit"); } }
-            Btn { text: "delete"; enabled: root.any-selected && !root.editing && !root.deleting; clicked => { root.action("delete"); } }
-            Btn { text: "copy phrase"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("copy"); } }
-        }
-        if root.editing: VerticalLayout {
-            spacing: 6px;
-            HorizontalLayout {
-                Text { text: "regex phrase: "; color: Theme.text; vertical-alignment: center; }
-                LineEdit { horizontal-stretch: 1; text <=> root.phrase; edited => { root.changed(); } }
-                Btn { text: "favourites ▾"; clicked => { root.favourite-menu(self.absolute-position.x,self.absolute-position.y+self.height); } }
+        VerticalLayout {
+            padding: 12px;
+            spacing: 8px;
+            ListTable {
+                vertical-stretch: 1;
+                columns: [{title: "regex", width: 330px, stretch: true}, {title: "description", width: 330px, stretch: true}];
+                rows: root.rows;
+                row-clicked(row, ctrl, shift) => { if !root.editing && !root.deleting { root.row-clicked(row, ctrl, shift); } }
+                row-activated(row) => { if !root.editing && !root.deleting { root.row-activated(row); } }
             }
             HorizontalLayout {
-                Text { text: "description: "; color: Theme.text; vertical-alignment: center; }
-                LineEdit { horizontal-stretch: 1; text <=> root.description; }
+                spacing: 6px;
+                Btn { text: "add"; enabled: !root.editing && !root.deleting; clicked => { root.action("add"); } }
+                Btn { text: "edit"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("edit"); } }
+                Btn { text: "delete"; enabled: root.any-selected && !root.editing && !root.deleting; clicked => { root.action("delete"); } }
+                Btn { text: "copy phrase"; enabled: root.one-selected && !root.editing && !root.deleting; clicked => { root.action("copy"); } }
             }
-            Text { text: root.validity; color: root.valid ? Theme.text : Theme.error; wrap: word-wrap; }
+            if root.editing: VerticalLayout {
+                spacing: 6px;
+                HorizontalLayout {
+                    Text { text: "regex phrase: "; color: Theme.text; vertical-alignment: center; }
+                    LineEdit { horizontal-stretch: 1; text <=> root.phrase; edited => { root.changed(); } }
+                    Btn { text: "favourites ▾"; clicked => { root.favourite-menu(self.absolute-position.x,self.absolute-position.y+self.height); } }
+                }
+                HorizontalLayout {
+                    Text { text: "description: "; color: Theme.text; vertical-alignment: center; }
+                    LineEdit { horizontal-stretch: 1; text <=> root.description; }
+                }
+                Text { text: root.validity; color: root.valid ? Theme.text : Theme.error; wrap: word-wrap; }
+                HorizontalLayout {
+                    alignment: end;
+                    spacing: 6px;
+                    Btn { text: "save row"; clicked => { root.action("save-row"); } }
+                    Btn { text: "cancel row"; clicked => { root.action("cancel-row"); } }
+                }
+            }
+            if root.deleting: HorizontalLayout {
+                spacing: 6px;
+                Text { text: "Remove all selected?"; color: Theme.text; vertical-alignment: center; }
+                Btn { text: "yes"; clicked => { root.action("confirm-delete"); } }
+                Btn { text: "no"; clicked => { root.action("cancel-delete"); } }
+            }
+            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Btn { text: "save row"; clicked => { root.action("save-row"); } }
-                Btn { text: "cancel row"; clicked => { root.action("cancel-row"); } }
+                Btn { text: "apply"; enabled: !root.editing && !root.deleting; clicked => { root.action("apply"); } }
+                Btn { text: "cancel"; clicked => { root.action("cancel"); } }
             }
-        }
-        if root.deleting: HorizontalLayout {
-            spacing: 6px;
-            Text { text: "Remove all selected?"; color: Theme.text; vertical-alignment: center; }
-            Btn { text: "yes"; clicked => { root.action("confirm-delete"); } }
-            Btn { text: "no"; clicked => { root.action("cancel-delete"); } }
-        }
-        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn { text: "apply"; enabled: !root.editing && !root.deleting; clicked => { root.action("apply"); } }
-            Btn { text: "cancel"; clicked => { root.action("cancel"); } }
         }
     }
     if root.favourite-panes.length > 0: MenuPanes {

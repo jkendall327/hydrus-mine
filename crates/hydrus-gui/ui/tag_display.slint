@@ -50,8 +50,12 @@ export component TagDisplayWindow inherits Window {
     callback source-click(bool, int);
     callback source-change(bool, int);
     callback apply(); callback cancel();
-    FocusScope {
-        capture-key-pressed(event) => { if event.text == Key.Escape { root.cancel(); return accept; } reject }
+    // (Escape, which the dialog helper takes: cancelled, as the reference's
+    // `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        capture-key-pressed(event) => { if event.text == Key.Escape { root.escape(); return accept; } reject }
         VerticalLayout {
             padding: 12px; spacing: 8px;
             ComboBox { enabled: !root.child-open; model: root.services; current-index <=> root.service-index; selected => { root.service-chosen(self.current-index); } }

@@ -313,6 +313,22 @@ pub(crate) fn open(
     };
     // (placed by its own frame, and kept by it when applied)
     let dialog = crate::dialog::Dialog::named(&window, store, "manage_times_dialog");
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    dialog.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if w.get_asking() {
+                w.invoke_cancelled();
+                return !w.get_asking();
+            }
+            false
+        }
+    });
     dialog.on_closed({
         let slot = slot.clone();
         let editing = editing.clone();

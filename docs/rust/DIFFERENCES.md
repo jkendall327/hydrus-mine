@@ -2813,12 +2813,20 @@ summary, merge options, checker options, import options overwrite, OR
 predicate, favourite searches and favourite search, shortcut set and
 command, external command and call, media view options, tag filter,
 incremental tagging, open-externally calls, export to png(s), login step,
-edit service and manage services, tag siblings and parents, and simple
-downloader formulae editors (dialogs: kept when applied), and help > about,
-tag display sync, detailed file metadata, migrate tags, the auto-resolution
-review, the login test result, file maintenance, bandwidth, network jobs,
-the vacuum review, review files to import and "what is this object?"
-(frames: kept a moment after a move or resize). Each of these is driven as a
+edit service and manage services, tag siblings and parents, simple
+downloader formulae, manage tag display and search, manage downloader
+display, manage url classes and gallery url generators with their
+definition editors, manage parsers, regex favourites, manage logins with
+its credentials editor, manage login scripts, manage http headers with
+its value editor, edit api access permissions and the API request wait
+(dialogs: kept when applied; the request wait's close is its OK, as a
+`DialogNullipotent`'s), and help > about, tag display sync, detailed file
+metadata, migrate tags, the auto-resolution review, the login test
+result, file maintenance, bandwidth, network jobs, the vacuum review,
+review files to import, "what is this object?", review session cookies
+and a session's cookies (frames: kept a moment after a move or resize;
+a session's cookies keep hydrus-rs's own apply, which saves them and
+closes the frame, keeping nothing more). Each of these is driven as a
 user opens it in `tests/gui/dialog_sweep.rs`, which each later batch
 extends: a dialog ended by a real Escape, its cancel and its apply, a frame
 resized and then ended by its close button, its window's close and a real
@@ -2858,7 +2866,20 @@ the dialog's own window close ends it (manage times under its date-time
 editor, merge options under its tag filter, the OR editor under a nested
 one, simple formulae under an export, and the rest in `dialog_sweep.rs`); its
 own cancel button still ends it and the child together, which Qt's
-modality would not let the user press. No migrated dialog yet has a panel check that refuses an apply
+modality would not let the user press. A question or inline editor up
+within a window (a yes/no, a row being edited, a chooser, a notice) is the
+reference's own modal dialog: Escape and the window's close both answer it
+no or close it first, and only the next one ends the window. The url
+classes list asks before a cancel discards anything added, edited,
+imported or deleted, as the reference's `UserIsOKToCancel` (whatever the
+list then holds); the gallery url generators never ask, as there. A
+session's cookies, which hydrus-rs edits as a draft until applied, ask
+before a cancel, Escape or the window's close discards changes; the
+reference's frame edits the cookie jar at once, so has nothing to ask
+about. The API request wait is cancelled when the Client API keys window
+it was opened from closes (that window isn't on the helper yet); in the
+reference the wait is modal over it, so it can't be closed under the
+wait. No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
 vetoed apply does). Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.

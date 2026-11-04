@@ -100,6 +100,28 @@ pub fn open_owned(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::RegexFavouritesWindow>()?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if w.get_editing() {
+                w.invoke_action("cancel-row".into());
+                return !w.get_editing();
+            }
+            if w.get_deleting() {
+                w.invoke_action("cancel-delete".into());
+                return !w.get_deleting();
+            }
+            false
+        }
+    });
     let editor = Rc::new(RefCell::new(Editor::new(value)));
     let editing = Rc::new(Cell::new(None::<usize>));
     let active = Rc::new(Cell::new(true));
@@ -224,7 +246,7 @@ pub fn open_owned(
         let weak = window.as_weak();
         let editor = editor.clone();
         let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let valid = valid.clone();
         let popup = popup.clone();
         move |action| {
@@ -241,7 +263,9 @@ pub fn open_owned(
             popup.close();
             let result = (|| -> Result<(), String> {
                 match action.as_str() {
-                    "cancel" => close(),
+                    "cancel" => {
+                        ended.cancel();
+                    }
                     "cancel-row" => {
                         window.set_editing(false);
                         editing.set(None);
@@ -287,7 +311,7 @@ pub fn open_owned(
                     }
                     "apply" => {
                         applied(editor.borrow().value())?;
-                        close();
+                        ended.accept();
                     }
                     _ => {}
                 }
@@ -297,10 +321,8 @@ pub fn open_owned(
             show(&window, &editor.borrow());
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
-    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     show(&window, &editor.borrow());
     window.show()?;
     *slot.borrow_mut() = Some(window.clone_strong());

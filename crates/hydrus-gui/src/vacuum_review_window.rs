@@ -293,6 +293,22 @@ fn open_using_with_admission(
     let window =
         crate::app_title::new::<crate::VacuumReviewWindow>().map_err(|error| error.to_string())?;
     let ended = crate::dialog::Dialog::frame(&window);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_answered(false);
+                return w.get_question().is_empty();
+            }
+            false
+        }
+    });
     window.set_info(model::INFO.into());
     let state = Rc::new(Confirmation {
         window: window.as_weak(),
@@ -671,6 +687,11 @@ mod tests {
         open_using(&first_store, &slot, Rc::new(|| true), accept.clone()).unwrap();
         let previous = slot.window().unwrap();
         start_question(&previous);
+        // (the close answers the question no first; the next ends it)
+        previous
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(previous.get_question().is_empty());
         previous
             .window()
             .dispatch_event(slint::platform::WindowEvent::CloseRequested);

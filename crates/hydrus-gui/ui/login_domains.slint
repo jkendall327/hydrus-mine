@@ -27,26 +27,39 @@ export component LoginDomainsWindow inherits Window {
     callback row-clicked(int,bool,bool);
     callback action(string);
     callback closed();
-    VerticalLayout { padding: 12px; spacing: 8px;
-        Text { text: "WARNING: Never use important accounts with hydrus. Hydrus does not store credentials securely. Always use a throwaway account you don't care much about.\nIf you are looking for your login cookies, go to network > data > review session cookies."; color: Theme.error; wrap: word-wrap; }
-        ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 160px}, {title: "login script", width: 180px}, {title: "access", width: 210px, stretch: true}, {title: "active", width: 60px}, {title: "logged in", width: 180px}, {title: "validity", width: 140px}, {title: "delay", width: 170px}]; rows: root.rows; row-clicked(i,c,s) => { if !root.child-open && root.question == "" && !root.running { root.row-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && root.question == "" && !root.running { root.row-clicked(i,false,false); root.action("credentials"); } } }
-        HorizontalLayout { spacing: 6px;
-            Btn { text: "add"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("add"); } }
-            Btn { text: "delete"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("delete"); } }
-            Btn { text: "edit credentials"; enabled: root.can-edit && !root.child-open && root.question == "" && !root.running; clicked => { root.action("credentials"); } }
-            Btn { text: "change login script"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("change-script"); } }
-            Btn { text: "flip active"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("flip-active"); } }
-            Btn { text: "scrub delays"; enabled: root.can-scrub-delays && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-delays"); } }
-            Btn { text: "scrub invalidity"; enabled: root.can-scrub-invalidity && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-invalidity"); } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout { spacing: 6px;
-            Btn { text: "do login now"; enabled: root.can-do-login && !root.child-open && root.question == "" && !root.running; clicked => { root.action("do-login"); } }
-            Btn { text: "reset login (delete cookies)"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("reset-login"); } }
-            Btn { text: "cancel login"; enabled: root.running; clicked => { root.action("cancel-login"); } }
+        VerticalLayout { padding: 12px; spacing: 8px;
+            Text { text: "WARNING: Never use important accounts with hydrus. Hydrus does not store credentials securely. Always use a throwaway account you don't care much about.\nIf you are looking for your login cookies, go to network > data > review session cookies."; color: Theme.error; wrap: word-wrap; }
+            ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 160px}, {title: "login script", width: 180px}, {title: "access", width: 210px, stretch: true}, {title: "active", width: 60px}, {title: "logged in", width: 180px}, {title: "validity", width: 140px}, {title: "delay", width: 170px}]; rows: root.rows; row-clicked(i,c,s) => { if !root.child-open && root.question == "" && !root.running { root.row-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && root.question == "" && !root.running { root.row-clicked(i,false,false); root.action("credentials"); } } }
+            HorizontalLayout { spacing: 6px;
+                Btn { text: "add"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("add"); } }
+                Btn { text: "delete"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("delete"); } }
+                Btn { text: "edit credentials"; enabled: root.can-edit && !root.child-open && root.question == "" && !root.running; clicked => { root.action("credentials"); } }
+                Btn { text: "change login script"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("change-script"); } }
+                Btn { text: "flip active"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("flip-active"); } }
+                Btn { text: "scrub delays"; enabled: root.can-scrub-delays && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-delays"); } }
+                Btn { text: "scrub invalidity"; enabled: root.can-scrub-invalidity && !root.child-open && root.question == "" && !root.running; clicked => { root.action("scrub-invalidity"); } }
+            }
+            HorizontalLayout { spacing: 6px;
+                Btn { text: "do login now"; enabled: root.can-do-login && !root.child-open && root.question == "" && !root.running; clicked => { root.action("do-login"); } }
+                Btn { text: "reset login (delete cookies)"; enabled: root.any-selected && !root.child-open && root.question == "" && !root.running; clicked => { root.action("reset-login"); } }
+                Btn { text: "cancel login"; enabled: root.running; clicked => { root.action("cancel-login"); } }
+            }
+            if root.status != "": Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+            if root.question != "": HorizontalLayout { spacing: 6px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } Btn { text: "yes"; clicked => { root.action(root.confirming-delete ? "confirm-delete" : root.confirming-reset ? "confirm-reset" : root.confirming-login ? "confirm-login" : "activate"); } } Btn { text: "no"; clicked => { root.action(root.confirming-delete ? "back-delete" : root.confirming-reset ? "back-reset" : root.confirming-login ? "back-login" : "leave-inactive"); } } }
+            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            HorizontalLayout { alignment: end; spacing: 6px; Btn { text: "apply"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("apply"); } } Btn { text: "cancel"; clicked => { root.action("cancel"); } } }
         }
-        if root.status != "": Text { text: root.status; color: Theme.text; wrap: word-wrap; }
-        if root.question != "": HorizontalLayout { spacing: 6px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } Btn { text: "yes"; clicked => { root.action(root.confirming-delete ? "confirm-delete" : root.confirming-reset ? "confirm-reset" : root.confirming-login ? "confirm-login" : "activate"); } } Btn { text: "no"; clicked => { root.action(root.confirming-delete ? "back-delete" : root.confirming-reset ? "back-reset" : root.confirming-login ? "back-login" : "leave-inactive"); } } }
-        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        HorizontalLayout { alignment: end; spacing: 6px; Btn { text: "apply"; enabled: !root.child-open && root.question == "" && !root.running; clicked => { root.action("apply"); } } Btn { text: "cancel"; clicked => { root.action("cancel"); } } }
     }
 }

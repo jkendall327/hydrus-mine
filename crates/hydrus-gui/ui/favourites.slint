@@ -201,6 +201,12 @@ export component FavouriteEditWindow inherits Window {
     callback clear-search();
     callback favourites-menu(length, length);
     in property <[MenuPane]> favourite-panes;
+    // (once its menu closes, however it closes, the window's keys take the
+    // focus back from it, so Escape reaches it again)
+    property <bool> menu-open: root.favourite-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { keys.focus(); }
+    }
     callback favourite-line-hovered(int, int, length, length, length);
     callback favourite-line-clicked(int, int, length, length, length);
     callback favourite-placed(int, length, length, length);

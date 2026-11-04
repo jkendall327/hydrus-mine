@@ -212,6 +212,14 @@ fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reope
     closing.invoke_exchange_action("import".into());
     assert!(closing.get_favourite_naming());
     let before = FavouriteTagFilters::load(&store).unwrap();
+    // (the close cancels the pending name first, as the reference's modal
+    // name entry keeps the window's close from passing it; the next close
+    // ends it)
+    closing
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!closing.get_favourite_naming());
+    assert!(closing.window().is_visible());
     closing
         .window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);

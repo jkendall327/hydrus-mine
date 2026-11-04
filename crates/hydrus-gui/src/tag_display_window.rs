@@ -13,6 +13,8 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<TagDisplayWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::TagDisplayWindow>()?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_application(application);
     if application {
         model.application_only();
@@ -400,7 +402,7 @@ pub(crate) fn open(
         let alive = alive.clone();
         let model = model.clone();
         let weak = window.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !can_edit() {
                 return;
@@ -411,7 +413,7 @@ pub(crate) fn open(
             match model.borrow().apply() {
                 Ok(()) => {
                     applied();
-                    close();
+                    ended.accept();
                 }
                 Err(e) => {
                     if let Some(w) = weak.upgrade() {
@@ -422,15 +424,17 @@ pub(crate) fn open(
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
+    // (its filter and location editors are modal children)
+    ended.modal_child({
+        let weak = window.as_weak();
+        move || weak.upgrade().is_some_and(|w| w.get_child_open())
     });
     refresh();
     window.show()?;

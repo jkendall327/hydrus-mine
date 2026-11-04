@@ -64,8 +64,8 @@ export component ReviewImportsWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                // ("Remove them?" answered no first)
-                if (root.asking-remove) { root.asking-remove = false; } else { root.escape(); }
+                // ("Remove them?" answered no first, by the dialog helper)
+                root.escape();
                 return accept;
             }
             if (event.text == Key.Delete && root.any-selected) {

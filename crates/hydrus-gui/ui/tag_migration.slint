@@ -62,7 +62,6 @@ export component TagMigrationWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.question != "" { root.answer(false); return accept; }
                 root.escape();
                 return accept;
             }

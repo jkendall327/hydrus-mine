@@ -550,7 +550,295 @@ fn cases() -> Vec<Named> {
                 }),
             )
         }),
+        ("manage tag display and search", || {
+            menu_dialog(&["tags"], "display/search\u{2026}", |b| {
+                opened(
+                    take(&b.tag_display, "tag display"),
+                    |w| w.invoke_apply(),
+                    |w| w.invoke_cancel(),
+                )
+            })
+        }),
+        ("manage downloader display", || {
+            menu_dialog(
+                &["network", "downloaders"],
+                "downloader and url display\u{2026}",
+                |_| {
+                    opened(
+                        hydrus_gui::downloader_display_window::last_opened()
+                            .expect("downloader display"),
+                        |w| w.invoke_apply_clicked(),
+                        |w| w.invoke_cancel_clicked(),
+                    )
+                },
+            )
+        }),
+        ("manage url classes", || {
+            menu_dialog(&["network", "downloaders"], "url classes\u{2026}", |b| {
+                opened(
+                    take(&b.downloader_definitions.classes, "url classes"),
+                    |w| w.invoke_action("apply".into()),
+                    |w| w.invoke_action("cancel".into()),
+                )
+            })
+        }),
+        ("manage gallery url generators", || {
+            menu_dialog(
+                &["network", "downloaders"],
+                "gallery url generators\u{2026}",
+                |b| {
+                    opened(
+                        take(&b.downloader_definitions.gugs, "gallery url generators"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                },
+            )
+        }),
+        ("edit url class", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(
+                &ui,
+                &["network", "downloaders"],
+                "url classes\u{2026}",
+            );
+            let list = take(&bound.downloader_definitions.classes, "url classes");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui);
+                    list.invoke_action("add".into());
+                    opened(
+                        take(&bound.downloader_definitions.class_edit, "edit url class"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("manage parsers", || {
+            menu_dialog(&["network", "downloaders"], "parsers\u{2026}", |b| {
+                opened(
+                    take(&b.parser_editors.list, "parsers"),
+                    |w| w.invoke_action("apply".into()),
+                    |w| w.invoke_action("cancel".into()),
+                )
+            })
+        }),
+        ("manage url class links", || {
+            menu_dialog(
+                &["network", "downloaders"],
+                "url class links\u{2026}",
+                |b| {
+                    opened(
+                        take(&b.parser_editors.links, "url class links"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                },
+            )
+        }),
+        ("manage regex favourites", || {
+            let (dirs, store) = crate::options_window::store();
+            let (ui, bound) = client(&store);
+            let options = options_page(&ui, &bound, "regex favourites");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    options.invoke_regex_favourites_clicked();
+                    opened(
+                        hydrus_gui::regex_favourites_window::last_opened()
+                            .expect("regex favourites"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("manage logins", || {
+            let (dir, store, _) = crate::login_workflows::store();
+            let (ui, bound) = client(&store);
+            (
+                store,
+                Box::new(move || {
+                    let _ = &dir;
+                    crate::common::main_menu::choose(&ui, &["network", "logins"], "logins\u{2026}");
+                    opened(
+                        take(&bound.login_workflows.domains.domains, "manage logins"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("edit login", || {
+            let (dir, store, _) = crate::login_workflows::store();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(&ui, &["network", "logins"], "logins\u{2026}");
+            let domains = take(&bound.login_workflows.domains.domains, "manage logins");
+            domains.invoke_row_clicked(0, false, false);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dir, &ui);
+                    domains.invoke_action("credentials".into());
+                    opened(
+                        take(&bound.login_workflows.domains.credentials, "edit login"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("manage login scripts", || {
+            let (dir, store, _) = crate::login_workflows::store();
+            let (ui, bound) = client(&store);
+            (
+                store,
+                Box::new(move || {
+                    let _ = &dir;
+                    crate::common::main_menu::choose(
+                        &ui,
+                        &["network", "logins"],
+                        "login scripts\u{2026}",
+                    );
+                    opened(
+                        take(&bound.login_workflows.scripts, "login scripts"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("manage http headers", || {
+            menu_dialog(&["network", "data"], "manage http headers\u{2026}", |b| {
+                opened(
+                    take(&b.network_sessions.headers, "http headers"),
+                    |w| w.invoke_apply_clicked(),
+                    |w| w.invoke_cancel_clicked(),
+                )
+            })
+        }),
+        ("edit header", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(
+                &ui,
+                &["network", "data"],
+                "manage http headers\u{2026}",
+            );
+            let headers = take(&bound.network_sessions.headers, "http headers");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    headers.invoke_row_clicked(0, false, false);
+                    headers.invoke_edit_clicked();
+                    opened(
+                        hydrus_gui::network_sessions_window::last_edit_opened()
+                            .expect("edit header"),
+                        |w| w.invoke_apply_clicked(),
+                        |w| w.invoke_cancel_clicked(),
+                    )
+                }),
+            )
+        }),
+        ("edit api access permissions", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let (review, keys) = api_keys(&ui, &bound);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &review);
+                    keys.invoke_add_clicked();
+                    opened(
+                        hydrus_gui::client_api_admin_window::last_edit_opened()
+                            .expect("api permissions"),
+                        |w| w.invoke_apply_clicked(),
+                        |w| w.invoke_cancel_clicked(),
+                    )
+                }),
+            )
+        }),
+        ("waiting for API access permissions request", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let id = store.snapshot().services.by_name("client api").unwrap().id;
+            store
+                .write_and_refresh(move |ctx| {
+                    hydrus_store::services::update_config(
+                        ctx.conn(),
+                        id,
+                        &hydrus_store::services::ServiceKind::ClientApi(
+                            hydrus_store::services::ServerConfig {
+                                port: Some(45869),
+                                ..hydrus_store::services::ServerConfig::default()
+                            },
+                        ),
+                    )
+                })
+                .unwrap();
+            let (ui, bound) = client(&store);
+            let (review, keys) = api_keys(&ui, &bound);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &review);
+                    keys.invoke_add_from_api_clicked();
+                    // (`DialogNullipotent`: its close button is its OK; Escape and the
+                    // window's close its cancel)
+                    opened(
+                        hydrus_gui::client_api_admin_window::last_request_opened()
+                            .expect("waiting"),
+                        |w| w.invoke_cancel_clicked(),
+                        |w| w.invoke_escape(),
+                    )
+                }),
+            )
+        }),
     ]
+}
+
+/// A client on the `basic` fixture opening a dialog from the main menu.
+fn menu_dialog(
+    path: &'static [&'static str],
+    line: &'static str,
+    fetch: fn(&Bound) -> Opened,
+) -> Case {
+    let (dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    (
+        store,
+        Box::new(move || {
+            let _ = &dirs;
+            crate::common::main_menu::choose(&ui, path, line);
+            fetch(&bound)
+        }),
+    )
+}
+
+/// services > review, the client api's "manage api keys": the review
+/// frame and the keys window it opens (kept open for their children).
+fn api_keys(
+    ui: &MainWindow,
+    bound: &Bound,
+) -> (
+    hydrus_gui::ServicesReviewWindow,
+    hydrus_gui::ClientApiKeysWindow,
+) {
+    crate::common::main_menu::choose(ui, &["services"], "review");
+    let review = take(&bound.services_review, "review services");
+    let at = review
+        .get_services()
+        .iter()
+        .position(|s| s.ends_with(": client api"))
+        .expect("a client api service");
+    review.invoke_selected_service(i32::try_from(at).unwrap());
+    review.invoke_manage_api_keys();
+    let keys = hydrus_gui::client_api_admin_window::last_opened().expect("api keys");
+    (review, keys)
 }
 
 /// tags > manage tag siblings or parents.
@@ -1130,6 +1418,37 @@ fn frames() -> Vec<NamedFrame> {
                 }),
             )
         }),
+        ("review session cookies", || {
+            menu_frame(&["network", "data"], "review session cookies", |b| {
+                framed(take(&b.network_sessions.browser, "session cookies"), |w| {
+                    w.invoke_cancel_clicked();
+                })
+            })
+        }),
+        ("review network session", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(&ui, &["network", "data"], "review session cookies");
+            let browser = take(&bound.network_sessions.browser, "session cookies");
+            browser.invoke_add_clicked();
+            let edit = hydrus_gui::network_sessions_window::last_edit_opened().unwrap();
+            edit.set_domain("example.com".into());
+            edit.invoke_apply_clicked();
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui);
+                    browser.invoke_row_clicked(0, false, false);
+                    browser.invoke_edit_clicked();
+                    framed(
+                        take(&bound.network_sessions.cookies, "network session"),
+                        |w| {
+                            w.invoke_cancel_clicked();
+                        },
+                    )
+                }),
+            )
+        }),
     ]
 }
 
@@ -1473,4 +1792,428 @@ fn review_imports_and_auto_resolution_take_escape_for_their_questions_first() {
         !window.window().is_visible(),
         "auto-resolution: then closed"
     );
+}
+
+/// The downloader, login, network and API dialogs: a question or inline
+/// editor within takes Escape first, and a child the reference opens
+/// modally holds Escape and the window's close.
+#[test]
+fn escape_answers_the_downloader_login_and_api_dialogs_sub_states_first() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    let close = |w: &slint::Window| w.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+
+    // manage url classes: its definition editor is a modal child; once a
+    // class is added, a cancel or Escape asks before discarding it
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "url classes\u{2026}");
+    let list = take(&bound.downloader_definitions.classes, "url classes");
+    list.invoke_action("add".into());
+    let edit = take(&bound.downloader_definitions.class_edit, "edit url class");
+    escape(list.window());
+    close(list.window());
+    assert!(
+        list.window().is_visible() && edit.window().is_visible(),
+        "url classes: waits on its editor"
+    );
+    edit.invoke_action("apply".into());
+    assert!(!edit.window().is_visible());
+    escape(list.window());
+    assert!(
+        !list.get_question().is_empty(),
+        "url classes: asks before discarding"
+    );
+    assert!(list.window().is_visible());
+    escape(list.window());
+    assert!(list.get_question().is_empty(), "url classes: answered no");
+    assert!(list.window().is_visible(), "url classes: still open");
+    close(list.window());
+    assert!(
+        !list.get_question().is_empty(),
+        "url classes: its close asks too"
+    );
+    list.invoke_answered(true);
+    assert!(
+        !list.window().is_visible(),
+        "url classes: discarded and closed"
+    );
+
+    // manage tag display: its tag filter is a modal child
+    crate::common::main_menu::choose(&ui, &["tags"], "display/search\u{2026}");
+    let display = take(&bound.tag_display, "tag display");
+    display.invoke_filter(false);
+    assert!(display.get_child_open());
+    escape(display.window());
+    close(display.window());
+    assert!(
+        display.window().is_visible(),
+        "tag display: waits on its filter"
+    );
+    display.invoke_cancel();
+    assert!(!display.window().is_visible());
+
+    // manage http headers: its value editor is a modal child
+    crate::common::main_menu::choose(&ui, &["network", "data"], "manage http headers\u{2026}");
+    let headers = take(&bound.network_sessions.headers, "http headers");
+    headers.invoke_row_clicked(0, false, false);
+    headers.invoke_edit_clicked();
+    let header = hydrus_gui::network_sessions_window::last_edit_opened().expect("edit header");
+    escape(headers.window());
+    close(headers.window());
+    assert!(
+        headers.window().is_visible() && header.window().is_visible(),
+        "http headers: waits on its editor"
+    );
+    headers.invoke_cancel_clicked();
+    assert!(!headers.window().is_visible() && !header.window().is_visible());
+
+    // edit api access permissions: "change key" takes Escape first; its
+    // tag filter is a modal child
+    let (_review, keys) = api_keys(&ui, &bound);
+    keys.invoke_add_clicked();
+    let permissions =
+        hydrus_gui::client_api_admin_window::last_edit_opened().expect("api permissions");
+    permissions.invoke_change_key();
+    assert!(permissions.get_changing_key());
+    escape(permissions.window());
+    assert!(
+        !permissions.get_changing_key(),
+        "api permissions: key editing cancelled"
+    );
+    assert!(
+        permissions.window().is_visible(),
+        "api permissions: still open"
+    );
+    // (the tag filter is for "search for and fetch files" alone)
+    permissions.set_permits_everything(false);
+    permissions.invoke_full_toggled();
+    permissions.invoke_permission_toggled(3, true);
+    permissions.invoke_edit_filter();
+    assert!(permissions.get_filtering());
+    escape(permissions.window());
+    close(permissions.window());
+    assert!(
+        permissions.window().is_visible(),
+        "api permissions: waits on its filter"
+    );
+    permissions.invoke_cancel_clicked();
+    assert!(!permissions.window().is_visible());
+
+    // manage regex favourites: an inline row editor takes Escape first
+    let (_odirs, ostore) = crate::options_window::store();
+    let (oui, obound) = client(&ostore);
+    let options = options_page(&oui, &obound, "regex favourites");
+    options.invoke_regex_favourites_clicked();
+    let regex = hydrus_gui::regex_favourites_window::last_opened().expect("regex favourites");
+    regex.invoke_action("add".into());
+    assert!(regex.get_editing());
+    escape(regex.window());
+    assert!(
+        !regex.get_editing(),
+        "regex favourites: the row editor cancelled"
+    );
+    assert!(regex.window().is_visible(), "regex favourites: still open");
+    escape(regex.window());
+    assert!(
+        !regex.window().is_visible(),
+        "regex favourites: then cancelled"
+    );
+
+    // manage login scripts: "delete" asks first; its script editor is a
+    // modal child
+    let (_ldir, lstore, _) = crate::login_workflows::store();
+    let (lui, lbound) = client(&lstore);
+    crate::common::main_menu::choose(&lui, &["network", "logins"], "login scripts\u{2026}");
+    let scripts = take(&lbound.login_workflows.scripts, "login scripts");
+    scripts.invoke_row_clicked(0, false, false);
+    scripts.invoke_action("delete".into());
+    assert!(scripts.get_deleting());
+    escape(scripts.window());
+    assert!(!scripts.get_deleting(), "login scripts: delete answered no");
+    assert!(scripts.window().is_visible(), "login scripts: still open");
+    scripts.invoke_action("add".into());
+    let script = take(&lbound.login_workflows.script, "a login script");
+    escape(scripts.window());
+    close(scripts.window());
+    assert!(
+        scripts.window().is_visible() && script.window().is_visible(),
+        "login scripts: waits on its editor"
+    );
+    scripts.invoke_action("cancel".into());
+    assert!(!scripts.window().is_visible() && !script.window().is_visible());
+
+    // manage logins: its credentials editor is a modal child
+    crate::common::main_menu::choose(&lui, &["network", "logins"], "logins\u{2026}");
+    let domains = take(&lbound.login_workflows.domains.domains, "manage logins");
+    domains.invoke_row_clicked(0, false, false);
+    domains.invoke_action("credentials".into());
+    let credentials = take(&lbound.login_workflows.domains.credentials, "edit login");
+    escape(domains.window());
+    close(domains.window());
+    assert!(
+        domains.window().is_visible() && credentials.window().is_visible(),
+        "manage logins: waits on its credentials"
+    );
+    domains.invoke_action("cancel".into());
+    assert!(!domains.window().is_visible() && !credentials.window().is_visible());
+}
+
+/// The window's own close answers a question or closes an inline editor up
+/// within it first, as Escape does (the reference's are modal dialogs of
+/// their own, which the parent's close can't pass), and only the next close
+/// ends the window.
+#[test]
+fn a_windows_close_answers_its_question_or_inline_editor_first() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    let close = |w: &slint::Window| w.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+
+    // review vacuum data: its "vacuum" question
+    crate::common::main_menu::choose(
+        &ui,
+        &["database", "db maintenance"],
+        "review vacuum data\u{2026}",
+    );
+    let vacuum = bound.vacuum_review().expect("vacuum review");
+    vacuum.invoke_clicked(0, false, false);
+    vacuum.invoke_vacuum_clicked();
+    assert!(!vacuum.get_question().is_empty());
+    close(vacuum.window());
+    assert!(
+        vacuum.get_question().is_empty(),
+        "vacuum: its close answers no"
+    );
+    assert!(vacuum.window().is_visible(), "vacuum: still open");
+    close(vacuum.window());
+    assert!(!vacuum.window().is_visible(), "vacuum: then closed");
+
+    // manage url classes: applied after a change, nothing is asked; a
+    // cancel with a class added asks, and the close answers that no
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "url classes\u{2026}");
+    let list = take(&bound.downloader_definitions.classes, "url classes");
+    list.invoke_action("add".into());
+    take(&bound.downloader_definitions.class_edit, "edit url class").invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    assert!(!list.window().is_visible(), "url classes: apply never asks");
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "url classes\u{2026}");
+    let list = take(&bound.downloader_definitions.classes, "url classes");
+    list.invoke_action("add".into());
+    take(&bound.downloader_definitions.class_edit, "edit url class").invoke_action("apply".into());
+    list.invoke_action("cancel".into());
+    assert!(!list.get_question().is_empty(), "url classes: cancel asks");
+    close(list.window());
+    assert!(
+        list.get_question().is_empty(),
+        "url classes: its close answers no"
+    );
+    assert!(list.window().is_visible());
+    list.invoke_action("cancel".into());
+    list.invoke_answered(true);
+    assert!(!list.window().is_visible());
+
+    // manage gallery url generators: a generator added, its cancel doesn't
+    // ask (the reference's `EditGUGsPanel` has no `UserIsOKToCancel`); the
+    // nested editor's members chooser (or its "No remaining gugs" notice)
+    // is closed by Escape and by the window's close first
+    crate::common::main_menu::choose(
+        &ui,
+        &["network", "downloaders"],
+        "gallery url generators\u{2026}",
+    );
+    let gugs = take(&bound.downloader_definitions.gugs, "gallery url generators");
+    gugs.invoke_tab_chosen(1);
+    gugs.invoke_action("add".into());
+    let nested = take(&bound.downloader_definitions.gug_edit, "a nested generator");
+    let chooser_or_notice = |w: &hydrus_gui::DownloaderDefinitionEditWindow| {
+        !w.get_chooser_title().is_empty() || !w.get_notice().is_empty()
+    };
+    nested.invoke_member_action("add".into());
+    assert!(
+        chooser_or_notice(&nested),
+        "nested: the chooser or its notice"
+    );
+    escape(nested.window());
+    assert!(
+        !chooser_or_notice(&nested),
+        "nested: Escape closes it first"
+    );
+    assert!(nested.window().is_visible(), "nested: still open");
+    nested.invoke_member_action("add".into());
+    assert!(chooser_or_notice(&nested));
+    close(nested.window());
+    assert!(
+        !chooser_or_notice(&nested),
+        "nested: its close closes it first"
+    );
+    assert!(nested.window().is_visible(), "nested: still open");
+    nested.invoke_action("cancel".into());
+    gugs.invoke_action("add".into());
+    take(&bound.downloader_definitions.gug_edit, "a generator").invoke_action("apply".into());
+    gugs.invoke_action("cancel".into());
+    assert!(!gugs.window().is_visible(), "gugs: a cancel never asks");
+
+    // a session's cookies: changed, a cancel, Escape or the close asks
+    // before discarding them, Escape answering no
+    crate::common::main_menu::choose(&ui, &["network", "data"], "review session cookies");
+    let browser = take(&bound.network_sessions.browser, "session cookies");
+    browser.invoke_add_clicked();
+    let edit = hydrus_gui::network_sessions_window::last_edit_opened().unwrap();
+    edit.set_domain("example.com".into());
+    edit.invoke_apply_clicked();
+    browser.invoke_row_clicked(0, false, false);
+    browser.invoke_edit_clicked();
+    let cookies = take(&bound.network_sessions.cookies, "network session");
+    cookies.invoke_add_clicked();
+    let cookie = hydrus_gui::network_sessions_window::last_edit_opened().unwrap();
+    cookie.set_name("sid".into());
+    cookie.set_value("token".into());
+    cookie.invoke_apply_clicked();
+    escape(cookies.window());
+    assert!(!cookies.get_question().is_empty(), "cookies: Escape asks");
+    escape(cookies.window());
+    assert!(cookies.get_question().is_empty(), "cookies: answered no");
+    close(cookies.window());
+    assert!(
+        !cookies.get_question().is_empty(),
+        "cookies: its close asks"
+    );
+    cookies.invoke_answered(true);
+    assert!(
+        !cookies.window().is_visible(),
+        "cookies: discarded and closed"
+    );
+
+    // manage logins' credentials: the "values are invalid" warning
+    let (_ldir, lstore, _) = crate::login_workflows::store();
+    let (lui, lbound) = client(&lstore);
+    crate::common::main_menu::choose(&lui, &["network", "logins"], "logins\u{2026}");
+    let domains = take(&lbound.login_workflows.domains.domains, "manage logins");
+    domains.invoke_row_clicked(0, false, false);
+    domains.invoke_action("credentials".into());
+    let credentials = take(&lbound.login_workflows.domains.credentials, "edit login");
+    credentials.invoke_edited(0, "1?!".into());
+    credentials.invoke_action("apply".into());
+    assert!(
+        !credentials.get_question().is_empty(),
+        "credentials: warned"
+    );
+    close(credentials.window());
+    assert!(
+        credentials.get_question().is_empty(),
+        "credentials: its close goes back"
+    );
+    assert!(credentials.window().is_visible());
+    credentials.invoke_action("cancel".into());
+    // and manage logins' delete question
+    domains.invoke_row_clicked(0, false, false);
+    domains.invoke_action("delete".into());
+    assert!(
+        !domains.get_question().is_empty(),
+        "manage logins: asks to delete"
+    );
+    close(domains.window());
+    assert!(
+        domains.get_question().is_empty(),
+        "manage logins: its close answers no"
+    );
+    assert!(domains.window().is_visible());
+    domains.invoke_action("cancel".into());
+
+    // manage regex favourites: after its favourites menu is dismissed by a
+    // click, Escape still reaches the row editor
+    let (_odirs, ostore) = crate::options_window::store();
+    let (oui, obound) = client(&ostore);
+    let options = options_page(&oui, &obound, "regex favourites");
+    options.invoke_regex_favourites_clicked();
+    let regex = hydrus_gui::regex_favourites_window::last_opened().expect("regex favourites");
+    widgets::lay_out(regex.window(), 700.0, 500.0);
+    regex.invoke_action("add".into());
+    widgets::click(regex.window(), "favourites \u{25be}");
+    assert!(
+        regex.get_favourite_panes().row_count() > 0,
+        "regex: its menu opens"
+    );
+    widgets::click_at(
+        regex.window(),
+        slint::LogicalPosition::new(5.0, 495.0),
+        slint::platform::PointerEventButton::Left,
+    );
+    assert_eq!(
+        regex.get_favourite_panes().row_count(),
+        0,
+        "regex: the menu dismissed"
+    );
+    escape(regex.window());
+    assert!(
+        !regex.get_editing(),
+        "regex: Escape cancels the row after the menu"
+    );
+    assert!(regex.window().is_visible());
+    close(regex.window());
+    assert!(!regex.window().is_visible());
+}
+
+/// Filename tagging: its regex menu, opened from within the "configure
+/// quick namespace" editor, is closed by Escape first, the editor and its
+/// text kept; the next Escape cancels the editor; the window's close then
+/// takes the same order.
+#[test]
+fn filename_tagging_escape_closes_its_regex_menu_before_the_quick_namespace_editor() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    let watched = tempfile::tempdir().unwrap();
+    crate::folders::open(&ui, "manage import folders\u{2026}");
+    let list = take(&bound.folders.import_list, "import folders");
+    list.invoke_add();
+    let folder = take(&bound.folders.import_edit, "an import folder");
+    folder.set_path(watched.path().to_string_lossy().into_owned().into());
+    let mine = (0..folder.get_tagging_choices().row_count())
+        .find(|&i| folder.get_tagging_choices().row_data(i).unwrap() == "my tags")
+        .unwrap();
+    folder.set_tagging_choice(i32::try_from(mine).unwrap());
+    folder.invoke_tagging_add();
+    let dialog = take(&bound.folders.filename_tagging, "filename tagging");
+    dialog.set_advanced(true);
+    let win = dialog.window();
+    widgets::lay_out(win, 900.0, 700.0);
+    let open_menu = || {
+        dialog.invoke_rule_action("quick_add".into());
+        assert!(dialog.get_rule_child(), "the quick namespace editor opens");
+        dialog.set_rule_namespace("series".into());
+        widgets::click(win, ".*");
+        assert!(
+            dialog.get_regex_panes().row_count() > 0,
+            "its regex menu opens"
+        );
+    };
+    open_menu();
+    escape(win);
+    assert_eq!(
+        dialog.get_regex_panes().row_count(),
+        0,
+        "Escape: the menu first"
+    );
+    assert!(dialog.get_rule_child(), "Escape: the editor kept");
+    assert_eq!(
+        dialog.get_rule_namespace(),
+        "series",
+        "Escape: its text kept"
+    );
+    escape(win);
+    assert!(!dialog.get_rule_child(), "Escape: then the editor");
+    assert!(win.is_visible(), "Escape: the dialog still open");
+    open_menu();
+    win.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert_eq!(
+        dialog.get_regex_panes().row_count(),
+        0,
+        "close: the menu first"
+    );
+    assert!(dialog.get_rule_child(), "close: the editor kept");
+    win.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!dialog.get_rule_child(), "close: then the editor");
+    assert!(win.is_visible(), "close: the dialog still open");
+    dialog.invoke_cancel();
 }
