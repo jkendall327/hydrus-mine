@@ -2919,8 +2919,10 @@ opened apart from them. Manage ratings' "edit value" editor holds it, as
 the reference's modal one: its ratings, copy, paste, apply and cancel do
 nothing until that closes. A dialog ended by its own buttons while it
 holds a window it opened (its own messages and questions, manage ratings'
-"edit value", the folders' logs and editors) closes that window with it,
-by the window's own close, so nothing it held outlives it. A menu open in
+"edit value", the folders' logs and editors) ends that window with it, so
+nothing it held outlives it: a dialog on the helper asking nothing (as Qt
+takes a modal child with its parent, its own questions and held windows
+with it), any other window by its own close. A menu open in
 a window (a favourites menu, a log's or a subscription's menu) takes
 Escape first and closes, and once it is dismissed the keys come back to
 the window, so Escape then reaches the dialog. No migrated dialog yet has a panel check that refuses an apply
