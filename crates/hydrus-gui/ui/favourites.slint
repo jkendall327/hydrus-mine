@@ -35,6 +35,9 @@ export component Question {
 }
 
 export component FavouritesWindow inherits Window {
+    // (Escape, once nothing within takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -68,7 +71,8 @@ export component FavouritesWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                root.cancel();
+                // (a question asked takes it first)
+                if (root.question != "") { root.answered(false); } else { root.escape(); }
                 return accept;
             }
             if (event.text == Key.Delete && root.can-delete) {
@@ -134,6 +138,9 @@ export component FavouritesWindow inherits Window {
 }
 
 export component FavouriteEditWindow inherits Window {
+    // (Escape, once nothing within takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -224,7 +231,8 @@ export component FavouriteEditWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                root.cancel();
+                // (a question asked takes it first)
+                if (root.question != "") { root.answered(false); } else { root.escape(); }
                 return accept;
             }
             reject

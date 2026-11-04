@@ -349,6 +349,7 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::LoginStepWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_name(step.name.as_str().into());
     window.set_scheme(i32::from(step.scheme == "https"));
     window.set_method(i32::from(step.method == "POST"));
@@ -590,7 +591,7 @@ pub fn open(
         let weak = window.as_weak();
         let editor = editor.clone();
         let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let edit = edit.clone();
         let exchange = slots.exchange.clone();
         let selected_argument = selected_argument.clone();
@@ -607,7 +608,7 @@ pub fn open(
                 return;
             };
             if action == "cancel" {
-                close();
+                ended.cancel();
                 return;
             }
             if window.get_child_open() {
@@ -741,7 +742,7 @@ pub fn open(
                     step.path = window.get_path().to_string();
                     step.cleanse();
                     match applied(step) {
-                        Ok(()) => close(),
+                        Ok(()) => ended.accept(),
                         Err(error) => window.set_error(error.into()),
                     }
                 }
@@ -806,9 +807,26 @@ pub fn open(
             }
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (its children are modal in the reference; Escape answers "Remove all
+    // selected?" no first)
+    ended.modal_child({
+        let weak = window.as_weak();
+        move || weak.upgrade().is_some_and(|window| window.get_child_open())
+    });
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(window) if window.get_deleting() => {
+                window.invoke_action("back".into());
+                true
+            }
+            _ => false,
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     window.show()?;
     *slots.step.borrow_mut() = Some(window.clone_strong());

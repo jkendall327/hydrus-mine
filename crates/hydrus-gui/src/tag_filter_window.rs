@@ -285,6 +285,7 @@ pub fn open(
     applied: Rc<dyn Fn(TagFilter)>,
 ) -> Result<TagFilterWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::TagFilterWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(title.into());
     window.set_message(message.into());
     window.set_instructions(INSTRUCTIONS.into());
@@ -751,24 +752,27 @@ pub fn open(
     };
     window.on_apply({
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         move || {
             if !active.get() {
                 return;
             }
             let filter = state.borrow().editor.value();
-            close();
+            ended.accept();
             applied(filter);
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     window.show()?;
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));

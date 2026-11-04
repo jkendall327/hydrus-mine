@@ -42,7 +42,10 @@ pub(crate) trait Escapes: ComponentHandle {
 
 macro_rules! escapes {
     ($($window:ident),* $(,)?) => {
-        $(impl Escapes for crate::$window {
+        // (a window without its own `escape` callback would call this
+        // itself: refused)
+        $(#[deny(unconditional_recursion)]
+        impl Escapes for crate::$window {
             fn on_escape(&self, then: impl Fn() + 'static) {
                 crate::$window::on_escape(self, then);
             }
@@ -52,17 +55,39 @@ macro_rules! escapes {
 
 escapes!(
     AboutWindow,
+    CheckerOptionsWindow,
     ChoiceButtonsWindow,
+    EditServiceWindow,
     EditSubscriptionWindow,
     EditValueWindow,
+    ExternalCallWindow,
+    ExternalCommandWindow,
+    FavouriteEditWindow,
+    FavouritesWindow,
     FilenameTaggingWindow,
     ForceFiletypeWindow,
+    ImportOptionsOverwriteWindow,
+    IncrementalTaggingWindow,
     LocationsWindow,
+    LoginStepWindow,
     ManageNotesWindow,
     ManageTagsWindow,
     ManageTimesWindow,
     ManageUrlsWindow,
+    MediaViewWindow,
+    MergeOptionsWindow,
+    OpenFileCallsWindow,
+    PngExportWindow,
+    PngsExportWindow,
+    SearchOrWindow,
+    ServicesEditorWindow,
+    ShortcutCommandWindow,
+    ShortcutSetWindow,
+    SimpleFormulaeWindow,
     SubscriptionsWindow,
+    TagBannerWindow,
+    TagFilterWindow,
+    TagRelationshipsWindow,
 );
 
 /// Whether it is a dialog (kept when applied) or a frame (kept as it moves).
@@ -81,8 +106,11 @@ struct Inner<C: ComponentHandle + 'static> {
     closed: RefCell<Vec<Box<dyn FnOnce()>>>,
     /// Whether it may be cancelled or closed now (`UserIsOKToCancel`).
     may_cancel: RefCell<Option<Box<dyn Fn() -> bool>>>,
-    /// Whether Escape reaches it now (not while a modal child has it).
-    may_escape: RefCell<Option<Box<dyn Fn() -> bool>>>,
+    /// What Escape does first (a sub-state closed, a modal child waited on).
+    escape_first: RefCell<Option<Box<dyn Fn() -> bool>>>,
+    /// Whether a child the reference opens modally is open, which neither
+    /// Escape nor the window's own close reach past.
+    modal_child: RefCell<Option<Box<dyn Fn() -> bool>>>,
     /// A frame's keeping of its geometry as it moves.
     autosave: RefCell<Option<Rc<slint::Timer>>>,
     /// The store its frame is kept in.
@@ -190,7 +218,8 @@ impl<C: Escapes + 'static> Dialog<C> {
                 open: Cell::new(true),
                 closed: RefCell::default(),
                 may_cancel: RefCell::default(),
-                may_escape: RefCell::default(),
+                escape_first: RefCell::default(),
+                modal_child: RefCell::default(),
                 autosave: RefCell::default(),
                 store,
                 save_on_close: Cell::new(false),
@@ -201,7 +230,9 @@ impl<C: Escapes + 'static> Dialog<C> {
         component.window().on_close_requested({
             let dialog = dialog.clone();
             move || {
-                if dialog.cancel() {
+                // (a modal child open: the window isn't the user's to close
+                // under it, as Qt's modality has it)
+                if !dialog.held() && dialog.cancel() {
                     slint::CloseRequestResponse::HideWindow
                 } else {
                     slint::CloseRequestResponse::KeepWindowShown
@@ -213,9 +244,18 @@ impl<C: Escapes + 'static> Dialog<C> {
             let dialog = Rc::downgrade(&dialog.inner);
             move || {
                 if let Some(inner) = dialog.upgrade() {
-                    let reaches = inner.may_escape.borrow().as_ref().is_none_or(|may| may());
-                    if reaches {
-                        Self { inner }.cancel();
+                    let dialog = Self { inner };
+                    if dialog.held() {
+                        return;
+                    }
+                    let taken = dialog
+                        .inner
+                        .escape_first
+                        .borrow()
+                        .as_ref()
+                        .is_some_and(|first| first());
+                    if !taken {
+                        dialog.cancel();
                     }
                 }
             }
@@ -235,10 +275,27 @@ impl<C: Escapes + 'static> Dialog<C> {
         *self.inner.may_cancel.borrow_mut() = Some(Box::new(may));
     }
 
-    /// Ask `may` before Escape cancels or closes it: while it says no, Escape
-    /// does nothing (a child the reference opens modally has it).
-    pub(crate) fn refuse_escape(&self, may: impl Fn() -> bool + 'static) {
-        *self.inner.may_escape.borrow_mut() = Some(Box::new(may));
+    /// What Escape does first, before it cancels or closes the window:
+    /// `first` closes whatever the window has open within it (a question, an
+    /// inline editor: back, as its own modal dialog's Escape would take it),
+    /// and says whether it took it.
+    pub(crate) fn escape_first(&self, first: impl Fn() -> bool + 'static) {
+        *self.inner.escape_first.borrow_mut() = Some(Box::new(first));
+    }
+
+    /// Whether a child window the reference opens modally is open: while it
+    /// is, Escape and the window's own close do nothing (its own buttons
+    /// still end it, cancelling the child with it, as before).
+    pub(crate) fn modal_child(&self, open: impl Fn() -> bool + 'static) {
+        *self.inner.modal_child.borrow_mut() = Some(Box::new(open));
+    }
+
+    fn held(&self) -> bool {
+        self.inner
+            .modal_child
+            .borrow()
+            .as_ref()
+            .is_some_and(|open| open())
     }
 
     /// Whether it has not been ended yet.

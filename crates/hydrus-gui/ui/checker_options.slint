@@ -71,115 +71,129 @@ export component CheckerOptionsWindow inherits Window {
     callback ok();
     callback cancel();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 8px;
-        Label {
-            text: root.texts.warning;
-            color: Theme.error;
-        }
-        BoxTitle { text: root.texts.defaults-box; }
-        for label[i] in root.presets: Btn {
-            text: label;
-            clicked => { root.preset(i); }
-        }
-        GridLayout {
-            spacing: 6px;
-            Row {
-                Label { text: root.texts.velocity-label; }
-                HorizontalLayout {
-                    spacing: 6px;
-                    alignment: start;
-                    LineEdit {
-                        width: 64px;
-                        input-type: InputType.number;
-                        text <=> root.velocity-files;
-                        edited(text) => { root.velocity-files-edited(round(text.to-float())); }
-                    }
-                    Text {
-                        text: root.texts.velocity-per;
-                        vertical-alignment: center;
-                        color: Theme.text;
-                    }
-                    TimeFields {
-                        fields: root.velocity-fields;
-                        edited(f, n) => { root.field-edited(3, f, n); }
-                    }
-                }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.question != "" { root.answered(false); return accept; }
+                root.escape();
+                return accept;
             }
-            Row {
-                Label { text: root.texts.static-label; }
-                CheckBox {
-                    checked <=> root.flat;
-                    toggled => { root.flat-toggled(); }
-                }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 8px;
+            Label {
+                text: root.texts.warning;
+                color: Theme.error;
             }
-        }
-        if root.advanced: Label {
-            text: root.texts.advanced-warning;
-            color: Theme.error;
-        }
-        if !root.flat: VerticalLayout {
-            spacing: 6px;
-            BoxTitle { text: root.texts.reactive-box; }
-            Label { text: root.texts.reactive-text; }
+            BoxTitle { text: root.texts.defaults-box; }
+            for label[i] in root.presets: Btn {
+                text: label;
+                clicked => { root.preset(i); }
+            }
             GridLayout {
                 spacing: 6px;
                 Row {
-                    Label { text: root.texts.intended-label; }
+                    Label { text: root.texts.velocity-label; }
                     HorizontalLayout {
+                        spacing: 6px;
                         alignment: start;
                         LineEdit {
-                            width: 100px;
-                            text <=> root.intended;
-                            edited(text) => { root.intended-edited(text); }
+                            width: 64px;
+                            input-type: InputType.number;
+                            text <=> root.velocity-files;
+                            edited(text) => { root.velocity-files-edited(round(text.to-float())); }
+                        }
+                        Text {
+                            text: root.texts.velocity-per;
+                            vertical-alignment: center;
+                            color: Theme.text;
+                        }
+                        TimeFields {
+                            fields: root.velocity-fields;
+                            edited(f, n) => { root.field-edited(3, f, n); }
                         }
                     }
                 }
                 Row {
-                    Label { text: root.texts.faster-label; }
-                    TimeFields {
-                        fields: root.faster-fields;
-                        edited(f, n) => { root.field-edited(0, f, n); }
-                    }
-                }
-                Row {
-                    Label { text: root.texts.slower-label; }
-                    TimeFields {
-                        fields: root.slower-fields;
-                        edited(f, n) => { root.field-edited(1, f, n); }
+                    Label { text: root.texts.static-label; }
+                    CheckBox {
+                        checked <=> root.flat;
+                        toggled => { root.flat-toggled(); }
                     }
                 }
             }
-        }
-        if root.flat: VerticalLayout {
-            spacing: 6px;
-            BoxTitle { text: root.texts.static-box; }
-            GridLayout {
+            if root.advanced: Label {
+                text: root.texts.advanced-warning;
+                color: Theme.error;
+            }
+            if !root.flat: VerticalLayout {
                 spacing: 6px;
-                Row {
-                    Label { text: root.texts.period-label; }
-                    TimeFields {
-                        fields: root.period-fields;
-                        edited(f, n) => { root.field-edited(2, f, n); }
+                BoxTitle { text: root.texts.reactive-box; }
+                Label { text: root.texts.reactive-text; }
+                GridLayout {
+                    spacing: 6px;
+                    Row {
+                        Label { text: root.texts.intended-label; }
+                        HorizontalLayout {
+                            alignment: start;
+                            LineEdit {
+                                width: 100px;
+                                text <=> root.intended;
+                                edited(text) => { root.intended-edited(text); }
+                            }
+                        }
+                    }
+                    Row {
+                        Label { text: root.texts.faster-label; }
+                        TimeFields {
+                            fields: root.faster-fields;
+                            edited(f, n) => { root.field-edited(0, f, n); }
+                        }
+                    }
+                    Row {
+                        Label { text: root.texts.slower-label; }
+                        TimeFields {
+                            fields: root.slower-fields;
+                            edited(f, n) => { root.field-edited(1, f, n); }
+                        }
                     }
                 }
             }
-        }
-        if root.question != "": Question {
-            text: root.question;
-            answered(yes) => { root.answered(yes); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                clicked => { root.ok(); }
+            if root.flat: VerticalLayout {
+                spacing: 6px;
+                BoxTitle { text: root.texts.static-box; }
+                GridLayout {
+                    spacing: 6px;
+                    Row {
+                        Label { text: root.texts.period-label; }
+                        TimeFields {
+                            fields: root.period-fields;
+                            edited(f, n) => { root.field-edited(2, f, n); }
+                        }
+                    }
+                }
             }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            if root.question != "": Question {
+                text: root.question;
+                answered(yes) => { root.answered(yes); }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    clicked => { root.ok(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

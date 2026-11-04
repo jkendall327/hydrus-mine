@@ -136,6 +136,7 @@ pub(crate) fn open(
 
 fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
     let window = crate::app_title::new::<crate::FavouritesWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&window);
     let rows = store
         .read(hydrus_store::settings::get::<FavouriteSearches>)
         .map(|f| f.0)
@@ -305,7 +306,7 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
         }
     };
     window.on_apply({
-        let close = close.clone();
+        let ended = ended.clone();
         let list = list.clone();
         move || {
             let rows = list.borrow().manager.rows.clone();
@@ -315,19 +316,24 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
                 eprintln!("could not keep the favourite searches: {e}");
                 return;
             }
-            close();
+            ended.accept();
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a favourite's editor is a modal child in the reference)
+    ended.modal_child({
+        let edit = slots.edit.clone();
+        move || edit.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.show().map_err(|e| e.to_string())?;
     *slots.list.borrow_mut() = Some(window);
@@ -385,6 +391,7 @@ fn open_edit(
     }
     let window =
         crate::app_title::new::<crate::FavouriteEditWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&window);
     let sorts: SortSettings = words
         .store
         .read(hydrus_store::settings::get)
@@ -1332,7 +1339,7 @@ fn open_edit(
         let list = list.clone();
         let list_window = slots.list.clone();
         let words = words.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         let child = child.clone();
         move || {
@@ -1349,7 +1356,7 @@ fn open_edit(
                 let index = list.manager.rows.len() - 1;
                 list.selection.select_only(Some(index));
             }
-            close();
+            ended.accept();
             if let Some(window) = list_window.borrow().as_ref() {
                 shower(window, &list, &words)();
             }
@@ -1394,15 +1401,32 @@ fn open_edit(
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (its predicate and OR editors are modal children in the reference;
+    // Escape answers the locations question no first)
+    ended.modal_child({
+        let child = child.clone();
+        let or_slot = or_slot.clone();
+        move || child.borrow().is_some() || or_slot.borrow().is_some()
+    });
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(window) if window.get_selecting_locations() => {
+                window.invoke_locations_answered(false);
+                true
+            }
+            _ => false,
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.show().map_err(|e| e.to_string())?;
     *slots.edit.borrow_mut() = Some(window);

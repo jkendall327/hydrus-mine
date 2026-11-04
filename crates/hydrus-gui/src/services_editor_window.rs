@@ -177,6 +177,7 @@ fn edit(
     svgs: &[String],
 ) -> Result<(), String> {
     let window = crate::app_title::new::<crate::EditServiceWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_service_name(service.name.as_str().into());
     window.set_service_type(service.service_type().name().into());
     window.set_rating(display(&service.kind).is_some());
@@ -486,7 +487,7 @@ fn edit(
     });
     window.on_apply_clicked({
         let weak = window.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !active.get() || !parent_active.get() || pending_counter.get().is_some() {
                 return;
@@ -502,19 +503,33 @@ fn edit(
             match edited_kind(&w, &service.kind, &colours.borrow()) {
                 Ok(kind) => {
                     done(w.get_service_name().to_string(), kind);
-                    close();
+                    ended.accept();
                 }
                 Err(e) => w.set_error(e.into()),
             }
         }
     });
     window.on_cancel_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (Escape: the counter's "edit value" question answered no first)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(window) if window.get_counter_editing() => {
+                window.invoke_counter_answered(false);
+                true
+            }
+            _ => false,
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     window.show().map_err(|e| e.to_string())?;
     *slots.edit.borrow_mut() = Some(window);
@@ -529,6 +544,7 @@ pub fn open(
 ) -> Result<ServicesEditorWindow, String> {
     let window =
         crate::app_title::new::<crate::ServicesEditorWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&window);
     crate::star_images::set_dir(store.dir());
     let active = Rc::new(Cell::new(true));
     let editor = Rc::new(RefCell::new(Editor::new(store).map_err(|e| e.to_string())?));
@@ -753,7 +769,7 @@ pub fn open(
     let apply = Rc::new({
         let editor = editor.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let weak = window.as_weak();
         let active = active.clone();
         let slots = slots.clone();
@@ -765,7 +781,7 @@ pub fn open(
                 match editor.borrow().apply(&store) {
                     Ok(()) => {
                         changed();
-                        close();
+                        ended.accept();
                     }
                     Err(e) => w.set_error(e.to_string().into()),
                 }
@@ -806,12 +822,20 @@ pub fn open(
         }
     });
     window.on_cancel_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a service's editor is a modal child in the reference)
+    ended.modal_child({
+        let slots = slots.clone();
+        move || slots.edit.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     window.show().map_err(|e| e.to_string())?;
     Ok(window)

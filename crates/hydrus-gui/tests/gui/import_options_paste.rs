@@ -39,7 +39,10 @@ fn sorted(mut tuple: Value) -> Value {
 }
 
 /// The editor of a specific importer, whose options are `current`.
-fn editor_of(s: &Setup, current: &ImportOptionsSlice) -> hydrus_gui::ImportOptionsWindow {
+pub(crate) fn editor_of(
+    s: &Setup,
+    current: &ImportOptionsSlice,
+) -> hydrus_gui::ImportOptionsWindow {
     let (queue, options) = (s.queue, current.clone());
     s.store
         .write(move |ctx| hydrus_store::queues::set_queue_options(ctx.conn(), queue, &options))

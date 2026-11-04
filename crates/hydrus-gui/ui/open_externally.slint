@@ -50,11 +50,25 @@ export component OpenFileCallsWindow inherits Window {
     callback action(string);
     callback apply();
     callback cancel();
-    VerticalLayout {
-        padding:10px;spacing:8px;
-        Text {text:"You can select multiple programs, and these choices will be exposed in the media \"open externally\" menus; for quicker actions like button clicks or shortcuts, the top-most is the default.";wrap:word-wrap;color:Theme.text;}
-        DeletionReasonQueue {rows:root.rows;enabled:true;selected:root.selected;child-open:root.child-open;row-clicked(i,c,s)=>{root.clicked(i,c,s);}row-activated(i)=>{root.activated(i);}action(a)=>{root.action(a);}}
-        HorizontalLayout {alignment:end;Btn {text:"apply";enabled:!root.child-open;clicked=>{root.apply();}}Btn {text:"cancel";clicked=>{root.cancel();}}}
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.child-open { return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding:10px;spacing:8px;
+            Text {text:"You can select multiple programs, and these choices will be exposed in the media \"open externally\" menus; for quicker actions like button clicks or shortcuts, the top-most is the default.";wrap:word-wrap;color:Theme.text;}
+            DeletionReasonQueue {rows:root.rows;enabled:true;selected:root.selected;child-open:root.child-open;row-clicked(i,c,s)=>{root.clicked(i,c,s);}row-activated(i)=>{root.activated(i);}action(a)=>{root.action(a);}}
+            HorizontalLayout {alignment:end;Btn {text:"apply";enabled:!root.child-open;clicked=>{root.apply();}}Btn {text:"cancel";clicked=>{root.cancel();}}}
+        }
     }
 }
 export component ExternalRoutingChoiceWindow inherits Window {

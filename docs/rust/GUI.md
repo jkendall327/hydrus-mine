@@ -5723,7 +5723,9 @@ except the choice dialogs with choices, which open by `quick_select_dialog`
 (buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
 choice is made, never when cancelled; a message with no choices takes neither.
 The ordinary dialogs that end through the shared dialog helper (so far
-"choose distance", "edit multiple location" and "force filetypes") keep `regular_dialog` as the
+"choose distance", "edit multiple location", "force filetypes", manage
+services, tag siblings and parents, favourite searches, and the other
+editors listed in DIFFERENCES.md) keep `regular_dialog` as the
 reference's do: when applied, never when cancelled (cancel, Escape) or
 closed by their window; and the ordinary frames on it (so far help > about)
 keep it a moment after each move or resize, nothing more as they close, and

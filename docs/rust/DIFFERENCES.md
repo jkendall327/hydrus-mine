@@ -2808,9 +2808,19 @@ off-screen rescue on open). Every other window opens by the ordinary
 dialogs' frame (`regular_dialog`). Those that end through the helper keep it
 as the reference's `DialogThatResizes` and `FrameThatResizes` do
 (`regular_dialog.rs`, replaying `regular_dialog.json`): so far "choose
-distance", "edit multiple location" and "force filetypes" (dialogs: kept
-when applied) and help > about
-(a frame: kept a moment after a move or resize). The rest don't keep it yet;
+distance", "edit multiple location", "force filetypes", and the tag
+summary, merge options, checker options, import options overwrite, OR
+predicate, favourite searches and favourite search, shortcut set and
+command, external command and call, media view options, tag filter,
+incremental tagging, open-externally calls, export to png(s), login step,
+edit service and manage services, tag siblings and parents, and simple
+downloader formulae editors (dialogs: kept when applied), and help > about
+(a frame: kept a moment after a move or resize). Each of these is driven as a
+user opens it and ended by a real Escape, its cancel and its apply in
+`tests/gui/dialog_sweep.rs`, which each later batch extends; there too, a
+question or inline editor within a dialog takes Escape first and a modal
+child (the reference's) holds it, the dialog staying open. "manage granularity" waits for its close button (the
+reference's `DialogNullipotent` keeps its frame by it). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape,
 which the helper owns, cancels these dialogs and closes the frames. Every
@@ -2826,9 +2836,12 @@ and closes); so do manage notes, URLs and times. Manage tags with changes
 staged asks before a cancel, Escape or its window's close discards them, as
 the reference's `UserIsOKToCancel`, on its own overlay rather than a
 separate yes/no dialog (which takes the place of a question already up).
-While manage times' date-time editor is open, Escape doesn't cancel the
-dialog under it (the reference's editor is modal; its cancel button still
-closes both). No migrated dialog yet has a panel check that refuses an apply
+While a dialog's modal child (the reference's) is open, neither Escape nor
+the dialog's own window close ends it (manage times under its date-time
+editor, merge options under its tag filter, the OR editor under a nested
+one, simple formulae under an export, and the rest in `dialog_sweep.rs`); its
+own cancel button still ends it and the child together, which Qt's
+modality would not let the user press. No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
 vetoed apply does). Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.

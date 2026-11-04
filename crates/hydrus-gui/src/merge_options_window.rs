@@ -206,6 +206,7 @@ pub fn open(
     applied: Rc<dyn Fn(MergeOptions)>,
 ) -> Result<MergeOptionsWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::MergeOptionsWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(TITLE.into());
     window.set_ratings_note(RATINGS_NOTE.into());
     window.set_row_labels(strings(ROW_LABELS.iter().map(|&l| l.to_owned())));
@@ -560,20 +561,39 @@ pub fn open(
     };
     window.on_apply({
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             let options = state.borrow().editor.value();
-            close();
+            ended.accept();
             applied(options);
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (the tag filter is a modal child in the reference; Escape closes the
+    // note settings box first)
+    ended.modal_child({
+        let filter_slot = filter_slot.clone();
+        move || filter_slot.borrow().is_some()
+    });
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(window) if window.get_note_settings_open() => {
+                window.invoke_note_settings_done(false);
+                true
+            }
+            _ => false,
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     window.show()?;
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));

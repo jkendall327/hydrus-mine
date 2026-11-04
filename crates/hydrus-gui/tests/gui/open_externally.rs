@@ -23,7 +23,7 @@ fn request_global_shortcuts(parent: &OptionsWindow) {
     parent.invoke_shortcut_set_clicked(false, i32::try_from(row).unwrap(), false, false);
     parent.invoke_shortcut_set_action("edit-reserved".into());
 }
-fn seed(store: &Store) -> Manager {
+pub(crate) fn seed(store: &Store) -> Manager {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");
     let manager = Manager {
         calls: fixture["calls"]
@@ -67,7 +67,7 @@ fn seed(store: &Store) -> Manager {
         .unwrap();
     manager
 }
-fn open(ui: &MainWindow, bound: &Bound) -> OptionsWindow {
+pub(crate) fn open(ui: &MainWindow, bound: &Bound) -> OptionsWindow {
     ui.invoke_menu_title_pressed(0, 20., 22.);
     let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
     let index = (0..lines.row_count())
@@ -104,7 +104,7 @@ fn choice(bound: &Bound) -> hydrus_gui::ExternalRoutingChoiceWindow {
         .unwrap()
         .clone_strong()
 }
-fn choose(bound: &Bound, name: &str) {
+pub(crate) fn choose(bound: &Bound, name: &str) {
     let window = choice(bound);
     let names = window.get_choices();
     let index = (0..names.row_count())

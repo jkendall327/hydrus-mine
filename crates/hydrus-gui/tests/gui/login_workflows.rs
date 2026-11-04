@@ -18,7 +18,7 @@ use std::{
     },
     time::{Duration, Instant},
 };
-fn store() -> (tempfile::TempDir, Arc<Store>, LoginManager) {
+pub(crate) fn store() -> (tempfile::TempDir, Arc<Store>, LoginManager) {
     let fixture = hydrus_testkit::fixture_json("login_editors.json");
     let manager = legacy::manager(
         &SerialisableObject::from_tuple_str(&fixture["manager"].to_string()).unwrap(),

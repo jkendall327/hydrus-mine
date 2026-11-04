@@ -146,7 +146,7 @@ fn deleting_relation_source_refreshes_open_viewer_and_locked_selection() {
     viewer.invoke_close_requested();
 }
 
-fn open(ui: &MainWindow) {
+pub(crate) fn open(ui: &MainWindow) {
     let titles = ui.get_menu_titles();
     let index = titles.iter().position(|t| t.label == "services").unwrap();
     ui.invoke_menu_title_pressed(i32::try_from(index).unwrap(), 10.0, 22.0);

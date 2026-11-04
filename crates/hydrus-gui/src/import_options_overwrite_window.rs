@@ -64,6 +64,7 @@ pub fn open(
 ) -> Result<ImportOptionsOverwriteWindow, String> {
     let window = crate::app_title::new::<crate::ImportOptionsOverwriteWindow>()
         .map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&window);
     let state = Rc::new(RefCell::new(draft));
     let active = Rc::new(Cell::new(true));
     let snapshot = store.snapshot();
@@ -120,23 +121,26 @@ pub fn open(
     window.on_apply({
         let state = state.clone();
         let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !active.get() {
                 return;
             }
             let value = state.borrow().value();
-            close();
+            ended.accept();
             applied(value);
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     show(&window, &state.borrow(), &snapshot);
     window.show().map_err(|e| e.to_string())?;

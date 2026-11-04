@@ -95,6 +95,7 @@ fn edit(
 ) -> Option<MediaViewWindow> {
     let capability = model::capability(row.code)?;
     let window = crate::app_title::new::<crate::MediaViewWindow>().ok()?;
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(title.into());
     window.set_intro(capability.intro.into());
     let label = |a| model::action_text(a).to_owned();
@@ -200,13 +201,15 @@ fn edit(
         let weak = window.as_weak();
         let code = row.code;
         let live = live.clone();
+        let ended = ended.clone();
         move || {
-            if !live.replace(false) {
+            if !live.get() {
                 return;
             }
             if let Some(w) = weak.upgrade().filter(|w| w.window().is_visible()) {
+                live.set(false);
                 let view = chosen(&w);
-                let _ = w.hide();
+                ended.accept();
                 done(Row { code, view });
             }
         }
@@ -224,13 +227,13 @@ fn edit(
         }
     });
     window.on_cancel({
-        let cancel = cancel.clone();
-        move || cancel()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        cancel();
-        slint::CloseRequestResponse::HideWindow
-    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || cancel());
     window.show().ok()?;
     Some(window)
 }

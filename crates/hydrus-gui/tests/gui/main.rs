@@ -235,6 +235,7 @@ mod tag_migration;
 mod tag_migration_counts;
 mod tag_migration_hash;
 
+mod dialog_sweep;
 mod manage_notes_replay;
 mod regen_questions_replay;
 mod regex_favourites;

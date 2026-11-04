@@ -951,10 +951,10 @@ pub(crate) fn open(
         }
     });
     // (its date-time editor is modal in the reference: while it is open,
-    // Escape doesn't cancel the dialog under it)
-    dialog.refuse_escape({
+    // neither Escape nor the window's close ends the dialog under it)
+    dialog.modal_child({
         let editing = editing.clone();
-        move || editing.borrow().is_none()
+        move || editing.borrow().is_some()
     });
     window.on_cancel(move || {
         dialog.cancel();

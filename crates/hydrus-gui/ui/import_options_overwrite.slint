@@ -12,6 +12,9 @@ export struct ImportOverwriteRow {
 }
 
 export component ImportOptionsOverwriteWindow inherits Window {
+    // (Escape, once nothing within takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -29,7 +32,7 @@ export component ImportOptionsOverwriteWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
-            if event.text == Key.Escape { root.cancel(); return accept; }
+            if event.text == Key.Escape { root.escape(); return accept; }
             reject
         }
         VerticalLayout {
