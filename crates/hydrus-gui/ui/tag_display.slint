@@ -53,7 +53,8 @@ export component TagDisplayWindow inherits Window {
     // (Escape, which the dialog helper takes: cancelled, as the reference's
     // `keyPressEvent`)
     callback escape();
-    FocusScope {
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
         capture-key-pressed(event) => { if event.text == Key.Escape { root.escape(); return accept; } reject }
         VerticalLayout {
             padding: 12px; spacing: 8px;
