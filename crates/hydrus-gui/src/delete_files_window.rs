@@ -87,22 +87,25 @@ pub fn open_with_choice(
         suggested,
         default_reason,
         guard,
-        Rc::new(move |draft: &Draft, store: &Store| {
-            let choice = draft.apply_with_choice(store).map_err(|e| e.to_string())?;
-            let applied = applied.clone();
-            Ok(Box::new(move || {
-                if let Some(choice) = choice {
-                    applied(&choice);
-                }
-            }) as Box<dyn FnOnce()>)
-        }),
+        Accepting {
+            closed: None,
+            accept: Rc::new(move |draft: &Draft, store: &Store| {
+                let choice = draft.apply_with_choice(store).map_err(|e| e.to_string())?;
+                let applied = applied.clone();
+                Ok(Box::new(move || {
+                    if let Some(choice) = choice {
+                        applied(&choice);
+                    }
+                }) as Box<dyn FnOnce()>)
+            }),
+        },
     )
 }
 
 /// The dialog's choice, not applied: `chosen` gets it to apply later (the
 /// reference's `just_get_content_update_packages`, as the duplicate filter
 /// asks for it). The choice and reason are remembered on OK, as when
-/// applied.
+/// applied. `closed` is told when a dialog shown closes, however it does.
 pub fn open_deferred(
     slot: &Slot,
     store: &Arc<Store>,
@@ -110,8 +113,9 @@ pub fn open_deferred(
     suggested: Option<&DeletionAction>,
     default_reason: &str,
     guard: Guard,
-    chosen: Rc<dyn Fn(hydrus_gui_model::delete_files::Deferred)>,
+    deferring: Deferring,
 ) -> Result<Option<DeleteFilesWindow>, String> {
+    let Deferring { chosen, closed } = deferring;
     open_accepting(
         slot,
         store,
@@ -119,16 +123,38 @@ pub fn open_deferred(
         suggested,
         default_reason,
         guard,
-        Rc::new(move |draft: &Draft, store: &Store| {
-            let deferred = draft.defer(store).map_err(|e| e.to_string())?;
-            let chosen = chosen.clone();
-            Ok(Box::new(move || {
-                if let Some(deferred) = deferred {
-                    chosen(deferred);
-                }
-            }) as Box<dyn FnOnce()>)
-        }),
+        Accepting {
+            closed: Some(closed),
+            accept: Rc::new(move |draft: &Draft, store: &Store| {
+                let deferred = draft.defer(store).map_err(|e| e.to_string())?;
+                let chosen = chosen.clone();
+                Ok(Box::new(move || {
+                    if let Some(deferred) = deferred {
+                        chosen(deferred);
+                    }
+                }) as Box<dyn FnOnce()>)
+            }),
+        },
     )
+}
+
+/// What a deferred dialog tells its owner: the choice, on OK; and that it
+/// closed, however it did.
+pub struct Deferring {
+    pub chosen: Rc<dyn Fn(hydrus_gui_model::delete_files::Deferred)>,
+    pub closed: Rc<dyn Fn()>,
+}
+
+impl std::fmt::Debug for Deferring {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Deferring").finish_non_exhaustive()
+    }
+}
+
+/// What OK does, and who to tell when the dialog closes.
+struct Accepting {
+    closed: Option<Rc<dyn Fn()>>,
+    accept: Accept,
 }
 
 /// What OK does with the draft: apply or freeze it, then (after the dialog
@@ -152,8 +178,9 @@ fn open_accepting(
     suggested: Option<&DeletionAction>,
     default_reason: &str,
     guard: Guard,
-    accept: Accept,
+    accepting: Accepting,
 ) -> Result<Option<DeleteFilesWindow>, String> {
+    let Accepting { closed, accept } = accepting;
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(Some(window.clone_strong()));
     }
@@ -202,6 +229,9 @@ fn open_accepting(
             }
             if let Some(slot) = slot.upgrade() {
                 slot.borrow_mut().take();
+            }
+            if let Some(closed) = &closed {
+                closed();
             }
         }
     });

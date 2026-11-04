@@ -1,4 +1,17 @@
 {
+ "archived": [
+  "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+  "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+  "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+  "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e",
+  "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+  "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057",
+  "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+  "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff",
+  "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+  "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed",
+  "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+ ],
  "steps": [
   {
    "start": {
@@ -67,6 +80,9 @@
      ],
      "action": "Send one file from my files to trash?",
      "reason": "Deleted manually in Duplicate Filter."
+    },
+    {
+     "delete dialog answer": "delete"
     }
    ],
    "after": {
@@ -123,6 +139,9 @@
      ],
      "action": "Send 2 files from my files to trash?",
      "reason": "Deleted manually in Duplicate Filter, along with its potential duplicate."
+    },
+    {
+     "delete dialog answer": "delete"
     }
    ],
    "after": {
@@ -147,14 +166,72 @@
    }
   },
   {
+   "did": "skip",
+   "answers": [],
+   "before": {
+    "index": "File One - 2/6 - 1 deletes",
+    "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+    "pair": 1
+   },
+   "events": [],
+   "after": {
+    "index": "File One - 3/6 - 1 deletes",
+    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "pair": 2
+   }
+  },
+  {
+   "did": "trash button",
+   "answers": [
+    "delete just this one"
+   ],
+   "before": {
+    "index": "File One - 3/6 - 1 deletes",
+    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "pair": 2
+   },
+   "events": [
+    {
+     "asked": "Delete just this file, or both?",
+     "title": "Are you sure?",
+     "yes": [
+      "delete just this one",
+      "delete both"
+     ],
+     "no": "forget it",
+     "answer": "delete just this one"
+    },
+    {
+     "delete dialog": [
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+     ],
+     "default_reason": "Deleted manually in Duplicate Filter.",
+     "suggested": "6c6f63616c2066696c6573",
+     "actions": [
+      "Send one file from my files to trash?"
+     ],
+     "action": "Send one file from my files to trash?",
+     "reason": "Deleted manually in Duplicate Filter."
+    },
+    {
+     "delete dialog answer": "cancel"
+    }
+   ],
+   "after": {
+    "index": "File One - 3/6 - 1 deletes",
+    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "pair": 2
+   }
+  },
+  {
    "did": "delete key",
    "answers": [
     "delete both"
    ],
    "before": {
-    "index": "File One - 2/6 - 1 deletes",
-    "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
-    "pair": 1
+    "index": "File One - 3/6 - 1 deletes",
+    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "pair": 2
    },
    "events": [
     {
@@ -169,8 +246,8 @@
     },
     {
      "delete dialog": [
-      "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
-      "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f"
+      "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671"
      ],
      "default_reason": "Deleted manually in Duplicate Filter, along with its potential duplicate.",
      "suggested": "6c6f63616c2066696c6573",
@@ -179,27 +256,85 @@
      ],
      "action": "Send 2 files from my files to trash?",
      "reason": "Deleted manually in Duplicate Filter, along with its potential duplicate."
+    },
+    {
+     "delete dialog answer": "delete"
     }
    ],
-   "after": {
-    "index": "File One - 3/6 - 2 deletes",
-    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
-    "pair": 2
-   }
-  },
-  {
-   "did": "skip",
-   "answers": [],
-   "before": {
-    "index": "File One - 3/6 - 2 deletes",
-    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
-    "pair": 2
-   },
-   "events": [],
    "after": {
     "index": "File One - 4/6 - 2 deletes",
     "shown": "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
     "pair": 3
+   }
+  },
+  {
+   "files": {
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    }
    }
   },
   {
@@ -232,104 +367,152 @@
    ],
    "after": {
     "index": "File One - 1/6 - no decisions yet",
-    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
     "pair": 0
    }
   },
   {
-   "did": "skip",
-   "answers": [],
+   "files": {
+    "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671": {
+     "in_my_files": false,
+     "trashed": true,
+     "deletion_reason": "Deleted manually in Duplicate Filter, along with its potential duplicate.",
+     "inbox": true
+    },
+    "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674": {
+     "in_my_files": false,
+     "trashed": true,
+     "deletion_reason": "Deleted manually in Duplicate Filter, along with its potential duplicate.",
+     "inbox": true
+    },
+    "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5": {
+     "in_my_files": false,
+     "trashed": true,
+     "deletion_reason": "Deleted manually in Duplicate Filter.",
+     "inbox": true
+    },
+    "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    },
+    "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    }
+   }
+  },
+  {
+   "did": "trash button",
+   "answers": [
+    "delete just this one"
+   ],
    "before": {
     "index": "File One - 1/6 - no decisions yet",
-    "shown": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+    "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
     "pair": 0
    },
-   "events": [],
+   "events": [
+    {
+     "asked": "Delete just this file, or both?",
+     "title": "Are you sure?",
+     "yes": [
+      "delete just this one",
+      "delete both"
+     ],
+     "no": "forget it",
+     "answer": "delete just this one"
+    },
+    {
+     "delete dialog": [
+      "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819"
+     ],
+     "default_reason": "Deleted manually in Duplicate Filter.",
+     "suggested": "6c6f63616c2066696c6573",
+     "actions": [
+      "Send one file from my files to trash?"
+     ],
+     "action": "Send one file from my files to trash?",
+     "reason": "Deleted manually in Duplicate Filter."
+    },
+    {
+     "delete dialog answer": "delete"
+    }
+   ],
    "after": {
-    "index": "File One - 2/6 - no decisions yet",
+    "index": "File One - 2/6 - 1 deletes",
     "shown": "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
     "pair": 1
    }
   },
   {
-   "did": "skip",
+   "did": "close",
    "answers": [],
    "before": {
-    "index": "File One - 2/6 - no decisions yet",
+    "index": "File One - 2/6 - 1 deletes",
     "shown": "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
     "pair": 1
    },
-   "events": [],
+   "events": [
+    {
+     "finish": "commit 1 deletes?",
+     "answer": "forget"
+    }
+   ],
    "after": {
-    "index": "File One - 3/6 - no decisions yet",
-    "shown": "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff",
-    "pair": 2
+    "index": "File One - 2/6 - 1 deletes",
+    "shown": "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+    "pair": 1
    }
   },
   {
-   "did": "skip",
-   "answers": [],
-   "before": {
-    "index": "File One - 3/6 - no decisions yet",
-    "shown": "e665a9581c75979e1a2873a65bc2b1e93d8ea4ab90df0e78b78aa2a6979a4bff",
-    "pair": 2
-   },
-   "events": [],
-   "after": {
-    "index": "File One - 4/6 - no decisions yet",
-    "shown": "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed",
-    "pair": 3
-   }
-  },
-  {
-   "did": "skip",
-   "answers": [],
-   "before": {
-    "index": "File One - 4/6 - no decisions yet",
-    "shown": "ec8b2e5a2a04d65268d2b6021782648cc0d808b0b30f9b07f3711957cbf927ed",
-    "pair": 3
-   },
-   "events": [],
-   "after": {
-    "index": "File One - 5/6 - no decisions yet",
-    "shown": "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e",
-    "pair": 4
-   }
-  },
-  {
-   "did": "skip",
-   "answers": [],
-   "before": {
-    "index": "File One - 5/6 - no decisions yet",
-    "shown": "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e",
-    "pair": 4
-   },
-   "events": [],
-   "after": {
-    "index": "File One - 6/6 - no decisions yet",
-    "shown": "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
-    "pair": 5
+   "files": {
+    "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
+     "in_my_files": true,
+     "trashed": false,
+     "deletion_reason": "Unknown deletion reason.",
+     "inbox": false
+    }
    }
   }
- ],
- "files_after": {
-  "fe2f6dba54db14a67e98038f5cdfdbfc40f70c33687ebd3ada6268044b816b5f": {
-   "in_my_files": false,
-   "trashed": true,
-   "deletion_reason": "Deleted manually in Duplicate Filter, along with its potential duplicate.",
-   "inbox": true
-  },
-  "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819": {
-   "in_my_files": false,
-   "trashed": true,
-   "deletion_reason": "Deleted manually in Duplicate Filter, along with its potential duplicate.",
-   "inbox": true
-  },
-  "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5": {
-   "in_my_files": false,
-   "trashed": true,
-   "deletion_reason": "Deleted manually in Duplicate Filter.",
-   "inbox": true
-  }
- }
+ ]
 }

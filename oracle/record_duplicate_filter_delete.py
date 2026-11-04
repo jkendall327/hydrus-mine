@@ -112,8 +112,19 @@ def record(session):
             'reason': self._GetReason(),
         })
     ClientGUIScrolledPanelsEdit.EditDeleteFilesPanel.__init__ = panel_init
-    # (the dialog accepted as it opens)
-    ClientGUITopLevelWindowsPanels.DialogEdit.exec = lambda self: QW.QDialog.DialogCode.Accepted
+    # (the dialog accepted as it opens, or cancelled where scripted)
+    exec_answers = []
+
+    def dialog_exec(self):
+        accepted = exec_answers.pop(0) if exec_answers else True
+        events.append({'delete dialog answer': 'delete' if accepted else 'cancel'})
+        return QW.QDialog.DialogCode.Accepted if accepted else QW.QDialog.DialogCode.Rejected
+    ClientGUITopLevelWindowsPanels.DialogEdit.exec = dialog_exec
+
+    def finish(win, label):
+        events.append({'finish': label, 'answer': 'forget'})
+        return (QW.QDialog.DialogCode.Rejected, False)
+    ClientGUIScrolledPanelsCommitFiltering.GetFinishFilteringAnswer = finish
 
     def interstitial(win, label):
         events.append({'interstitial': label})
@@ -146,6 +157,15 @@ def record(session):
     else:
         raise Exception('the filter never showed a pair')
     time.sleep(1.0)
+
+    # the batch's files archived, and the delete lock's reinbox option on, so
+    # deleting re-inboxes them (`delete_lock_reinbox_deletees_after_duplicate_filter`)
+    from hydrus.core import HydrusConstants as HC
+    from hydrus.client.metadata import ClientContentUpdates
+    batch_hashes = qt(lambda: sorted({r.GetHash() for pair in holder['canvas']._batch_of_pairs_to_process for r in pair}))
+    cu = ClientContentUpdates.ContentUpdate(HC.CONTENT_TYPE_FILES, HC.CONTENT_UPDATE_ARCHIVE, batch_hashes)
+    controller.WriteSynchronous('content_updates', ClientContentUpdates.ContentUpdatePackage.STATICCreateFromContentUpdate(CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY, cu))
+    controller.new_options.SetBoolean('delete_lock_reinbox_deletees_after_duplicate_filter', True)
 
     def settle(seconds=0.5):
         deadline = time.time() + seconds
@@ -185,26 +205,28 @@ def record(session):
         step('switch', switch)
         step('delete key', delete_key, ['delete both'])
         step('back', back)
+        step('skip', skip)
+        exec_answers.append(False)
+        step('trash button', delete_button, ['delete just this one'])
         step('delete key', delete_key, ['delete both'])
-        # on to the batch's end, skipping
+        # nothing is deleted before the commit
+        steps.append({'files': state_of(batch_hex)})
+        # on to the batch's end, skipping, until it commits
         for _ in range(8):
-            if canvas._current_media is None or canvas._GetNumRemainingDecisions() == 0:
+            committed = any('interstitial' in e for s in steps for e in s.get('events', []))
+            if committed or canvas._current_media is None:
                 break
             step('skip', skip)
+        steps.append({'files': state_of(batch_hex)})
+        # in the next batch: a deletion, then closing, forgetting it
+        step('trash button', delete_button, ['delete just this one'])
+        forgotten = [e['delete dialog'] for e in steps[-1]['events'] if 'delete dialog' in e][0]
+        step('close', canvas.UserOKToClose)
+        steps.append({'files': state_of(forgotten)})
         return steps
 
-    out = {'steps': qt(drive)}
-    time.sleep(2.0)
-
-    # the files after the commit
-    def files():
-        canvas = holder['canvas']
-        hashes = set()
-        for s in out['steps']:
-            for e in s.get('events', []):
-                if 'delete dialog' in e:
-                    hashes.update(e['delete dialog'])
-        results = controller.Read('media_results', [bytes.fromhex(h) for h in sorted(hashes)])
+    def state_of(hexes):
+        results = controller.Read('media_results', [bytes.fromhex(h) for h in sorted(hexes)])
         state = {}
         for r in results:
             lm = r.GetLocationsManager()
@@ -214,11 +236,17 @@ def record(session):
                 'deletion_reason': lm.GetLocalFileDeletionReason() if hasattr(lm, 'GetLocalFileDeletionReason') else None,
                 'inbox': r.GetInbox(),
             }
-        canvas._duplicate_pair_decisions = []
-        canvas._TryToCloseWindow = lambda: None
-        holder['frame'].hide()
         return state
-    out['files_after'] = qt(files)
+
+    batch_hex = [h.hex() for h in batch_hashes]
+
+    out = {'archived': batch_hex, 'steps': qt(drive)}
+
+    def done():
+        holder['canvas']._duplicate_pair_decisions = []
+        holder['canvas']._TryToCloseWindow = lambda: None
+        holder['frame'].hide()
+    qt(done)
     return out
 
 

@@ -90,8 +90,11 @@ struct Decided {
     decision: Decision,
     /// A custom action's own merge options, in place of the client's.
     merge: Option<MergeOptions>,
-    /// A deletion's choice, applied when the batch commits.
-    deletion: Option<Deferred>,
+    /// A deletion's choice, applied when the batch commits, and the files
+    /// it was asked for (`media`: skipped for the rest of the batch, and
+    /// inboxed first, as the delete lock's option says, whatever the dialog
+    /// could act on).
+    deletion: Option<(Vec<HashId>, Deferred)>,
 }
 
 /// Where the filter is after a step.
@@ -408,8 +411,8 @@ impl DuplicateFilter {
                 }
             }
             // (approved or not, as the reference does)
-            if let Some(deletion) = &d.deletion {
-                used.extend(deletion.choice.files.iter().copied());
+            if let Some((files, _)) = &d.deletion {
+                used.extend(files.iter().copied());
             }
             if let (Decision::Review { .. }, Some((_, rule))) = (d.decision, &self.rule) {
                 if matches!(rule.action, RuleAction::Better | RuleAction::SameQuality)
@@ -596,7 +599,11 @@ impl DuplicateFilter {
     /// Delete one or both of the pair shown, as the delete files dialog
     /// chose (`_Delete`): recorded as the pair's decision, the files
     /// deleted when the batch commits; on to the next pair.
-    pub fn decide_deletion(&mut self, deletion: Deferred) -> anyhow::Result<Step> {
+    pub fn decide_deletion(
+        &mut self,
+        files: Vec<HashId>,
+        deletion: Deferred,
+    ) -> anyhow::Result<Step> {
         let Some((a, b)) = self.current() else {
             return Ok(Step::Finished);
         };
@@ -605,7 +612,7 @@ impl DuplicateFilter {
             b,
             decision: Decision::Deletion,
             merge: None,
-            deletion: Some(deletion),
+            deletion: Some((files, deletion)),
         });
         self.index += 1;
         self.next()
@@ -701,13 +708,13 @@ impl DuplicateFilter {
         }
         self.store.write_content(move |w| {
             for d in &work {
-                if let Some(deletion) = &d.deletion {
+                if let Some((files, deletion)) = &d.deletion {
                     // (inboxed first, so archived files may go, if the
                     // delete lock's option says)
                     let lock: hydrus_store::delete_lock::DeleteLock =
                         hydrus_store::settings::get(w.conn())?;
                     if lock.reinbox_after_duplicate_filter {
-                        w.inbox(&deletion.choice.files)?;
+                        w.inbox(files)?;
                     }
                     deletion.apply(w)?;
                     continue;
@@ -789,6 +796,19 @@ impl DuplicateFilter {
 
     pub fn store(&self) -> &Arc<Store> {
         &self.store
+    }
+
+    /// The file domain the delete dialog suggests (`_location_context`):
+    /// the search's, if it is one domain; none for pairs given or under
+    /// review, whose filter searches every local file domain.
+    pub fn suggested_domain(&self) -> Option<hydrus_core::ServiceKey> {
+        if self.given.is_some() || self.rule.is_some() {
+            return None;
+        }
+        let current = self.query.search_1.location.current();
+        (current.len() == 1)
+            .then(|| current.iter().next().cloned())
+            .flatten()
     }
 
     pub fn scores(&self) -> &ComparisonScores {

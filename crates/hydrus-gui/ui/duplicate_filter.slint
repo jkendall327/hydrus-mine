@@ -182,12 +182,14 @@ export component DuplicateFilterWindow inherits Window {
     // "skip", "back"
     callback decide(string);
     callback switch-media();
+    // the delete files dialog is open over the filter
+    in property <bool> deleting;
     // the top hover frame (`CanvasHoverFrameTopDuplicatesFilter`), which
     // shows with the pointer over it or near it, in the window's middle
     // three fifths: the file's info line, the zoom ("100%"), the tooltips
     // that name shortcuts, the file's state, the menus' entries
     in property <string> info-line;
-    out property <bool> info-showing: root.question == "" && (top-frame.has-hover || top-frame.volume-open || (pointer.has-hover
+    out property <bool> info-showing: root.question == "" && !root.deleting && (top-frame.has-hover || top-frame.volume-open || (pointer.has-hover
         && pointer.mouse-y <= top-frame.box-height + 20px
         && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
     in property <string> zoom-text;
@@ -241,7 +243,7 @@ export component DuplicateFilterWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
-            if (root.question != "") {
+            if (root.question != "" || root.deleting) {
                 return reject;
             }
             if (event.modifiers.shift) {
@@ -283,9 +285,14 @@ export component DuplicateFilterWindow inherits Window {
                 root.decide("skip");
                 return accept;
             }
-            // (the 'media' shortcut set's delete key: this file, or both?)
+            // (the 'media' shortcut set's delete key: this file, or both?
+            // and shift+delete: undelete)
             if (event.text == Key.Delete && !event.modifiers.shift) {
                 root.delete();
+                return accept;
+            }
+            if (event.text == Key.Delete && event.modifiers.shift) {
+                root.undelete();
                 return accept;
             }
             if (event.text == " ") {
@@ -340,7 +347,7 @@ export component DuplicateFilterWindow inherits Window {
                 }
                 pointer := TouchArea {
                     pointer-event(event) => {
-                        if (root.question != "" || event.kind != PointerEventKind.down) {
+                        if (root.question != "" || root.deleting || event.kind != PointerEventKind.down) {
                             return;
                         }
                         if (event.button == PointerEventButton.left) {
@@ -352,7 +359,7 @@ export component DuplicateFilterWindow inherits Window {
                         }
                     }
                     scroll-event(event) => {
-                        if (root.question != "") {
+                        if (root.question != "" || root.deleting) {
                             return accept;
                         }
                         if (event.modifiers.control) {
@@ -443,6 +450,10 @@ export component DuplicateFilterWindow inherits Window {
             focus-media => { root.focus-media(); }
             close => { root.close-requested(); }
         }
+
+        // (the delete files dialog is open: as the reference's is modal,
+        // nothing here takes the pointer until it closes)
+        if root.deleting: TouchArea { }
 
         if root.question != "": Rectangle {
             background: Theme.shade;
