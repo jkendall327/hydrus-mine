@@ -55,30 +55,37 @@ macro_rules! escapes {
 
 escapes!(
     AboutWindow,
+    AutoResolutionReviewWindow,
+    BandwidthWindow,
     CheckerOptionsWindow,
     ChoiceButtonsWindow,
     EditServiceWindow,
     EditSubscriptionWindow,
     EditValueWindow,
+    EmbeddedMetadataWindow,
     ExternalCallWindow,
     ExternalCommandWindow,
     FavouriteEditWindow,
     FavouritesWindow,
+    FileMaintenanceWindow,
     FilenameTaggingWindow,
     ForceFiletypeWindow,
     ImportOptionsOverwriteWindow,
     IncrementalTaggingWindow,
     LocationsWindow,
     LoginStepWindow,
+    LoginTestResultWindow,
     ManageNotesWindow,
     ManageTagsWindow,
     ManageTimesWindow,
     ManageUrlsWindow,
     MediaViewWindow,
     MergeOptionsWindow,
+    NetworkJobsWindow,
     OpenFileCallsWindow,
     PngExportWindow,
     PngsExportWindow,
+    ReviewImportsWindow,
     SearchOrWindow,
     ServicesEditorWindow,
     ShortcutCommandWindow,
@@ -87,7 +94,11 @@ escapes!(
     SubscriptionsWindow,
     TagBannerWindow,
     TagFilterWindow,
+    TagMigrationWindow,
     TagRelationshipsWindow,
+    TagSyncReviewWindow,
+    VacuumReviewWindow,
+    WhatIsThisWindow,
 );
 
 /// Whether it is a dialog (kept when applied) or a frame (kept as it moves).
@@ -334,6 +345,10 @@ impl<C: Escapes + 'static> Dialog<C> {
     /// already closed).
     pub(crate) fn cancel(&self) -> bool {
         if !self.is_open() {
+            // (a window already ended, shown again, is only hidden)
+            if let Some(component) = self.inner.window.upgrade() {
+                let _ = component.hide();
+            }
             return true;
         }
         let may = self

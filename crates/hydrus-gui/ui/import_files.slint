@@ -9,6 +9,11 @@ import { Button, CheckBox, LineEdit, ProgressIndicator } from "std-widgets.slint
 import { Theme } from "@hydrus_ui_core";
 
 export component ReviewImportsWindow inherits Window {
+    // (Escape, once nothing within takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
+    // (the window's keys hold the focus it opens with)
+    forward-focus: keys;
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -59,7 +64,8 @@ export component ReviewImportsWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                root.cancel();
+                // ("Remove them?" answered no first)
+                if (root.asking-remove) { root.asking-remove = false; } else { root.escape(); }
                 return accept;
             }
             if (event.text == Key.Delete && root.any-selected) {

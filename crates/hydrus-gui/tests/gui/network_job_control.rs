@@ -46,7 +46,7 @@ fn global_rules(store: &Store) -> serde_json::Value {
             .rules(),
     )
 }
-fn snapshot() -> Snapshot {
+pub(crate) fn snapshot() -> Snapshot {
     Snapshot {
         epoch: "test daemon".into(),
         at: now(),

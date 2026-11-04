@@ -200,11 +200,14 @@ pub fn open(
         .any(|s| matches!(s.kind, ServiceKind::LocalFileStorage) && media.is_current_in(s.id));
     // Hide any previous window. Its worker only owns its own result channel,
     // and the old window's close callback cannot remove a newer slot.
-    if let Some(previous) = slot.borrow_mut().take() {
-        let _ = previous.hide();
+    let previous = slot.borrow_mut().take();
+    if let Some(previous) = previous {
+        // (through the dialog helper, as its close button)
+        previous.invoke_dismissed();
     }
     let window =
         crate::app_title::new::<crate::EmbeddedMetadataWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_basics(basics(&lines).into());
     window.set_instruction(exif_instruction(info.mime).into());
     window.set_loading(true);
@@ -237,11 +240,14 @@ pub fn open(
             }
         }
     };
-    window.on_dismissed(close.clone());
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    window.on_dismissed({
+        let ended = ended.clone();
+        move || {
+            ended.close();
+        }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(close);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

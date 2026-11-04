@@ -50,7 +50,6 @@ impl Slot {
             state.close();
         }
     }
-    #[cfg(test)]
     fn window(&self) -> Option<VacuumReviewWindow> {
         self.0
             .current
@@ -59,6 +58,15 @@ impl Slot {
             .and_then(|open| open.state.window.upgrade())
     }
 }
+impl crate::Bound {
+    /// The open "review vacuum data" window, for tests.
+    #[must_use]
+    #[doc(hidden)]
+    pub fn vacuum_review(&self) -> Option<VacuumReviewWindow> {
+        self.vacuum_review_owner.0.window()
+    }
+}
+
 /// Only the final shared Bound owner retires the slot; callback clones do not own it.
 pub(crate) struct Owner(Slot);
 impl Owner {
@@ -86,6 +94,8 @@ struct Confirmation {
     review: RefCell<State>,
     accepted: Rc<dyn Fn()>,
     timer: Timer,
+    /// How it ends (the dialog helper's frame).
+    ended: crate::dialog::Dialog<VacuumReviewWindow>,
 }
 impl Confirmation {
     fn close(self: &Rc<Self>) {
@@ -94,6 +104,8 @@ impl Confirmation {
         }
         self.pending.set(false);
         self.timer.stop();
+        // (however it closes, it ends through the dialog helper)
+        self.ended.cancel_confirmed();
         if let Some(window) = self.window.upgrade() {
             window.set_question(SharedString::new());
             let _ = window.hide();
@@ -280,6 +292,7 @@ fn open_using_with_admission(
     let rows = rows()?;
     let window =
         crate::app_title::new::<crate::VacuumReviewWindow>().map_err(|error| error.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_info(model::INFO.into());
     let state = Rc::new(Confirmation {
         window: window.as_weak(),
@@ -294,6 +307,7 @@ fn open_using_with_admission(
         }),
         accepted,
         timer: Timer::default(),
+        ended: ended.clone(),
     });
     paint(&window, &state.review.borrow());
     window.on_clicked({
@@ -348,15 +362,15 @@ fn open_using_with_admission(
         }
     });
     window.on_close_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.close();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let state = state.clone();
         move || state.close()
-    });
-    window.window().on_close_requested({
-        let state = state.clone();
-        move || {
-            state.close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     state
         .timer
@@ -390,12 +404,8 @@ mod tests {
     use super::*;
     use slint::Model as _;
 
-    #[expect(
-        clippy::used_underscore_binding,
-        reason = "tests inspect the lifetime-only Bound owner"
-    )]
     fn bound_window(bound: &crate::Bound) -> Option<VacuumReviewWindow> {
-        bound._vacuum_review_owner.0.window()
+        bound.vacuum_review()
     }
 
     fn store() -> (tempfile::TempDir, Arc<Store>) {

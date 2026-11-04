@@ -125,6 +125,7 @@ pub fn open(
         Migration::new(store, key, files).map_err(|e| e.to_string())?,
     ));
     let window = crate::app_title::new::<crate::TagMigrationWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_services(strings(
         settings.borrow().services.iter().map(|s| s.name.clone()),
     ));
@@ -215,7 +216,7 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = crate::tag_filter_window::open(
+            match crate::tag_filter_window::open(
                 &store,
                 &filter,
                 false,
@@ -227,9 +228,14 @@ pub fn open(
                 "Only tags passing this filter are migrated.",
                 &filter_slot,
                 chosen,
-            ) && let Some(w) = weak.upgrade()
-            {
-                w.set_error(e.to_string().into());
+            ) {
+                // (kept, so the frame waits on it and closes it with itself)
+                Ok(editor) => *filter_slot.borrow_mut() = Some(editor),
+                Err(e) => {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_error(e.to_string().into());
+                    }
+                }
             }
         }
     });
@@ -401,6 +407,22 @@ pub fn open(
             }
         }
     });
+    // (its tag filter and locations editors are modal children in the
+    // reference: `TagFilterButton`'s and the location button's `DialogEdit`)
+    ended.modal_child({
+        let filter_slot = filter_slot.clone();
+        let location_slot = location_slot.clone();
+        move || {
+            filter_slot
+                .borrow()
+                .as_ref()
+                .is_some_and(|w| w.window().is_visible())
+                || location_slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|w| w.window().is_visible())
+        }
+    });
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
@@ -421,11 +443,14 @@ pub fn open(
             slot.borrow_mut().take();
         }
     };
-    window.on_close_clicked(close.clone());
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    window.on_close_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.close();
+        }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(close);
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     *slot.borrow_mut() = Some(window.clone_strong());
     window.show().map_err(|e| e.to_string())?;

@@ -367,7 +367,8 @@ pub(crate) type Windows = Rc<RefCell<Vec<(u64, AutoResolutionReviewWindow)>>>;
 pub(crate) fn close_all(windows: &Windows) {
     let open: Vec<_> = windows.borrow_mut().drain(..).collect();
     for (_, window) in open {
-        let _ = window.hide();
+        // (through the dialog helper, as its close button)
+        window.invoke_close_window();
     }
 }
 
@@ -383,6 +384,7 @@ pub(crate) fn open(
 ) -> Result<(), String> {
     let window =
         crate::app_title::new::<crate::AutoResolutionReviewWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_window_title(TITLE.into());
     window.set_rule_name(rule.name.as_str().into());
     window.set_tabs(strings(&TABS));
@@ -711,16 +713,13 @@ pub(crate) fn open(
         })
     };
     window.on_close_window({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.close();
         }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     // (approval or denial at work: its progress on its button, then the
     // lists once done)
     let timer = slint::Timer::default();

@@ -13,11 +13,12 @@ use slint::ComponentHandle as _;
 use crate::WhatIsThisWindow;
 
 thread_local! {
-    /// The windows opened, kept alive (the reference opens a frame each time).
+    /// The windows open, kept alive until closed (the reference opens a
+    /// frame each time).
     static OPEN: RefCell<Vec<WhatIsThisWindow>> = const { RefCell::new(Vec::new()) };
 }
 
-/// The windows opened so far (for the tests).
+/// The windows open (for the tests).
 pub fn windows() -> Vec<WhatIsThisWindow> {
     OPEN.with(|open| {
         open.borrow()
@@ -141,6 +142,27 @@ fn import_paths(window: &WhatIsThisWindow, paths: &[PathBuf]) {
 /// If the window cannot be made.
 pub fn open() -> Result<WhatIsThisWindow, slint::PlatformError> {
     let window = crate::app_title::new::<WhatIsThisWindow>()?;
+    // (an ordinary frame: its window's close and Escape close it, and it
+    // keeps its size and place as it moves)
+    let ended = crate::dialog::Dialog::frame(&window);
+    window.on_close_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.close();
+        }
+    });
+    // (a closed window is let go)
+    ended.on_closed({
+        let weak = window.as_weak();
+        move || {
+            OPEN.with(|open| {
+                open.borrow_mut().retain(|w| {
+                    weak.upgrade()
+                        .is_none_or(|closed| !std::ptr::eq(w.window(), closed.window()))
+                });
+            });
+        }
+    });
     let notice = Rc::new(slint::Timer::default());
     window.on_paste({
         let weak = window.as_weak();

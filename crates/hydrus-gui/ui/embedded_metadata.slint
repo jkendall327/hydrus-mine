@@ -50,54 +50,67 @@ export component EmbeddedMetadataWindow inherits Window {
     callback sort(int, bool);
     callback dismissed();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 8px;
-        ScrollView {
-            VerticalLayout {
-                alignment: start;
-                spacing: 8px;
-                Box {
-                    title: "basics";
-                    Text { text: root.basics; color: Theme.text; wrap: word-wrap; }
-                }
-                if root.loading: Text { text: "Loading embedded metadata…"; color: Theme.text; }
-                if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-                if root.has-exif: Box {
-                    title: "EXIF";
-                    Text {
-                        text: root.instruction;
-                        color: Theme.text;
-                        horizontal-alignment: center;
-                        wrap: word-wrap;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 8px;
+            ScrollView {
+                VerticalLayout {
+                    alignment: start;
+                    spacing: 8px;
+                    Box {
+                        title: "basics";
+                        Text { text: root.basics; color: Theme.text; wrap: word-wrap; }
                     }
-                    ListTable {
-                        preferred-height: 352px;
-                        columns: [
-                            { title: "id", width: 65px, stretch: false },
-                            { title: "label", width: 190px, stretch: false },
-                            { title: "value", width: 220px, stretch: true },
-                        ];
-                        rows: root.rows;
-                        sort-column: root.sort-column;
-                        ascending: root.ascending;
-                        row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
-                        row-activated(row) => { root.row-activated(row); }
-                        sort(column, ascending) => { root.sort(column, ascending); }
+                    if root.loading: Text { text: "Loading embedded metadata…"; color: Theme.text; }
+                    if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+                    if root.has-exif: Box {
+                        title: "EXIF";
+                        Text {
+                            text: root.instruction;
+                            color: Theme.text;
+                            horizontal-alignment: center;
+                            wrap: word-wrap;
+                        }
+                        ListTable {
+                            preferred-height: 352px;
+                            columns: [
+                                { title: "id", width: 65px, stretch: false },
+                                { title: "label", width: 190px, stretch: false },
+                                { title: "value", width: 220px, stretch: true },
+                            ];
+                            rows: root.rows;
+                            sort-column: root.sort-column;
+                            ascending: root.ascending;
+                            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                            row-activated(row) => { root.row-activated(row); }
+                            sort(column, ascending) => { root.sort(column, ascending); }
+                        }
                     }
-                }
-                if root.has-xmp: TextBox { title: "XMP"; text: root.xmp; }
-                if root.has-iptc: TextBox { title: "IPTC"; text: root.iptc; }
-                if root.has-text: TextBox { title: "human-readable text"; text: root.text; }
-                if root.extra.length > 0: Box {
-                    title: "extra info";
-                    for row in root.extra: Text { text: row; color: Theme.text; wrap: word-wrap; }
+                    if root.has-xmp: TextBox { title: "XMP"; text: root.xmp; }
+                    if root.has-iptc: TextBox { title: "IPTC"; text: root.iptc; }
+                    if root.has-text: TextBox { title: "human-readable text"; text: root.text; }
+                    if root.extra.length > 0: Box {
+                        title: "extra info";
+                        for row in root.extra: Text { text: row; color: Theme.text; wrap: word-wrap; }
+                    }
                 }
             }
-        }
-        HorizontalLayout {
-            alignment: end;
-            Btn { text: "close"; clicked => { root.dismissed(); } }
+            HorizontalLayout {
+                alignment: end;
+                Btn { text: "close"; clicked => { root.dismissed(); } }
+            }
         }
     }
 }

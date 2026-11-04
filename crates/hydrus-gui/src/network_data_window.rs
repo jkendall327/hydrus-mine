@@ -188,10 +188,10 @@ impl Slots {
         let bandwidth = self.bandwidth.borrow().clone();
         let jobs = self.jobs.borrow().clone();
         if let Some(bandwidth) = bandwidth {
-            bandwidth.close();
+            bandwidth.end();
         }
         if let Some(jobs) = jobs {
-            jobs.close();
+            jobs.end();
         }
     }
 }
@@ -273,8 +273,21 @@ struct Bandwidth {
     edit: RefCell<Option<Edit>>,
     pending: RefCell<Option<Operation>>,
     error: RefCell<String>,
+    /// How it ends (the dialog helper's frame), once made.
+    ended: RefCell<Option<crate::dialog::Dialog<BandwidthWindow>>>,
 }
 impl Bandwidth {
+    /// Ended through the dialog helper (its window hidden, its frame's
+    /// autosave stopped), then closed.
+    fn end(&self) {
+        let ended = self.ended.borrow().clone();
+        match ended {
+            Some(ended) => {
+                ended.cancel_confirmed();
+            }
+            None => self.close(),
+        }
+    }
     fn show(&self) {
         let formatting = hydrus_gui_model::gui_format::preferences(&self.store);
         let review = self.review.borrow();
@@ -481,12 +494,9 @@ impl Bandwidth {
             let _ = edit.window.hide();
         }
         if self.direct.get() {
-            self.active.set(false);
-            self.timer.stop();
-            let _ = self.worker.send.send(Operation::Stop);
-            if let Some(owner) = self.owner.upgrade() {
-                owner.borrow_mut().take();
-            }
+            // (the hidden owner of a rules editor opened on its own ends
+            // with it)
+            self.end();
         }
     }
     fn edit(self: &Rc<Self>, context: NetworkContext) {
@@ -692,6 +702,7 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         return Ok(w);
     }
     let window = crate::app_title::new::<crate::BandwidthWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_columns(columns(&[
         ("network context", 250.0),
         ("type", 105.0),
@@ -732,6 +743,7 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         edit: RefCell::default(),
         pending: RefCell::default(),
         error: RefCell::default(),
+        ended: RefCell::new(Some(ended.clone())),
     });
     window.on_row_clicked({
         let state = Rc::downgrade(&state);
@@ -891,20 +903,23 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         }
     });
     window.on_close_clicked({
-        let state = Rc::downgrade(&state);
+        let ended = ended.clone();
         move || {
-            if let Some(s) = state.upgrade() {
-                s.close();
-            }
+            ended.close();
         }
     });
-    window.window().on_close_requested({
+    // (a context's rules editor is a modal child in the reference)
+    ended.modal_child({
+        let state = Rc::downgrade(&state);
+        move || state.upgrade().is_some_and(|s| s.edit.borrow().is_some())
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let state = Rc::downgrade(&state);
         move || {
             if let Some(s) = state.upgrade() {
                 s.close();
             }
-            slint::CloseRequestResponse::KeepWindowShown
         }
     });
     state
@@ -948,6 +963,11 @@ pub fn open_rules(store: Arc<Store>, slots: &Slots, context: NetworkContext) -> 
 struct Jobs {
     store: Arc<Store>,
     rules: Slots,
+    /// Whether its cog opened a rules editor (a modal child in the
+    /// reference: `ClientGUINetworkJobControl`'s `DialogEdit`).
+    rules_opened: Cell<bool>,
+    /// How it ends (the dialog helper's frame).
+    ended: crate::dialog::Dialog<NetworkJobsWindow>,
     control_owner: u64,
     auto_override: Cell<bool>,
     auto_sent: RefCell<Option<(String, u64, bool)>>,
@@ -1194,7 +1214,9 @@ impl Jobs {
                 crate::copy_to_clipboard(url);
             }
             Some(hydrus_gui_model::network_job_control::Action::Rules(context)) => {
-                let _ = open_rules(self.store.clone(), &self.rules, context.clone());
+                if open_rules(self.store.clone(), &self.rules, context.clone()).is_ok() {
+                    self.rules_opened.set(true);
+                }
             }
             Some(hydrus_gui_model::network_job_control::Action::Job(action)) => {
                 if let Some((epoch, id)) = self.cog_job.borrow().as_ref()
@@ -1298,7 +1320,28 @@ impl Jobs {
         }
         self.manual.set(true);
     }
+    /// Whether the rules editor its cog opened is still open.
+    fn rules_open(&self) -> bool {
+        let open =
+            self.rules_opened.get()
+                && self.rules.bandwidth.borrow().as_ref().is_some_and(|b| {
+                    b.edit.borrow().is_some() || b.requested_edit.borrow().is_some()
+                });
+        self.rules_opened.set(open);
+        open
+    }
+    fn end(&self) {
+        self.ended.cancel_confirmed();
+    }
     fn close(&self) {
+        // (its rules editor, a modal child, closes with it)
+        if self.rules_open() {
+            let bandwidth = self.rules.bandwidth.borrow().clone();
+            if let Some(bandwidth) = bandwidth {
+                bandwidth.requested_edit.borrow_mut().take();
+                bandwidth.close_edit();
+            }
+        }
         if let Some((epoch, job, true)) = self.auto_sent.borrow_mut().take() {
             let _ = self.worker.send.send(Operation::Job(Command {
                 epoch,
@@ -1329,6 +1372,7 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         return Ok(w);
     }
     let window = crate::app_title::new::<crate::NetworkJobsWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_columns(columns(&[
         ("position", 150.0),
         ("url", 350.0),
@@ -1338,6 +1382,8 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
     ]));
     let state = Rc::new(Jobs {
         store: store.clone(),
+        rules_opened: Cell::new(false),
+        ended: ended.clone(),
         rules: Slots {
             bandwidth: slots.bandwidth.clone(),
             jobs: Rc::default(),
@@ -1479,20 +1525,23 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         }
     });
     window.on_close_clicked({
-        let state = Rc::downgrade(&state);
+        let ended = ended.clone();
         move || {
-            if let Some(s) = state.upgrade() {
-                s.close();
-            }
+            ended.close();
         }
     });
-    window.window().on_close_requested({
+    // (whatever ends it, through the dialog helper)
+    // (the rules editor its cog opens is a modal child in the reference)
+    ended.modal_child({
+        let state = Rc::downgrade(&state);
+        move || state.upgrade().is_some_and(|s| s.rules_open())
+    });
+    ended.on_closed({
         let state = Rc::downgrade(&state);
         move || {
             if let Some(s) = state.upgrade() {
                 s.close();
             }
-            slint::CloseRequestResponse::KeepWindowShown
         }
     });
     state

@@ -632,4 +632,77 @@ mod tests {
         assert!(window.get_information().is_empty());
         window.hide().unwrap();
     }
+
+    fn escape(window: &FileMaintenanceWindow) {
+        use slint::platform::{Key, WindowEvent};
+        let text: SharedString = Key::Escape.into();
+        window
+            .window()
+            .dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
+        window
+            .window()
+            .dispatch_event(WindowEvent::KeyReleased { text });
+    }
+
+    /// A real Escape answers the window's yes/no questions no and dismisses
+    /// its information first, as their own dialogs in the reference
+    /// (`_AddJob`'s `GetYesNo`, `ShowInformation`, the clear question), and
+    /// only then closes the frame.
+    #[test]
+    fn escape_answers_its_questions_no_and_dismisses_information_before_closing() {
+        let _windows = crate::headless::init();
+        let (_directory, store) = store(1001);
+        let ui = crate::MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = crate::bind(
+            &ui,
+            crate::Pages::single(crate::SearchPage::new(store.clone())),
+        );
+        let window = open(&ui, &bound);
+        window
+            .window()
+            .set_size(slint::LogicalSize::new(950.0, 600.0));
+        select(&window, 1001);
+        // "schedule on 1,001 files?"
+        ask(&window);
+        escape(&window);
+        assert!(
+            window.get_new_question().is_empty(),
+            "the add question answered no"
+        );
+        assert!(counts(&store).is_empty(), "nothing scheduled");
+        assert!(window.window().is_visible());
+        // the job's description
+        window.invoke_see_description();
+        assert!(!window.get_information().is_empty());
+        escape(&window);
+        assert!(
+            window.get_information().is_empty(),
+            "the description dismissed"
+        );
+        assert!(window.window().is_visible());
+        // "Jobs added!"
+        ask(&window);
+        window.invoke_new_answered(true);
+        pump(|| window.get_information() == model::ADDED);
+        escape(&window);
+        assert!(window.get_information().is_empty(), "the notice dismissed");
+        assert!(window.window().is_visible());
+        // "Clear all the selected scheduled work?"
+        window.invoke_refresh_clicked();
+        pump(|| window.get_rows().row_count() > 0);
+        window.invoke_clicked(0, false, false);
+        window.invoke_clear_clicked();
+        assert!(!window.get_question().is_empty());
+        escape(&window);
+        assert!(
+            window.get_question().is_empty(),
+            "the clear question answered no"
+        );
+        assert!(!counts(&store).is_empty(), "nothing cleared");
+        assert!(window.window().is_visible());
+        // and then Escape closes it
+        escape(&window);
+        assert!(!window.window().is_visible(), "then closed");
+    }
 }

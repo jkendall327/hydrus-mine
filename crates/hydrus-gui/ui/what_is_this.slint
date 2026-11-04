@@ -17,20 +17,39 @@ export component WhatIsThisWindow inherits Window {
     in property <string> paste-tooltip: "Paste paths/bitmaps/JSON from clipboard!";
     callback paste();
     callback picture-clicked();
-    VerticalLayout {
-        padding: 8px; spacing: 6px;
-        TouchArea {
-            height: 346px;
-            mouse-cursor: pointer;
-            clicked => { root.picture-clicked(); }
-            Image { source: @image-url("../../../static/question_mark_on_head.jpg"); image-fit: contain; }
+    callback close-clicked();
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout {
-            alignment: end; spacing: 8px;
-            Text { text: root.notice; color: Theme.text; vertical-alignment: center; }
-            Btn { text: "paste"; clicked => { root.paste(); } }
+        VerticalLayout {
+            padding: 8px; spacing: 6px;
+            TouchArea {
+                height: 346px;
+                mouse-cursor: pointer;
+                clicked => { root.picture-clicked(); }
+                Image { source: @image-url("../../../static/question_mark_on_head.jpg"); image-fit: contain; }
+            }
+            HorizontalLayout {
+                alignment: end; spacing: 8px;
+                Text { text: root.notice; color: Theme.text; vertical-alignment: center; }
+                Btn { text: "paste"; clicked => { root.paste(); } }
+            }
+            TextEdit { vertical-stretch: 1; text <=> root.description; }
+            TextEdit { vertical-stretch: 1; text <=> root.json-content; }
+            // (the reference frame's own close button)
+            HorizontalLayout {
+                alignment: end;
+                Btn { text: "close"; clicked => { root.close-clicked(); } }
+            }
         }
-        TextEdit { vertical-stretch: 1; text <=> root.description; }
-        TextEdit { vertical-stretch: 1; text <=> root.json-content; }
     }
 }

@@ -55,64 +55,78 @@ export component TagMigrationWindow inherits Window {
     callback cancel-job();
     callback pause-job();
     callback close-clicked();
-    VerticalBox {
-        padding: 16px; spacing: 10px;
-        Text { text: "The content from the source that the filter allows is applied using the action to the destination."; color: Theme.text; wrap: word-wrap; }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.question != "" { root.answer(false); return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
+        }
         VerticalBox {
+            padding: 16px; spacing: 10px;
+            Text { text: "The content from the source that the filter allows is applied using the action to the destination."; color: Theme.text; wrap: word-wrap; }
+            VerticalBox {
 
-            HorizontalBox {
-                Text { text: "content"; color: Theme.text; }
-                ComboBox { enabled: !root.running && root.question == ""; model: ["tag mappings", "tag siblings", "tag parents"]; current-index <=> root.content; selected => { root.choices-changed(); } }
-                Text { text: "source"; color: Theme.text; }
-                ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.source; selected => { root.choices-changed(); } }
-            }
-            if root.source-archive: HorizontalBox {
-                Btn { text: root.source-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(true); } }
-                if root.content == 0: Text { text: root.source-hash; color: Theme.text; }
-            }
-            HorizontalBox {
-                Text { text: "status"; color: Theme.text; }
-                ComboBox { enabled: !root.running && root.question == ""; model: root.statuses; current-index <=> root.status; selected => { root.choices-changed(); } }
-                Text { text: "action"; color: Theme.text; }
-                ComboBox { enabled: !root.running && root.question == ""; model: root.actions; current-index <=> root.action; selected => { root.choices-changed(); } }
-            }
-            HorizontalBox {
-                Text { text: "destination"; color: Theme.text; }
-                ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.destination; selected => { root.choices-changed(); } }
-            }
-            if root.destination-archive: HorizontalBox {
-                Btn { text: root.destination-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(false); } }
-                if root.content == 0: ComboBox { model: ["sha256", "md5", "sha1", "sha512"]; current-index <=> root.hash-kind; enabled: !root.hash-locked && !root.running && root.question == ""; selected => { root.choices-changed(); } }
-            }
-            if root.content == 0: HorizontalBox {
-                if root.have-files: CheckBox { enabled: !root.running && root.question == ""; text: root.file-label; checked <=> root.selected-files; toggled => {root.choices-changed();} }
-                Btn { text: root.location-label; enabled: !root.selected-files && !root.running && root.question == ""; clicked => {root.edit-location();} }
-            }
-            TipButton { enabled: !root.running && root.question == ""; text: root.left-label; tip: root.left-tooltip; clicked => {root.edit-filter(false);} }
-            if root.content != 0: TipButton { enabled: !root.running && root.question == ""; text: root.right-label; tip: root.right-tooltip; clicked => {root.edit-filter(true);} }
-            if root.content != 0: VerticalBox {
-                CheckBox { text: root.content == 1 ? "only if worse (left) side has count" : "only if child (left) side has count"; checked <=> root.count-left; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
-                CheckBox { text: root.content == 1 ? "only if ideal (where right side's chain terminates) has count" : "only if parent (right) side has count"; checked <=> root.count-right; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
-                CheckBox { text: root.content == 1 ? "only if the worse or ideal has count" : "only if the child or parent has count"; checked <=> root.count-either; enabled: !root.running && root.question == ""; toggled => {root.choices-changed();} }
                 HorizontalBox {
-                    Text { text: "in service:"; color: Theme.text; }
-                    ComboBox { model: root.count-services; current-index <=> root.count-service; enabled: (root.count-left || root.count-right || root.count-either) && !root.running && root.question == ""; selected => {root.choices-changed();} }
+                    Text { text: "content"; color: Theme.text; }
+                    ComboBox { enabled: !root.running && root.question == ""; model: ["tag mappings", "tag siblings", "tag parents"]; current-index <=> root.content; selected => { root.choices-changed(); } }
+                    Text { text: "source"; color: Theme.text; }
+                    ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.source; selected => { root.choices-changed(); } }
+                }
+                if root.source-archive: HorizontalBox {
+                    Btn { text: root.source-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(true); } }
+                    if root.content == 0: Text { text: root.source-hash; color: Theme.text; }
+                }
+                HorizontalBox {
+                    Text { text: "status"; color: Theme.text; }
+                    ComboBox { enabled: !root.running && root.question == ""; model: root.statuses; current-index <=> root.status; selected => { root.choices-changed(); } }
+                    Text { text: "action"; color: Theme.text; }
+                    ComboBox { enabled: !root.running && root.question == ""; model: root.actions; current-index <=> root.action; selected => { root.choices-changed(); } }
+                }
+                HorizontalBox {
+                    Text { text: "destination"; color: Theme.text; }
+                    ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.destination; selected => { root.choices-changed(); } }
+                }
+                if root.destination-archive: HorizontalBox {
+                    Btn { text: root.destination-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(false); } }
+                    if root.content == 0: ComboBox { model: ["sha256", "md5", "sha1", "sha512"]; current-index <=> root.hash-kind; enabled: !root.hash-locked && !root.running && root.question == ""; selected => { root.choices-changed(); } }
+                }
+                if root.content == 0: HorizontalBox {
+                    if root.have-files: CheckBox { enabled: !root.running && root.question == ""; text: root.file-label; checked <=> root.selected-files; toggled => {root.choices-changed();} }
+                    Btn { text: root.location-label; enabled: !root.selected-files && !root.running && root.question == ""; clicked => {root.edit-location();} }
+                }
+                TipButton { enabled: !root.running && root.question == ""; text: root.left-label; tip: root.left-tooltip; clicked => {root.edit-filter(false);} }
+                if root.content != 0: TipButton { enabled: !root.running && root.question == ""; text: root.right-label; tip: root.right-tooltip; clicked => {root.edit-filter(true);} }
+                if root.content != 0: VerticalBox {
+                    CheckBox { text: root.content == 1 ? "only if worse (left) side has count" : "only if child (left) side has count"; checked <=> root.count-left; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
+                    CheckBox { text: root.content == 1 ? "only if ideal (where right side's chain terminates) has count" : "only if parent (right) side has count"; checked <=> root.count-right; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
+                    CheckBox { text: root.content == 1 ? "only if the worse or ideal has count" : "only if the child or parent has count"; checked <=> root.count-either; enabled: !root.running && root.question == ""; toggled => {root.choices-changed();} }
+                    HorizontalBox {
+                        Text { text: "in service:"; color: Theme.text; }
+                        ComboBox { model: root.count-services; current-index <=> root.count-service; enabled: (root.count-left || root.count-right || root.count-either) && !root.running && root.question == ""; selected => {root.choices-changed();} }
+                    }
+                }
+                if root.petition: HorizontalBox {
+                    Text { text: "petition reason"; color: Theme.text; }
+                    LineEdit { enabled: !root.running && root.question == ""; text <=> root.reason; }
                 }
             }
-            if root.petition: HorizontalBox {
-                Text { text: "petition reason"; color: Theme.text; }
-                LineEdit { enabled: !root.running && root.question == ""; text <=> root.reason; }
+            if root.question != "": Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalBox {
+                if root.question != "": Btn { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
+                if root.question != "": Btn { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
+                if root.question == "" && !root.running: Btn { text: "Go!"; clicked => {root.go();} }
+                Rectangle { horizontal-stretch: 1; }
+                Btn { text: "close"; clicked => {root.close-clicked();} }
             }
-        }
-        if root.question != "": Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        Rectangle { vertical-stretch: 1; }
-        HorizontalBox {
-            if root.question != "": Btn { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
-            if root.question != "": Btn { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
-            if root.question == "" && !root.running: Btn { text: "Go!"; clicked => {root.go();} }
-            Rectangle { horizontal-stretch: 1; }
-            Btn { text: "close"; clicked => {root.close-clicked();} }
         }
     }
 }
