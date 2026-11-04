@@ -42,7 +42,10 @@ pub(crate) trait Escapes: ComponentHandle {
 
 macro_rules! escapes {
     ($($window:ident),* $(,)?) => {
-        $(impl Escapes for crate::$window {
+        // (a window without its own `escape` callback would call this
+        // itself: refused)
+        $(#[deny(unconditional_recursion)]
+        impl Escapes for crate::$window {
             fn on_escape(&self, then: impl Fn() + 'static) {
                 crate::$window::on_escape(self, then);
             }
@@ -52,17 +55,39 @@ macro_rules! escapes {
 
 escapes!(
     AboutWindow,
+    CheckerOptionsWindow,
     ChoiceButtonsWindow,
+    EditServiceWindow,
     EditSubscriptionWindow,
     EditValueWindow,
+    ExternalCallWindow,
+    ExternalCommandWindow,
+    FavouriteEditWindow,
+    FavouritesWindow,
     FilenameTaggingWindow,
     ForceFiletypeWindow,
+    ImportOptionsOverwriteWindow,
+    IncrementalTaggingWindow,
     LocationsWindow,
+    LoginStepWindow,
     ManageNotesWindow,
     ManageTagsWindow,
     ManageTimesWindow,
     ManageUrlsWindow,
+    MediaViewWindow,
+    MergeOptionsWindow,
+    OpenFileCallsWindow,
+    PngExportWindow,
+    PngsExportWindow,
+    SearchOrWindow,
+    ServicesEditorWindow,
+    ShortcutCommandWindow,
+    ShortcutSetWindow,
+    SimpleFormulaeWindow,
     SubscriptionsWindow,
+    TagBannerWindow,
+    TagFilterWindow,
+    TagRelationshipsWindow,
 );
 
 /// Whether it is a dialog (kept when applied) or a frame (kept as it moves).

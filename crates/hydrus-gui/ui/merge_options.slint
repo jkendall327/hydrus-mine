@@ -94,193 +94,207 @@ export component MergeOptionsWindow inherits Window {
     callback apply();
     callback cancel();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        Box {
-            vertical-stretch: 1;
-            title: "duplicate metadata merge options";
-            Text {
-                text: root.note;
-                wrap: word-wrap;
-                color: Theme.text;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.asking { root.cancelled(); return accept; }
+                root.escape();
+                return accept;
             }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
             Box {
                 vertical-stretch: 1;
-                title: "tag services";
-                ListTable {
-                    vertical-stretch: 1;
-                    min-height: 110px;
-                    columns: [
-                        { title: "service name", width: 160px },
-                        { title: "action", width: 200px },
-                        { title: "tags merged", width: 200px, stretch: true },
-                    ];
-                    rows: root.tag-rows;
-                    row-clicked(r, ctrl, shift) => { root.row-clicked(0, r, ctrl, shift); }
-                    row-activated(r) => { root.row-activated(0, r); }
-                }
-                HorizontalLayout {
-                    spacing: 4px;
-                    alignment: end;
-                    Btn {
-                        text: "add";
-                        enabled: !root.asking;
-                        clicked => { root.list-button(0, "add"); }
-                    }
-                    if root.edit-action-shown: Btn {
-                        text: "edit action";
-                        enabled: root.tag-one-selected && !root.asking;
-                        clicked => { root.list-button(0, "edit action"); }
-                    }
-                    Btn {
-                        text: "edit filter";
-                        enabled: root.tag-one-selected && !root.asking;
-                        clicked => { root.list-button(0, "edit filter"); }
-                    }
-                    Btn {
-                        text: "delete";
-                        enabled: root.tag-any-selected && !root.asking;
-                        clicked => { root.list-button(0, "delete"); }
-                    }
-                }
-            }
-            Box {
-                vertical-stretch: 1;
-                title: "rating services";
+                title: "duplicate metadata merge options";
                 Text {
-                    text: root.ratings-note;
+                    text: root.note;
                     wrap: word-wrap;
                     color: Theme.text;
                 }
-                ListTable {
+                Box {
                     vertical-stretch: 1;
-                    min-height: 90px;
-                    columns: [
-                        { title: "service name", width: 160px },
-                        { title: "action", width: 240px, stretch: true },
-                    ];
-                    rows: root.rating-rows;
-                    row-clicked(r, ctrl, shift) => { root.row-clicked(1, r, ctrl, shift); }
-                    row-activated(r) => { root.row-activated(1, r); }
-                }
-                HorizontalLayout {
-                    spacing: 4px;
-                    alignment: end;
-                    Btn {
-                        text: "add";
-                        enabled: !root.asking;
-                        clicked => { root.list-button(1, "add"); }
+                    title: "tag services";
+                    ListTable {
+                        vertical-stretch: 1;
+                        min-height: 110px;
+                        columns: [
+                            { title: "service name", width: 160px },
+                            { title: "action", width: 200px },
+                            { title: "tags merged", width: 200px, stretch: true },
+                        ];
+                        rows: root.tag-rows;
+                        row-clicked(r, ctrl, shift) => { root.row-clicked(0, r, ctrl, shift); }
+                        row-activated(r) => { root.row-activated(0, r); }
                     }
-                    if root.edit-action-shown: Btn {
-                        text: "edit action";
-                        enabled: root.rating-one-selected && !root.asking;
-                        clicked => { root.list-button(1, "edit action"); }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: end;
+                        Btn {
+                            text: "add";
+                            enabled: !root.asking;
+                            clicked => { root.list-button(0, "add"); }
+                        }
+                        if root.edit-action-shown: Btn {
+                            text: "edit action";
+                            enabled: root.tag-one-selected && !root.asking;
+                            clicked => { root.list-button(0, "edit action"); }
+                        }
+                        Btn {
+                            text: "edit filter";
+                            enabled: root.tag-one-selected && !root.asking;
+                            clicked => { root.list-button(0, "edit filter"); }
+                        }
+                        Btn {
+                            text: "delete";
+                            enabled: root.tag-any-selected && !root.asking;
+                            clicked => { root.list-button(0, "delete"); }
+                        }
                     }
-                    Btn {
-                        text: "delete";
-                        enabled: root.rating-any-selected && !root.asking;
-                        clicked => { root.list-button(1, "delete"); }
+                }
+                Box {
+                    vertical-stretch: 1;
+                    title: "rating services";
+                    Text {
+                        text: root.ratings-note;
+                        wrap: word-wrap;
+                        color: Theme.text;
                     }
-                }
-            }
-            Row {
-                label: root.row-labels[0];
-                ComboBox {
-                    horizontal-stretch: 1;
-                    model: root.archive-options;
-                    current-index <=> root.archive-index;
-                    enabled: !root.asking;
-                    selected => { root.choice-changed(); }
-                }
-            }
-            Row {
-                label: root.row-labels[1];
-                ComboBox {
-                    horizontal-stretch: 1;
-                    model: root.modified-options;
-                    current-index <=> root.modified-index;
-                    enabled: root.syncs-enabled && !root.asking;
-                    selected => { root.choice-changed(); }
-                }
-            }
-            Row {
-                label: root.row-labels[2];
-                ComboBox {
-                    horizontal-stretch: 1;
-                    model: root.urls-options;
-                    current-index <=> root.urls-index;
-                    enabled: root.syncs-enabled && !root.asking;
-                    selected => { root.choice-changed(); }
-                }
-            }
-            Row {
-                label: root.row-labels[3];
-                ComboBox {
-                    horizontal-stretch: 1;
-                    model: root.notes-options;
-                    current-index <=> root.notes-index;
-                    enabled: root.syncs-enabled && !root.asking;
-                    selected => { root.choice-changed(); }
-                }
-            }
-            Row {
-                label: "";
-                Btn {
-                    horizontal-stretch: 1;
-                    text: "note merge settings";
-                    enabled: root.note-settings-enabled && !root.asking && !root.note-settings-open;
-                    clicked => { root.note-settings(); }
-                }
-            }
-            if root.note-settings-open: Box {
-                title: "edit note merge options";
-                Row {
-                    label: root.note-extend-label;
-                    CheckBox {
-                        checked <=> root.note-extend;
+                    ListTable {
+                        vertical-stretch: 1;
+                        min-height: 90px;
+                        columns: [
+                            { title: "service name", width: 160px },
+                            { title: "action", width: 240px, stretch: true },
+                        ];
+                        rows: root.rating-rows;
+                        row-clicked(r, ctrl, shift) => { root.row-clicked(1, r, ctrl, shift); }
+                        row-activated(r) => { root.row-activated(1, r); }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: end;
+                        Btn {
+                            text: "add";
+                            enabled: !root.asking;
+                            clicked => { root.list-button(1, "add"); }
+                        }
+                        if root.edit-action-shown: Btn {
+                            text: "edit action";
+                            enabled: root.rating-one-selected && !root.asking;
+                            clicked => { root.list-button(1, "edit action"); }
+                        }
+                        Btn {
+                            text: "delete";
+                            enabled: root.rating-any-selected && !root.asking;
+                            clicked => { root.list-button(1, "delete"); }
+                        }
                     }
                 }
                 Row {
-                    label: root.note-conflict-label;
+                    label: root.row-labels[0];
                     ComboBox {
                         horizontal-stretch: 1;
-                        model: root.note-conflicts;
-                        current-index <=> root.note-conflict;
+                        model: root.archive-options;
+                        current-index <=> root.archive-index;
+                        enabled: !root.asking;
+                        selected => { root.choice-changed(); }
                     }
                 }
-                HorizontalLayout {
-                    spacing: 4px;
-                    alignment: end;
-                    Btn {
-                        text: "apply";
-                        clicked => { root.note-settings-done(true); }
+                Row {
+                    label: root.row-labels[1];
+                    ComboBox {
+                        horizontal-stretch: 1;
+                        model: root.modified-options;
+                        current-index <=> root.modified-index;
+                        enabled: root.syncs-enabled && !root.asking;
+                        selected => { root.choice-changed(); }
                     }
+                }
+                Row {
+                    label: root.row-labels[2];
+                    ComboBox {
+                        horizontal-stretch: 1;
+                        model: root.urls-options;
+                        current-index <=> root.urls-index;
+                        enabled: root.syncs-enabled && !root.asking;
+                        selected => { root.choice-changed(); }
+                    }
+                }
+                Row {
+                    label: root.row-labels[3];
+                    ComboBox {
+                        horizontal-stretch: 1;
+                        model: root.notes-options;
+                        current-index <=> root.notes-index;
+                        enabled: root.syncs-enabled && !root.asking;
+                        selected => { root.choice-changed(); }
+                    }
+                }
+                Row {
+                    label: "";
                     Btn {
-                        text: "cancel";
-                        clicked => { root.note-settings-done(false); }
+                        horizontal-stretch: 1;
+                        text: "note merge settings";
+                        enabled: root.note-settings-enabled && !root.asking && !root.note-settings-open;
+                        clicked => { root.note-settings(); }
+                    }
+                }
+                if root.note-settings-open: Box {
+                    title: "edit note merge options";
+                    Row {
+                        label: root.note-extend-label;
+                        CheckBox {
+                            checked <=> root.note-extend;
+                        }
+                    }
+                    Row {
+                        label: root.note-conflict-label;
+                        ComboBox {
+                            horizontal-stretch: 1;
+                            model: root.note-conflicts;
+                            current-index <=> root.note-conflict;
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: end;
+                        Btn {
+                            text: "apply";
+                            clicked => { root.note-settings-done(true); }
+                        }
+                        Btn {
+                            text: "cancel";
+                            clicked => { root.note-settings-done(false); }
+                        }
                     }
                 }
             }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            chosen(i) => { root.chosen(i); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                enabled: !root.asking && !root.note-settings-open;
-                clicked => { root.apply(); }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
             }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    enabled: !root.asking && !root.note-settings-open;
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

@@ -2,6 +2,9 @@ import { Btn } from "@hydrus_ui_core";
 import { Button, CheckBox, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
 export component IncrementalTaggingWindow inherits Window {
+    // (Escape, once nothing within takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -21,7 +24,7 @@ export component IncrementalTaggingWindow inherits Window {
     callback apply(); callback cancel();
     forward-focus: namespace-input;
     FocusScope {
-        key-pressed(event) => { if event.text == Key.Escape { root.cancel(); return accept; } reject }
+        key-pressed(event) => { if event.text == Key.Escape { root.escape(); return accept; } reject }
         VerticalLayout {
             padding: 12px; spacing: 8px;
             Text { text: "Here you can add numerical tags incrementally to a selection of files, for instance adding page:1 -> page:20 to twenty files."; color: Theme.text; wrap: word-wrap; }

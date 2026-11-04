@@ -73,6 +73,7 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::TagBannerWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     let editor = Rc::new(RefCell::new(Editor::new(value, presentation)));
     let active = Rc::new(Cell::new(true));
     let pending: Rc<RefCell<Option<Prompt>>> = Rc::default();
@@ -164,7 +165,7 @@ pub fn open(
         let active = active.clone();
         let weak = window.as_weak();
         let editor = editor.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let pending = pending.clone();
         let removal = removal.clone();
         move |action| {
@@ -175,11 +176,13 @@ pub fn open(
                 return;
             };
             match action.as_str() {
-                "cancel" => close(),
+                "cancel" => {
+                    ended.cancel();
+                }
                 "apply" if !window.get_asking() && !window.get_confirming() => {
                     let value = editor.borrow().value();
                     applied(value);
-                    close();
+                    ended.accept();
                 }
                 "add" | "edit" if !window.get_asking() && !window.get_confirming() => {
                     let selected = if action == "edit" {
@@ -290,9 +293,10 @@ pub fn open(
             show(&window, &editor.borrow());
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     window.show()?;
     *slot.borrow_mut() = Some(window.clone_strong());

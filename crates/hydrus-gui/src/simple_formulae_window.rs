@@ -84,6 +84,7 @@ pub fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<SimpleFormulaeWindow, slint::PlatformError> {
     let w = crate::app_title::new::<crate::SimpleFormulaeWindow>()?;
+    let ended = crate::dialog::Dialog::new(&w);
     let mut values = store
         .read(settings::get::<SimpleDownloaderFormulae>)
         .unwrap_or_default();
@@ -511,7 +512,7 @@ pub fn open(
         let weak = w.as_weak();
         let store = store.clone();
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if state.borrow().child_open {
                 return;
@@ -523,7 +524,7 @@ pub fn open(
                 settings::set(ctx.conn(), &saved)
             }) {
                 Ok(()) => {
-                    close();
+                    ended.accept();
                     applied();
                 }
                 Err(e) => {
@@ -535,12 +536,15 @@ pub fn open(
         }
     });
     w.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    w.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     refresh();
     w.show()?;

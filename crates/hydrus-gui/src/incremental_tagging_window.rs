@@ -28,6 +28,7 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::IncrementalTaggingWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     let model = Rc::new(RefCell::new(model));
     let active = Rc::new(Cell::new(true));
     crate::gui_colours::bind(
@@ -105,7 +106,7 @@ pub fn open(
     window.on_apply({
         let active = active.clone();
         let weak = window.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !active.get() {
                 return;
@@ -115,7 +116,7 @@ pub fn open(
                 .cleaned_pairs()
                 .and_then(|pairs| applied(pairs));
             match result {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(error) => {
                     if let Some(window) = weak.upgrade() {
                         window.set_error(error.into());
@@ -125,12 +126,15 @@ pub fn open(
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     refresh();
     window.show()?;

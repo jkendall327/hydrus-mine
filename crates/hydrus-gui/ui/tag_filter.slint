@@ -262,209 +262,223 @@ export component TagFilterWindow inherits Window {
     callback cancel();
     callback closed();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        HorizontalLayout {
-            alignment: end;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.asking { root.cancelled(); return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
-            Text {
-                text: "help for this panel -->";
-                vertical-alignment: center;
-                color: Theme.text;
-            }
-            Btn {
-                text: "?";
-                enabled: !root.asking;
-                clicked => { root.help(); }
-            }
-        }
-        if root.message != "": Box {
-            title: "explanation";
-            Text {
-                text: root.message;
-                wrap: word-wrap;
-                color: Theme.text;
-            }
-        }
-        Box {
-            title: "favourites";
             HorizontalLayout {
+                alignment: end;
                 spacing: 6px;
-                for action in ["import", "export", "load", "save", "delete"] : Btn {
-                    text: action;
+                Text {
+                    text: "help for this panel -->";
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                Btn {
+                    text: "?";
                     enabled: !root.asking;
-                    clicked => { root.favourite(action); }
+                    clicked => { root.help(); }
                 }
             }
-        }
-        Box {
-            title: "filter";
-            vertical-stretch: 1;
-            Text {
-                text: root.instructions;
-                wrap: word-wrap;
-                horizontal-alignment: center;
-                color: Theme.text;
-            }
-            if root.show-other-panels: TipButton {
-                text: "show other panels";
-                tip: root.show-other-panels-tooltip;
-                enabled: !root.asking;
-                clicked => { root.show-panels(); }
-            }
-            HorizontalLayout {
-                spacing: 0px;
-                alignment: start;
-                for name[i] in root.tabs: Tab {
-                    text: name;
-                    current: i == root.tab;
-                    clicked => { root.tab-chosen(i); }
+            if root.message != "": Box {
+                title: "explanation";
+                Text {
+                    text: root.message;
+                    wrap: word-wrap;
+                    color: Theme.text;
                 }
             }
-            if root.tabs[root.tab] == "whitelist": Simple {
-                vertical-stretch: 1;
-                title: "allow these";
-                enabled: root.white-enabled;
-                error: root.white-error;
-                global: root.white-global;
-                namespaces: root.white-namespaces;
-                namespaces-enabled: root.white-namespaces-enabled;
-                rows: root.white-rows;
-                asking: root.asking;
-                global-clicked(i) => { root.global-clicked(0, i); }
-                namespace-clicked(i) => { root.namespace-clicked(0, i); }
-                row-clicked(r, ctrl, shift) => { root.row-clicked(0, r, ctrl, shift); }
-                row-activated(r) => { root.row-activated(0, r); }
-                typed(t) => { root.typed(0, t); }
-                paste => { root.paste(0); }
-                remove => { root.remove(0); }
+            Box {
+                title: "favourites";
+                HorizontalLayout {
+                    spacing: 6px;
+                    for action in ["import", "export", "load", "save", "delete"] : Btn {
+                        text: action;
+                        enabled: !root.asking;
+                        clicked => { root.favourite(action); }
+                    }
+                }
             }
-            if root.tabs[root.tab] == "blacklist": Simple {
+            Box {
+                title: "filter";
                 vertical-stretch: 1;
-                title: "exclude these";
-                enabled: root.black-enabled;
-                error: root.black-error;
-                global: root.black-global;
-                namespaces: root.black-namespaces;
-                namespaces-enabled: root.black-namespaces-enabled;
-                rows: root.black-rows;
-                block-everything: true;
-                asking: root.asking;
-                global-clicked(i) => { root.global-clicked(1, i); }
-                namespace-clicked(i) => { root.namespace-clicked(1, i); }
-                row-clicked(r, ctrl, shift) => { root.row-clicked(1, r, ctrl, shift); }
-                row-activated(r) => { root.row-activated(1, r); }
-                typed(t) => { root.typed(1, t); }
-                paste => { root.paste(1); }
-                remove => { root.remove(1); }
-                block => { root.block-everything(); }
-            }
-            if root.tabs[root.tab] == "advanced": HorizontalLayout {
-                vertical-stretch: 1;
-                spacing: 6px;
-                Rules {
+                Text {
+                    text: root.instructions;
+                    wrap: word-wrap;
+                    horizontal-alignment: center;
+                    color: Theme.text;
+                }
+                if root.show-other-panels: TipButton {
+                    text: "show other panels";
+                    tip: root.show-other-panels-tooltip;
+                    enabled: !root.asking;
+                    clicked => { root.show-panels(); }
+                }
+                HorizontalLayout {
+                    spacing: 0px;
+                    alignment: start;
+                    for name[i] in root.tabs: Tab {
+                        text: name;
+                        current: i == root.tab;
+                        clicked => { root.tab-chosen(i); }
+                    }
+                }
+                if root.tabs[root.tab] == "whitelist": Simple {
+                    vertical-stretch: 1;
+                    title: "allow these";
+                    enabled: root.white-enabled;
+                    error: root.white-error;
+                    global: root.white-global;
+                    namespaces: root.white-namespaces;
+                    namespaces-enabled: root.white-namespaces-enabled;
+                    rows: root.white-rows;
+                    asking: root.asking;
+                    global-clicked(i) => { root.global-clicked(0, i); }
+                    namespace-clicked(i) => { root.namespace-clicked(0, i); }
+                    row-clicked(r, ctrl, shift) => { root.row-clicked(0, r, ctrl, shift); }
+                    row-activated(r) => { root.row-activated(0, r); }
+                    typed(t) => { root.typed(0, t); }
+                    paste => { root.paste(0); }
+                    remove => { root.remove(0); }
+                }
+                if root.tabs[root.tab] == "blacklist": Simple {
+                    vertical-stretch: 1;
                     title: "exclude these";
-                    rows: root.exclude-rows;
+                    enabled: root.black-enabled;
+                    error: root.black-error;
+                    global: root.black-global;
+                    namespaces: root.black-namespaces;
+                    namespaces-enabled: root.black-namespaces-enabled;
+                    rows: root.black-rows;
                     block-everything: true;
                     asking: root.asking;
-                    row-clicked(r, ctrl, shift) => { root.row-clicked(2, r, ctrl, shift); }
-                    row-activated(r) => { root.row-activated(2, r); }
-                    typed(t) => { root.typed(2, t); }
-                paste => { root.paste(2); }
-                    delete => { root.remove(2); }
+                    global-clicked(i) => { root.global-clicked(1, i); }
+                    namespace-clicked(i) => { root.namespace-clicked(1, i); }
+                    row-clicked(r, ctrl, shift) => { root.row-clicked(1, r, ctrl, shift); }
+                    row-activated(r) => { root.row-activated(1, r); }
+                    typed(t) => { root.typed(1, t); }
+                    paste => { root.paste(1); }
+                    remove => { root.remove(1); }
                     block => { root.block-everything(); }
                 }
-                Rules {
-                    title: "except for these";
-                    rows: root.except-rows;
-                    input-enabled: root.except-input-enabled;
-                    asking: root.asking;
-                    row-clicked(r, ctrl, shift) => { root.row-clicked(3, r, ctrl, shift); }
-                    row-activated(r) => { root.row-activated(3, r); }
-                    typed(t) => { root.typed(3, t); }
-                paste => { root.paste(3); }
-                    delete => { root.remove(3); }
-                }
-            }
-            if root.redundant != "": Text {
-                text: root.redundant;
-                wrap: word-wrap;
-                color: Theme.error;
-            }
-            Text {
-                text: root.current;
-                wrap: word-wrap;
-                color: Theme.text;
-            }
-        }
-        Box {
-            title: "testing";
-            HorizontalLayout {
-                spacing: 8px;
-                VerticalLayout {
-                    horizontal-stretch: 1;
-                    alignment: center;
-                    if root.test-note != "": Text {
-                        text: root.test-note;
-                        wrap: word-wrap;
-                        color: Theme.text;
+                if root.tabs[root.tab] == "advanced": HorizontalLayout {
+                    vertical-stretch: 1;
+                    spacing: 6px;
+                    Rules {
+                        title: "exclude these";
+                        rows: root.exclude-rows;
+                        block-everything: true;
+                        asking: root.asking;
+                        row-clicked(r, ctrl, shift) => { root.row-clicked(2, r, ctrl, shift); }
+                        row-activated(r) => { root.row-activated(2, r); }
+                        typed(t) => { root.typed(2, t); }
+                    paste => { root.paste(2); }
+                        delete => { root.remove(2); }
+                        block => { root.block-everything(); }
                     }
-                    Text {
-                        text: root.test-result;
-                        wrap: word-wrap;
-                        horizontal-alignment: right;
-                        color: root.test-good > 0 ? Theme.good : root.test-good < 0 ? Theme.bad : Theme.text;
+                    Rules {
+                        title: "except for these";
+                        rows: root.except-rows;
+                        input-enabled: root.except-input-enabled;
+                        asking: root.asking;
+                        row-clicked(r, ctrl, shift) => { root.row-clicked(3, r, ctrl, shift); }
+                        row-activated(r) => { root.row-activated(3, r); }
+                        typed(t) => { root.typed(3, t); }
+                    paste => { root.paste(3); }
+                        delete => { root.remove(3); }
                     }
                 }
-                TextEdit {
-                    horizontal-stretch: 1;
-                    min-width: 280px;
-                    height: 60px;
-                    text <=> root.test-input;
-                    edited => { root.test-edited(); }
+                if root.redundant != "": Text {
+                    text: root.redundant;
+                    wrap: word-wrap;
+                    color: Theme.error;
+                }
+                Text {
+                    text: root.current;
+                    wrap: word-wrap;
+                    color: Theme.text;
                 }
             }
-        }
-        if root.favourite-naming: HorizontalLayout {
-            LineEdit {
-                horizontal-stretch: 1;
-                text <=> root.favourite-name;
-                accepted(t) => { root.favourite-named(t); }
+            Box {
+                title: "testing";
+                HorizontalLayout {
+                    spacing: 8px;
+                    VerticalLayout {
+                        horizontal-stretch: 1;
+                        alignment: center;
+                        if root.test-note != "": Text {
+                            text: root.test-note;
+                            wrap: word-wrap;
+                            color: Theme.text;
+                        }
+                        Text {
+                            text: root.test-result;
+                            wrap: word-wrap;
+                            horizontal-alignment: right;
+                            color: root.test-good > 0 ? Theme.good : root.test-good < 0 ? Theme.bad : Theme.text;
+                        }
+                    }
+                    TextEdit {
+                        horizontal-stretch: 1;
+                        min-width: 280px;
+                        height: 60px;
+                        text <=> root.test-input;
+                        edited => { root.test-edited(); }
+                    }
+                }
             }
-            Btn { text: "save"; clicked => { root.favourite-named(root.favourite-name); } }
-        }
-        if root.favourite-exchange: Box {
-            title: root.exchange-importing ? "import favourite" : "export favourite";
-            TextEdit { height: 80px; text <=> root.exchange-text; read-only: !root.exchange-importing; }
+            if root.favourite-naming: HorizontalLayout {
+                LineEdit {
+                    horizontal-stretch: 1;
+                    text <=> root.favourite-name;
+                    accepted(t) => { root.favourite-named(t); }
+                }
+                Btn { text: "save"; clicked => { root.favourite-named(root.favourite-name); } }
+            }
+            if root.favourite-exchange: Box {
+                title: root.exchange-importing ? "import favourite" : "export favourite";
+                TextEdit { height: 80px; text <=> root.exchange-text; read-only: !root.exchange-importing; }
+                HorizontalLayout {
+                    Btn { text: root.exchange-importing ? "paste" : "copy"; clicked => { root.exchange-action(root.exchange-importing ? "paste" : "copy"); } }
+                    if root.exchange-importing: Btn { text: "import text"; clicked => { root.exchange-action("import"); } }
+                    LineEdit { horizontal-stretch: 1; text <=> root.exchange-path; placeholder-text: "JSON file path"; }
+                    Btn { text: "browse"; clicked => { root.exchange-action("browse"); } }
+                    Btn { text: root.exchange-importing ? "open file" : "save JSON"; clicked => { root.exchange-action(root.exchange-importing ? "open" : "save"); } }
+                }
+                if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+            }
             HorizontalLayout {
-                Btn { text: root.exchange-importing ? "paste" : "copy"; clicked => { root.exchange-action(root.exchange-importing ? "paste" : "copy"); } }
-                if root.exchange-importing: Btn { text: "import text"; clicked => { root.exchange-action("import"); } }
-                LineEdit { horizontal-stretch: 1; text <=> root.exchange-path; placeholder-text: "JSON file path"; }
-                Btn { text: "browse"; clicked => { root.exchange-action("browse"); } }
-                Btn { text: root.exchange-importing ? "open file" : "save JSON"; clicked => { root.exchange-action(root.exchange-importing ? "open" : "save"); } }
-            }
-            if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            chosen(i) => { root.chosen(i); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                enabled: !root.asking;
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                enabled: !root.asking;
-                clicked => { root.cancel(); }
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    enabled: !root.asking;
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    enabled: !root.asking;
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

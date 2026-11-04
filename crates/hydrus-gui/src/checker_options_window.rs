@@ -107,6 +107,7 @@ pub(crate) fn open(
 ) -> Result<CheckerOptionsWindow, String> {
     let window =
         crate::app_title::new::<crate::CheckerOptionsWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_texts(CheckerTexts {
         warning: checker::WARNING.into(),
         defaults_box: checker::DEFAULTS_BOX.into(),
@@ -216,7 +217,7 @@ pub(crate) fn open(
         let shown = shown.clone();
         let weak = window.as_weak();
         let done = done.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
             let question = editor.borrow_mut().ok();
@@ -225,7 +226,7 @@ pub(crate) fn open(
                 window.set_question(question.into());
             } else {
                 done(editor.borrow().value());
-                close();
+                ended.accept();
             }
         }
     });
@@ -233,26 +234,26 @@ pub(crate) fn open(
         let editor = editor.clone();
         let weak = window.as_weak();
         let done = done.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move |yes| {
             if yes {
                 done(editor.borrow().value());
-                close();
+                ended.accept();
             } else if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
             }
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.show().map_err(|e| e.to_string())?;
     Ok(window)

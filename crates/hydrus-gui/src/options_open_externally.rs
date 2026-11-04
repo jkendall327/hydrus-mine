@@ -418,6 +418,7 @@ impl State {
         let queue = Rc::new(RefCell::new(Queue::new(&values)));
         let window = crate::app_title::new::<crate::OpenFileCallsWindow>()
             .map_err(|error| error.to_string())?;
+        let ended = crate::dialog::Dialog::new(&window);
         window.set_window_title(
             if new {
                 "edit calls"
@@ -540,7 +541,7 @@ impl State {
             let state = Rc::downgrade(self);
             let queue = queue.clone();
             let allowed = allowed.clone();
-            let close = close.clone();
+            let ended = ended.clone();
             move || {
                 if !allowed() {
                     return;
@@ -555,19 +556,19 @@ impl State {
                         .model
                         .borrow_mut()
                         .put(mime, queue.borrow().values(), new);
-                    close();
+                    ended.accept();
                     state.changed();
                 }
             }
         });
         window.on_cancel({
-            let close = close.clone();
-            move || close()
+            let ended = ended.clone();
+            move || {
+                ended.cancel();
+            }
         });
-        window.window().on_close_requested(move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        });
+        // (whatever ends it, through the dialog helper)
+        ended.on_closed(move || close());
         *self.slots.files.borrow_mut() = Some(window.clone_strong());
         show();
         if let Err(error) = window.show() {

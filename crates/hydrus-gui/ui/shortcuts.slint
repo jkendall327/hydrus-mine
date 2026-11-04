@@ -17,21 +17,35 @@ export component ShortcutSetWindow inherits Window {
     callback selected-row(int);
     callback action(string);
     callback apply(); callback cancel();
-    VerticalLayout {
-        padding:12px;spacing:8px;
-        Text {text:"Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.";wrap:word-wrap;}
-        HorizontalLayout {spacing:6px; Text{text:"name: ";vertical-alignment:center;} LineEdit{text<=>root.set-name;enabled:root.name-enabled && !root.child-open;}}
-        if root.description != "": Text {text:root.description;wrap:word-wrap;}
-        ListTable { rows:root.rows; columns:[{title:"shortcut",width:300px,stretch:true},{title:"command",width:380px,stretch:true}]; row-clicked(i,c,s)=>{if !root.child-open {root.selected-row(i);}} row-activated(i)=>{if !root.child-open {root.selected-row(i);root.action("edit");}} }
-        Text {text:root.error;color:#b00020;wrap:word-wrap;}
-        if root.remove-question:HorizontalLayout {Text{text:"Remove all selected?";}Button{text:"yes";clicked=>{root.remove-chosen(true);}}Button{text:"no";clicked=>{root.remove-chosen(false);}}}
-        HorizontalLayout {
-            Button{text:"add";enabled:!root.child-open;clicked=>{root.action("add");}}
-            Button{text:"edit";enabled:root.selected>=0 && !root.child-open;clicked=>{root.action("edit");}}
-            Button{text:"remove";enabled:root.selected>=0 && !root.child-open;clicked=>{root.action("remove");}}
-            Rectangle {horizontal-stretch:1;}
-            Button{text:"ok";enabled:!root.child-open;clicked=>{root.apply();}}
-            Button{text:"cancel";clicked=>{root.cancel();}}
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.child-open { return accept; } if root.remove-question { root.remove-chosen(false); return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding:12px;spacing:8px;
+            Text {text:"Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.";wrap:word-wrap;}
+            HorizontalLayout {spacing:6px; Text{text:"name: ";vertical-alignment:center;} LineEdit{text<=>root.set-name;enabled:root.name-enabled && !root.child-open;}}
+            if root.description != "": Text {text:root.description;wrap:word-wrap;}
+            ListTable { rows:root.rows; columns:[{title:"shortcut",width:300px,stretch:true},{title:"command",width:380px,stretch:true}]; row-clicked(i,c,s)=>{if !root.child-open {root.selected-row(i);}} row-activated(i)=>{if !root.child-open {root.selected-row(i);root.action("edit");}} }
+            Text {text:root.error;color:#b00020;wrap:word-wrap;}
+            if root.remove-question:HorizontalLayout {Text{text:"Remove all selected?";}Button{text:"yes";clicked=>{root.remove-chosen(true);}}Button{text:"no";clicked=>{root.remove-chosen(false);}}}
+            HorizontalLayout {
+                Button{text:"add";enabled:!root.child-open;clicked=>{root.action("add");}}
+                Button{text:"edit";enabled:root.selected>=0 && !root.child-open;clicked=>{root.action("edit");}}
+                Button{text:"remove";enabled:root.selected>=0 && !root.child-open;clicked=>{root.action("remove");}}
+                Rectangle {horizontal-stretch:1;}
+                Button{text:"ok";enabled:!root.child-open;clicked=>{root.apply();}}
+                Button{text:"cancel";clicked=>{root.cancel();}}
+            }
         }
     }
 }
@@ -99,44 +113,56 @@ export component ShortcutCommandWindow inherits Window {
     callback double-capture();
     callback apply();callback cancel();
     forward-focus:keyboard;
-    VerticalLayout {
-        padding:12px;spacing:10px;
-        Text{text:"shortcut";font-weight:700;}
-        Text{text:"Mouse events only work for some windows, mostly media viewer stuff, atm!";wrap:word-wrap;}
-        HorizontalLayout {
-            Button{text:"mouse";clicked=>{root.mode=1;}}
-            mouse := Rectangle {
-                background:#eeeeee;border-width:1px;border-color:#777;min-width:280px;height:45px;
-                Text{text:root.mouse-text;vertical-alignment:center;horizontal-alignment:center;}
-                TouchArea {
-                    pointer-event(e)=>{if e.kind==PointerEventKind.down || e.kind==PointerEventKind.up {
-                        root.mouse-capture(e.button==PointerEventButton.left?0:e.button==PointerEventButton.right?1:e.button==PointerEventButton.middle?2:e.button==PointerEventButton.back?7:e.button==PointerEventButton.forward?8:9,e.kind==PointerEventKind.down?0:1,(e.modifiers.control?1:0)+(e.modifiers.alt?2:0)+(e.modifiers.shift?4:0)+(e.modifiers.meta?32:0));
-                    }}
-                    double-clicked=>{root.double-capture();}
-                    scroll-event(e)=>{root.wheel-capture(e.delta-y/1px,(e.modifiers.control?1:0)+(e.modifiers.alt?2:0)+(e.modifiers.shift?4:0)+(e.modifiers.meta?32:0));return accept;}
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding:12px;spacing:10px;
+            Text{text:"shortcut";font-weight:700;}
+            Text{text:"Mouse events only work for some windows, mostly media viewer stuff, atm!";wrap:word-wrap;}
+            HorizontalLayout {
+                Button{text:"mouse";clicked=>{root.mode=1;}}
+                mouse := Rectangle {
+                    background:#eeeeee;border-width:1px;border-color:#777;min-width:280px;height:45px;
+                    Text{text:root.mouse-text;vertical-alignment:center;horizontal-alignment:center;}
+                    TouchArea {
+                        pointer-event(e)=>{if e.kind==PointerEventKind.down || e.kind==PointerEventKind.up {
+                            root.mouse-capture(e.button==PointerEventButton.left?0:e.button==PointerEventButton.right?1:e.button==PointerEventButton.middle?2:e.button==PointerEventButton.back?7:e.button==PointerEventButton.forward?8:9,e.kind==PointerEventKind.down?0:1,(e.modifiers.control?1:0)+(e.modifiers.alt?2:0)+(e.modifiers.shift?4:0)+(e.modifiers.meta?32:0));
+                        }}
+                        double-clicked=>{root.double-capture();}
+                        scroll-event(e)=>{root.wheel-capture(e.delta-y/1px,(e.modifiers.control?1:0)+(e.modifiers.alt?2:0)+(e.modifiers.shift?4:0)+(e.modifiers.meta?32:0));return accept;}
+                    }
+                }
+                ComboBox{model:["press","release"];current-index<=>root.release-choice;enabled:root.release-enabled;selected(_)=>{root.release-changed(self.current-index);}}
+            }
+            HorizontalLayout {
+                Button{text:"keyboard";clicked=>{root.mode=0;keyboard.focus();}}
+                keyboard := FocusScope {
+                    min-width:420px;height:45px;
+                    key-pressed(e)=>{if root.mode != 0 {return reject;}root.key-capture(e.text,(e.modifiers.control?1:0)+(e.modifiers.alt?2:0)+(e.modifiers.shift?4:0)+(e.modifiers.meta?32:0));return accept;}
+                    Rectangle{background:#fff;border-width:keyboard.has-focus?2px:1px;border-color:#777;Text{text:root.keyboard-text;vertical-alignment:center;horizontal-alignment:center;}TouchArea{clicked=>{root.mode=0;keyboard.focus();}}}
                 }
             }
-            ComboBox{model:["press","release"];current-index<=>root.release-choice;enabled:root.release-enabled;selected(_)=>{root.release-changed(self.current-index);}}
-        }
-        HorizontalLayout {
-            Button{text:"keyboard";clicked=>{root.mode=0;keyboard.focus();}}
-            keyboard := FocusScope {
-                min-width:420px;height:45px;
-                key-pressed(e)=>{if root.mode != 0 {return reject;}root.key-capture(e.text,(e.modifiers.control?1:0)+(e.modifiers.alt?2:0)+(e.modifiers.shift?4:0)+(e.modifiers.meta?32:0));return accept;}
-                Rectangle{background:#fff;border-width:keyboard.has-focus?2px:1px;border-color:#777;Text{text:root.keyboard-text;vertical-alignment:center;horizontal-alignment:center;}TouchArea{clicked=>{root.mode=0;keyboard.focus();}}}
+            Text{text:"command";font-weight:700;}
+            ComboBox{model:["simple command","tag or rating","interactive 'edit value' manual set command"];current-index<=>root.command-type;enabled:root.content-services.length > 0;}
+            if root.command-type == 0: ComboBox{model:root.commands;current-index<=>root.command-index;}
+            if root.command-type == 1: VerticalLayout {
+                spacing:6px;
+                ComboBox{model:root.content-services;current-index<=>root.content-service;selected(_)=>{root.content-service-changed(self.current-index);}}
+                ComboBox{model:root.content-actions;current-index<=>root.content-action;}
+                LineEdit{text<=>root.content-value;placeholder-text:root.content-hint;}
+                if root.content-error != "": Text{text:root.content-error;color:#b00020;wrap:word-wrap;}
             }
+            if root.command-type == 2: ComboBox{model:root.interactive-services;current-index<=>root.interactive-service;}
+            HorizontalLayout {Rectangle{horizontal-stretch:1;}Button{text:"ok";clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}
         }
-        Text{text:"command";font-weight:700;}
-        ComboBox{model:["simple command","tag or rating","interactive 'edit value' manual set command"];current-index<=>root.command-type;enabled:root.content-services.length > 0;}
-        if root.command-type == 0: ComboBox{model:root.commands;current-index<=>root.command-index;}
-        if root.command-type == 1: VerticalLayout {
-            spacing:6px;
-            ComboBox{model:root.content-services;current-index<=>root.content-service;selected(_)=>{root.content-service-changed(self.current-index);}}
-            ComboBox{model:root.content-actions;current-index<=>root.content-action;}
-            LineEdit{text<=>root.content-value;placeholder-text:root.content-hint;}
-            if root.content-error != "": Text{text:root.content-error;color:#b00020;wrap:word-wrap;}
-        }
-        if root.command-type == 2: ComboBox{model:root.interactive-services;current-index<=>root.interactive-service;}
-        HorizontalLayout {Rectangle{horizontal-stretch:1;}Button{text:"ok";clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}
     }
 }

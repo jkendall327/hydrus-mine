@@ -50,6 +50,7 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<TagRelationshipsWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::TagRelationshipsWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     window
         .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);
@@ -343,7 +344,7 @@ pub(crate) fn open(
         let binding = binding.clone();
         let weak = window.as_weak();
         let refresh = refresh.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -404,7 +405,7 @@ pub(crate) fn open(
                             Ok(()) => {
                                 drop(binding);
                                 applied();
-                                close();
+                                ended.accept();
                                 return;
                             }
                             Err(e) => {
@@ -483,8 +484,10 @@ pub(crate) fn open(
         move || start(Operation::Apply)
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
     window.on_answered({
         let binding = binding.clone();
@@ -910,12 +913,10 @@ pub(crate) fn open(
             }
         }
     });
-    window.window().on_close_requested({
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
+        move || close()
     });
     refresh();
     window.show()?;

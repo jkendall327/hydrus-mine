@@ -822,3 +822,116 @@ fn escape_in_manage_tags_clears_typing_answers_questions_and_asks_before_discard
     assert!(!window.is_visible(), "yes: closed");
     assert!(bound.manage_tags.borrow().is_none());
 }
+
+/// One of the reference's ordinary dialogs, as a user opens it from the main
+/// window, and its apply.
+type Opened = (Box<dyn crate::frame_geometry::Shown>, Box<dyn Fn()>);
+
+/// How a user opens one of them.
+type Opener = fn(&Client) -> Opened;
+
+fn menu_ordinary() -> Vec<(&'static str, Opener)> {
+    fn tags(c: &Client, kind: &str) -> Opened {
+        let lines = crate::common::main_menu::open(&c.ui, &["tags"]);
+        let label = lines
+            .iter()
+            .find(|l| l.0.starts_with(kind))
+            .unwrap_or_else(|| panic!("tags > {kind}"))
+            .0
+            .clone();
+        crate::common::main_menu::choose(&c.ui, &["tags"], &label);
+        let w = c
+            .bound
+            .tag_relationships
+            .borrow()
+            .as_ref()
+            .map(ComponentHandle::clone_strong)
+            .expect("it opens");
+        let apply = w.clone_strong();
+        (Box::new(w), Box::new(move || apply.invoke_apply()))
+    }
+    vec![
+        ("manage services", |c| {
+            let titles = c.ui.get_menu_titles();
+            let at = titles.iter().position(|t| t.label == "services").unwrap();
+            c.ui.invoke_menu_title_pressed(at as i32, 10.0, 22.0);
+            let lines = c.ui.get_menu_panes().row_data(0).unwrap().lines;
+            let at = lines
+                .iter()
+                .position(|l| l.label.starts_with("edit"))
+                .unwrap();
+            c.ui.invoke_menu_line_clicked(0, at as i32, 0.0, 0.0, 0.0);
+            let w = c
+                .bound
+                .services_editor
+                .manage
+                .borrow()
+                .as_ref()
+                .map(ComponentHandle::clone_strong)
+                .expect("it opens");
+            let apply = w.clone_strong();
+            (Box::new(w), Box::new(move || apply.invoke_apply_clicked()))
+        }),
+        ("manage tag siblings", |c| tags(c, "siblings")),
+        ("manage tag parents", |c| tags(c, "parents")),
+        ("edit favourite searches", |c| {
+            c.ui.invoke_favourites_menu_requested(10.0, 100.0);
+            c.ui.invoke_menu_line_clicked(0, 2, 0.0, 0.0, 0.0);
+            let w = c
+                .bound
+                .favourites
+                .list
+                .borrow()
+                .as_ref()
+                .map(ComponentHandle::clone_strong)
+                .expect("it opens");
+            let apply = w.clone_strong();
+            (Box::new(w), Box::new(move || apply.invoke_apply()))
+        }),
+    ]
+}
+
+/// The ordinary dialogs opened from the main window's menus keep
+/// `regular_dialog` when applied, and nothing when Escape cancels them, as
+/// the recording's `DialogEdit` and `DialogManage` do.
+#[test]
+fn menu_dialogs_keep_their_frame_when_applied_and_not_when_escaped() {
+    let recorded = hydrus_testkit::fixture_json("regular_dialog.json");
+    let baseline = recorded_frame(&recorded["baseline"]);
+    let moved = pair(&recorded["moved"]["size"]).unwrap();
+    let applied = recorded["lifecycle"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["kind"] == "manage" && c["action"] == "apply")
+        .unwrap();
+    let _windows = headless::init();
+    let client = client();
+    for (name, open) in menu_ordinary() {
+        // Escape: closed, nothing kept
+        client.keep(baseline.clone());
+        let (shown, _) = open(&client);
+        let window = shown.win();
+        assert_eq!(
+            Some(size(window)),
+            pair(&applied["opened"]["size"]),
+            "{name}: opened"
+        );
+        window.set_size(slint::LogicalSize::new(moved.0 as f32, moved.1 as f32));
+        crate::common::widgets::key(window, slint::platform::Key::Escape);
+        assert!(!window.is_visible(), "{name}: Escape closes it");
+        assert_eq!(client.frame(), baseline, "{name}: nothing kept");
+        drop(shown);
+        // apply: kept
+        let (shown, apply) = open(&client);
+        let window = shown.win();
+        window.set_size(slint::LogicalSize::new(moved.0 as f32, moved.1 as f32));
+        apply();
+        assert!(!window.is_visible(), "{name}: applied, closed");
+        assert_eq!(
+            client.frame(),
+            expected_after(applied, window),
+            "{name}: kept"
+        );
+    }
+}

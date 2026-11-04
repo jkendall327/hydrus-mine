@@ -2795,9 +2795,18 @@ off-screen rescue on open). Every other window opens by the ordinary
 dialogs' frame (`regular_dialog`). Those that end through the helper keep it
 as the reference's `DialogThatResizes` and `FrameThatResizes` do
 (`regular_dialog.rs`, replaying `regular_dialog.json`): so far "choose
-distance", "edit multiple location" and "force filetypes" (dialogs: kept
-when applied) and help > about
-(a frame: kept a moment after a move or resize). The rest don't keep it yet;
+distance", "edit multiple location", "force filetypes", and the tag
+summary, merge options, checker options, import options overwrite, OR
+predicate, favourite searches and favourite search, shortcut set and
+command, external command and call, media view options, tag filter,
+incremental tagging, open-externally calls, export to png(s), login step,
+edit service and manage services, tag siblings and parents, and simple
+downloader formulae editors (dialogs: kept when applied), and help > about
+(a frame: kept a moment after a move or resize). Of these, manage services,
+tag siblings and parents and favourite searches are driven through their
+frame in `regular_dialog.rs`; the others share the same helper and their
+own suites. "manage granularity" waits for its close button (the
+reference's `DialogNullipotent` keeps its frame by it). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape,
 which the helper owns, cancels these dialogs and closes the frames. Every

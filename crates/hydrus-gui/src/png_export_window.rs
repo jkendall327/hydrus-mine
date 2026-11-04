@@ -108,6 +108,7 @@ pub fn open_described(
         return Ok(w);
     }
     let w = crate::app_title::new::<crate::PngExportWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&w);
     w.set_payload_description(summary.into());
     let summary: slint::SharedString = title.into();
     w.set_png_title(summary.clone());
@@ -176,7 +177,7 @@ pub fn open_described(
         let weak = w.as_weak();
         let store = store.clone();
         let alive = alive.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let update = update.clone();
         move |action| {
             if !alive.get() {
@@ -187,7 +188,8 @@ pub fn open_described(
             };
             let result = (|| -> Result<(), String> {
                 match action.as_str() {
-                    "close" => close(),
+                    // (`DialogNullipotent`'s close button: its OK)
+                    "close" => ended.accept(),
                     "update" => {
                         w.set_done(false);
                         update();
@@ -254,12 +256,10 @@ pub fn open_described(
             }
         }
     });
-    w.window().on_close_requested({
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
+        move || close()
     });
     *slots.0.borrow_mut() = Some(w.clone_strong());
     LAST.with(|s| *s.borrow_mut() = w.as_weak());
@@ -315,6 +315,7 @@ pub fn open_many(
         return Ok(w);
     }
     let w = crate::app_title::new::<crate::PngsExportWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&w);
     let directory = store
         .read(settings::get::<model::Directory>)
         .map_err(|e| e.to_string())?;
@@ -357,7 +358,7 @@ pub fn open_many(
         let weak = w.as_weak();
         let store = store.clone();
         let alive = alive.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let update = update.clone();
         move |action| {
             if !alive.get() {
@@ -368,7 +369,8 @@ pub fn open_many(
             };
             let result = (|| -> Result<(), String> {
                 match action.as_str() {
-                    "close" => close(),
+                    // (`DialogNullipotent`'s close button: its OK)
+                    "close" => ended.accept(),
                     "update" => {
                         w.set_done(false);
                         update();
@@ -429,12 +431,10 @@ pub fn open_many(
             }
         }
     });
-    w.window().on_close_requested({
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
+        move || close()
     });
     *slots.0.borrow_mut() = Some(w.clone_strong());
     update();

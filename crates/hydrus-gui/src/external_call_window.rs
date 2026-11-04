@@ -392,6 +392,7 @@ fn command_open(
     accepted: &Rc<dyn Fn(String, Vec<String>)>,
 ) -> Result<ExternalCommandWindow, String> {
     let w = crate::app_title::new::<crate::ExternalCommandWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&w);
     w.set_executable(process.executable.as_str().into());
     w.set_mac_delete_key(cfg!(target_os = "macos"));
     let state = Rc::new(RefCell::new(CommandState::new(process.arguments.clone())));
@@ -502,15 +503,15 @@ fn command_open(
     });
     // Acceptance questions follow the reference order: empty path, then which.
     w.on_apply({
-        let weak=w.as_weak();let active=active.clone();let state=state.clone();let close=close.clone();let question=slots.question.clone();let accepted=accepted.clone();
+        let weak=w.as_weak();let active=active.clone();let state=state.clone();let ended=ended.clone();let question=slots.question.clone();let accepted=accepted.clone();
         move|| {
             if !active.get() || question.borrow().is_some(){return;}
             let Some(w)=weak.upgrade()else{return;};
             let executable=w.get_executable().to_string();
             let args=clean_arguments(&state.borrow().arguments);
             let finish:Rc<dyn Fn(bool)>=Rc::new({
-                let close=close.clone();let accepted=accepted.clone();let executable=executable.clone();
-                move|yes|{if yes{close();accepted(executable.clone(),args.clone());}}
+                let ended=ended.clone();let accepted=accepted.clone();let executable=executable.clone();
+                move|yes|{if yes{ended.accept();accepted(executable.clone(),args.clone());}}
             });
             if executable.is_empty() {
                 let next:Rc<dyn Fn(bool)>=Rc::new({
@@ -524,14 +525,15 @@ fn command_open(
         }
     });
     w.on_cancel({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
+            ended.cancel();
         }
     });
-    w.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     *slots.command.borrow_mut() = Some(w.clone_strong());
     show();
@@ -682,6 +684,7 @@ pub fn open(
         return Err("An external-call child is already open.".into());
     }
     let w = crate::app_title::new::<crate::ExternalCallWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::new(&w);
     w.set_name(call.name.as_str().into());
     w.set_pipeline(i32::from(call.pipeline == Pipeline::Url));
     w.set_call_type(i32::from(!matches!(call.call, ActualCall::Process(_))));
@@ -1082,7 +1085,7 @@ pub fn open(
         let state = state.clone();
         let blocked = blocked.clone();
         let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let question = slots.question.clone();
         move || {
             if blocked() { return; }
@@ -1092,8 +1095,8 @@ pub fn open(
             let invalid = matches!(&call.call, ActualCall::Process(p) if p.validate().is_err());
             let done: Rc<dyn Fn(bool)> = Rc::new({
                 let applied = applied.clone();
-                let close = close.clone();
-                move |yes| { if yes { close(); applied(call.clone()); } }
+                let ended = ended.clone();
+                move |yes| { if yes { ended.accept(); applied(call.clone()); } }
             });
             if invalid {
                 let _ = ask(&question, &active, "Hey, it looks like something is not quite right here. Are you sure you want to save this?".into(), done);
@@ -1101,14 +1104,15 @@ pub fn open(
         }
     });
     w.on_cancel({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
+            ended.cancel();
         }
     });
-    w.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     *slots.editor.borrow_mut() = Some(w.clone_strong());
     refresh();

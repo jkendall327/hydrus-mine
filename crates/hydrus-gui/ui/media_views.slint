@@ -42,6 +42,9 @@ export component MediaViewTable inherits Rectangle {
 }
 
 export component MediaViewWindow inherits Window {
+    // (Escape, once nothing within takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
     in property <string> window-title: "edit media view options information";
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
@@ -82,7 +85,7 @@ export component MediaViewWindow inherits Window {
     callback apply();
     callback cancel();
     keys := FocusScope {
-        key-pressed(e) => { if e.text == Key.Escape { root.cancel(); return accept; } reject }
+        key-pressed(e) => { if e.text == Key.Escape { root.escape(); return accept; } reject }
         VerticalLayout {
             padding: 12px;
             spacing: 6px;

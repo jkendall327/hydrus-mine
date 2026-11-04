@@ -448,6 +448,7 @@ fn open_set(
 ) -> Result<Owned<ShortcutSetWindow>, slint::PlatformError> {
     let snapshot = snapshot.clone();
     let window = crate::app_title::new::<crate::ShortcutSetWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     let live = Rc::new(Cell::new(true));
     let settings = editor.borrow().edited_shortcuts();
     let name = target.name();
@@ -607,7 +608,7 @@ fn open_set(
         let live = live.clone();
         let parent_live = parent_live.clone();
         let slots = slots.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !live.get() || !parent_live.get() || slots.command.borrow().is_some() {
                 return;
@@ -654,19 +655,20 @@ fn open_set(
                 }
             }
             editor.borrow_mut().set_shortcuts(settings);
-            close();
+            ended.accept();
             saved();
         }
     });
     window.on_cancel({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
+            ended.cancel();
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     LAST_SET.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     window.show()?;
@@ -694,6 +696,7 @@ fn open_command(
 ) -> Result<Owned<ShortcutCommandWindow>, slint::PlatformError> {
     use hydrus_gui_model::shortcut_content as content;
     let window = crate::app_title::new::<crate::ShortcutCommandWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     let live = Rc::new(Cell::new(true));
     // tag and rating commands, for the services that take them
     let services = Rc::new(content::services(&snapshot.services));
@@ -928,7 +931,7 @@ fn open_command(
         let services = services.clone();
         let interactive = interactive.clone();
         let weak = window.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !valid() {
                 return;
@@ -956,7 +959,7 @@ fn open_command(
                         service: service.key.clone(),
                     }),
                 });
-                close();
+                ended.accept();
                 return;
             }
             if window.get_command_type() == 1 {
@@ -981,7 +984,7 @@ fn open_command(
                         return;
                     }
                 }
-                close();
+                ended.accept();
                 return;
             }
             let Some((action, _)) = usize::try_from(window.get_command_index())
@@ -996,18 +999,19 @@ fn open_command(
                 text: None,
                 content: None,
             });
-            close();
+            ended.accept();
         }
     });
     window.on_cancel({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
+            ended.cancel();
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     LAST_COMMAND.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     window.show()?;

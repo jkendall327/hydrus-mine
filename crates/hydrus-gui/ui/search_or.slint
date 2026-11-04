@@ -4,6 +4,9 @@ import { Button, LineEdit, ScrollView } from "std-widgets.slint";
 import { ReadAutocomplete } from "read_autocomplete.slint";
 import { ListText, Theme } from "theme.slint";
 export component SearchOrWindow inherits Window {
+    // (Escape, once nothing within takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
     in property <string> window-title;
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
@@ -37,13 +40,13 @@ export component SearchOrWindow inherits Window {
     callback move-highlight(int);
     callback fetch();
     callback or-action(int);
-    callback escape() -> bool;
+    callback escape-input() -> bool;
     callback apply();
     callback cancel();
     callback closed();
     FocusScope {
         capture-key-pressed(event) => {
-            if event.text == Key.Escape { if !root.escape() { root.cancel(); } return accept; }
+            if event.text == Key.Escape { if !root.escape-input() { root.escape(); } return accept; }
             reject
         }
         VerticalLayout {

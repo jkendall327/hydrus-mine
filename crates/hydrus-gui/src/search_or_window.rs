@@ -249,6 +249,7 @@ fn open_with(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::SearchOrWindow>()?;
+    let ended = crate::dialog::Dialog::new(&window);
     window
         .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);
@@ -472,7 +473,7 @@ fn open_with(
             }
         }
     });
-    window.on_escape({
+    window.on_escape_input({
         let state = state.clone();
         let weak = window.as_weak();
         move || {
@@ -561,6 +562,7 @@ fn open_with(
         let state = state.clone();
         let weak = window.as_weak();
         let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !state.owned() {
                 close();
@@ -592,7 +594,7 @@ fn open_with(
             };
             match result {
                 Ok(predicates) if !window.get_advanced() || !predicates.is_empty() => {
-                    close();
+                    ended.accept();
                     applied(predicates);
                 }
                 _ => window.set_error(
@@ -602,12 +604,15 @@ fn open_with(
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
     });
     state.watch_owner.start(
         slint::TimerMode::Repeated,
