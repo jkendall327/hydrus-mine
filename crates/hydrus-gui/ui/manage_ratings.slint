@@ -41,107 +41,120 @@ export component ManageRatingsWindow inherits Window {
     callback apply();
     callback cancel();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        for row[i] in root.ratings: HorizontalLayout {
-            spacing: 8px;
-            Text {
-                text: root.names[i] + ": ";
-                color: Theme.text;
-                vertical-alignment: center;
-                horizontal-stretch: 1;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
-            Rectangle {
-                width: row.kind == 2 ? root.counter-widths[i] * 1px : row.shapes.length * (root.rating-size + row.pad) - row.pad;
-                height: row.kind == 2 ? root.incdec-height : root.rating-size;
-                if row.kind == 2: Rectangle {
-                    border-width: 1px;
-                    border-color: row.pen;
-                    background: row.brush;
-                    Text {
-                        x: 0;
-                        width: parent.width - 2px;
-                        height: parent.height;
-                        horizontal-alignment: right;
-                        vertical-alignment: center;
-                        text: row.text;
-                        color: #000000;
-                        font-size: max(root.incdec-height - 1px, 6px);
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            for row[i] in root.ratings: HorizontalLayout {
+                spacing: 8px;
+                Text {
+                    text: root.names[i] + ": ";
+                    color: Theme.text;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+                Rectangle {
+                    width: row.kind == 2 ? root.counter-widths[i] * 1px : row.shapes.length * (root.rating-size + row.pad) - row.pad;
+                    height: row.kind == 2 ? root.incdec-height : root.rating-size;
+                    if row.kind == 2: Rectangle {
+                        border-width: 1px;
+                        border-color: row.pen;
+                        background: row.brush;
+                        Text {
+                            x: 0;
+                            width: parent.width - 2px;
+                            height: parent.height;
+                            horizontal-alignment: right;
+                            vertical-alignment: center;
+                            text: row.text;
+                            color: #000000;
+                            font-size: max(root.incdec-height - 1px, 6px);
+                        }
                     }
-                }
-                for star[k] in row.shapes: Path {
-                    x: k * (root.rating-size + row.pad);
-                    y: 0;
-                    width: root.rating-size;
-                    height: root.rating-size;
-                    viewbox-width: 12;
-                    viewbox-height: 12;
-                    commands: row.shape;
-                    fill: star.brush;
-                    stroke: star.pen;
-                    stroke-width: root.rating-outline;
-                }
-                TouchArea {
-                    enabled: !root.asking;
-                    pointer-event(event) => {
-                        if (event.kind == PointerEventKind.down) {
-                            if (event.button == PointerEventButton.left) {
+                    for star[k] in row.shapes: Path {
+                        x: k * (root.rating-size + row.pad);
+                        y: 0;
+                        width: root.rating-size;
+                        height: root.rating-size;
+                        viewbox-width: 12;
+                        viewbox-height: 12;
+                        commands: row.shape;
+                        fill: star.brush;
+                        stroke: star.pen;
+                        stroke-width: root.rating-outline;
+                    }
+                    TouchArea {
+                        enabled: !root.asking;
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.down) {
+                                if (event.button == PointerEventButton.left) {
+                                    root.rating-clicked(i, true, self.mouse-x / self.width);
+                                } else if (event.button == PointerEventButton.right) {
+                                    root.rating-clicked(i, false, 0);
+                                } else if (event.button == PointerEventButton.middle && row.kind == 2) {
+                                    root.rating-middle(i);
+                                }
+                            }
+                        }
+                        moved => {
+                            // (dragging along stars sets them)
+                            if (row.kind == 1 && self.pressed) {
                                 root.rating-clicked(i, true, self.mouse-x / self.width);
-                            } else if (event.button == PointerEventButton.right) {
-                                root.rating-clicked(i, false, 0);
-                            } else if (event.button == PointerEventButton.middle && row.kind == 2) {
-                                root.rating-middle(i);
                             }
                         }
                     }
-                    moved => {
-                        // (dragging along stars sets them)
-                        if (row.kind == 1 && self.pressed) {
-                            root.rating-clicked(i, true, self.mouse-x / self.width);
-                        }
-                    }
                 }
             }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            if root.notice != "": Text {
-                text: root.notice;
-                vertical-alignment: center;
-                color: Theme.text;
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                if root.notice != "": Text {
+                    text: root.notice;
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                Btn {
+                    text: "copy";
+                    enabled: !root.asking;
+                    clicked => { root.copy(); }
+                }
+                Btn {
+                    text: "paste";
+                    enabled: !root.asking;
+                    clicked => { root.paste(); }
+                }
             }
-            Btn {
-                text: "copy";
-                enabled: !root.asking;
-                clicked => { root.copy(); }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: ["ok"];
+                wants-text: false;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
             }
-            Btn {
-                text: "paste";
-                enabled: !root.asking;
-                clicked => { root.paste(); }
-            }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: ["ok"];
-            wants-text: false;
-            chosen(index) => { root.chosen(index); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                enabled: !root.asking;
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    enabled: !root.asking;
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

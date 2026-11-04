@@ -205,6 +205,9 @@ fn open_accepting(
         return Ok(None);
     }
     let window = crate::app_title::new::<crate::DeleteFilesWindow>().map_err(|e| e.to_string())?;
+    // (`GetDeleteFilesJobs`' `DialogEdit` on `quick_select_dialog`: placed by
+    // it, and kept by it when accepted)
+    let ended = crate::dialog::Dialog::keyed(&window, "quick_select_dialog");
     window.set_custom(draft.custom.as_str().into());
     window.set_simple(draft.simple);
     show(&window, &draft);
@@ -295,14 +298,14 @@ fn open_accepting(
         let active = active.clone();
         let draft = draft.clone();
         let weak = window.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         let store = store.clone();
         move || {
             if !active.get() {
                 return;
             }
             if !guard() {
-                close();
+                ended.cancel();
                 return;
             }
             let Some(window) = weak.upgrade() else {
@@ -315,7 +318,7 @@ fn open_accepting(
             let accepted = accept(&draft.borrow(), &store);
             match accepted {
                 Ok(then) => {
-                    close();
+                    ended.accept();
                     then();
                 }
                 Err(error) => {
@@ -325,13 +328,13 @@ fn open_accepting(
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
-    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     *slot.borrow_mut() = Some(window.clone_strong());
     LAST.with(|l| *l.borrow_mut() = Some(window.as_weak()));
     window.show().map_err(|e| e.to_string())?;

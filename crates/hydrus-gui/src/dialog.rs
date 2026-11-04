@@ -62,8 +62,10 @@ escapes!(
     BandwidthWindow,
     CheckerOptionsWindow,
     ChoiceButtonsWindow,
+    ClientApiKeysWindow,
     ComparatorWindow,
     DatabaseLocationsWindow,
+    DeleteFilesWindow,
     DownloaderDefinitionEditWindow,
     DownloaderDefinitionsWindow,
     DownloaderDisplayWindow,
@@ -84,6 +86,8 @@ escapes!(
     FilenameTaggingWindow,
     FoldersWindow,
     ForceFiletypeWindow,
+    FrameLocationWindow,
+    GranularityWindow,
     ImportFolderWindow,
     ImportOptionsOverwriteWindow,
     ImportOptionsWindow,
@@ -96,6 +100,7 @@ escapes!(
     LoginStepWindow,
     LoginTestResultWindow,
     ManageNotesWindow,
+    ManageRatingsWindow,
     ManageTagsWindow,
     ManageTimesWindow,
     ManageUrlsWindow,
@@ -112,6 +117,7 @@ escapes!(
     ReviewImportsWindow,
     SearchOrWindow,
     ServicesEditorWindow,
+    ServicesReviewWindow,
     ShortcutCommandWindow,
     ShortcutSetWindow,
     SidecarNodeWindow,
@@ -218,6 +224,23 @@ impl<C: Escapes + 'static> Dialog<C> {
         let dialog = Self::make(component, name, Kind::Dialog, Some(store.clone()));
         crate::windows::place_frame(component, store, name);
         dialog
+    }
+
+    /// [`Dialog::named`] in the main window's store (the reference's
+    /// `deeply_nested_dialog`, `quick_select_dialog`, `quick_entry_dialog`
+    /// dialogs); without one (no main window), kept nowhere.
+    pub(crate) fn keyed(component: &C, name: &'static str) -> Self {
+        match crate::windows::store() {
+            Some(store) => Self::named(component, &store, name),
+            None => Self::make(component, name, Kind::Dialog, None),
+        }
+    }
+
+    /// A dialog the reference doesn't size or place (an old
+    /// `ClientGUIDialogs.Dialog`, a panel hydrus-rs opens as a window of
+    /// its own): it ends as the ordinary dialogs do, keeping no frame.
+    pub(crate) fn plain(component: &C) -> Self {
+        Self::make(component, "regular_dialog", Kind::Dialog, None)
     }
 
     /// A frame the reference opens by a frame key of its own (the viewer's

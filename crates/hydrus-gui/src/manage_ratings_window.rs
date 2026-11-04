@@ -119,6 +119,9 @@ pub(crate) fn open(
         .collect();
     let window =
         crate::app_title::new::<crate::ManageRatingsWindow>().map_err(|e| e.to_string())?;
+    // (the reference's `DialogManageRatings`, an old `ClientGUIDialogs.Dialog`
+    // it doesn't size or place: ending as a dialog does, keeping no frame)
+    let ended = crate::dialog::Dialog::plain(&window);
     window.set_window_title(title(files.len()).into());
     let sizes = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::RatingContextSizes>)
@@ -173,6 +176,7 @@ pub(crate) fn open(
     // an inc/dec control's middle click: "edit value", its count typed
     let editing = editing.clone();
     window.on_rating_middle({
+        let owner = ended.clone();
         let state = state.clone();
         let refresh = refresh.clone();
         let editing = editing.clone();
@@ -210,6 +214,8 @@ pub(crate) fn open(
                 ended.cancel();
             });
             if edit.show().is_ok() {
+                // ("edit value" is modal over it)
+                owner.hold(&edit);
                 *editing.borrow_mut() = Some(edit);
             }
         }
@@ -257,7 +263,7 @@ pub(crate) fn open(
     window.on_apply({
         let state = state.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             let updates = state.borrow().editor.updates();
             if !updates.is_empty() {
@@ -276,17 +282,28 @@ pub(crate) fn open(
                     Err(e) => eprintln!("could not write the ratings: {e}"),
                 }
             }
-            close();
+            ended.accept();
         }
     });
-    window.on_cancel(move || close());
-    window.window().on_close_requested({
-        let slot = slot.clone();
+    window.on_cancel({
+        let ended = ended.clone();
         move || {
-            slot.borrow_mut().take();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
     });
+    // (its problem message takes Escape and the window's close first)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     show(&window, &state.borrow());
     window.show().map_err(|e| e.to_string())?;
     Ok(window)

@@ -2,6 +2,9 @@ import { Btn } from "@hydrus_ui_core";
 import { Button, ComboBox, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
 export component ServicesReviewWindow inherits Window {
+    // (Escape goes to the dialog helper: closed, as the reference's frame's
+    // `keyPressEvent`)
+    callback escape();
     in property <string> window-title: "review services";
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
@@ -40,8 +43,8 @@ export component ServicesReviewWindow inherits Window {
         init => { self.focus(); }
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.question != "" { root.answer(false); }
-                else { root.close-clicked(); }
+                // (a question up answered no first, by the dialog helper)
+                root.escape();
                 return accept;
             }
             return reject;

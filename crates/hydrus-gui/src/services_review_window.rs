@@ -51,6 +51,9 @@ pub fn open_with_changed(
     let window =
         crate::app_title::new::<crate::ServicesReviewWindow>().map_err(|e| e.to_string())?;
     let frame_store = store.clone();
+    // (a frame with a frame key of its own, `review_services`: placed by it,
+    // and kept by it as it closes)
+    let ended = crate::dialog::Dialog::named_frame(&window, &frame_store, FRAME);
     let active = Rc::new(Cell::new(true));
     let pending = Rc::new(RefCell::new(
         None::<(hydrus_core::ServiceKey, Action, bool)>,
@@ -269,37 +272,41 @@ pub fn open_with_changed(
         }
     });
     window.on_close_clicked({
-        let active = active.clone();
-        let pending = pending.clone();
-        let slots = slots.clone();
-        let weak = window.as_weak();
-        let store = frame_store.clone();
+        let ended = ended.clone();
         move || {
-            active.set(false);
-            pending.borrow_mut().take();
-            if let Some(w) = weak.upgrade() {
-                w.set_question(SharedString::new());
-                w.set_rating_menu(false);
-                slots.close();
-                crate::windows::save_named(w.window(), &store, FRAME);
-                let _ = w.hide();
-            }
+            ended.close();
         }
     });
+    // (a question up, or the ratings menu, takes Escape and the window's
+    // close first)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_answer(false);
+                return w.get_question().is_empty();
+            }
+            if w.get_rating_menu() {
+                w.set_rating_menu(false);
+                return true;
+            }
+            false
+        }
+    });
+    // (whatever ends it, through the dialog helper)
     let weak = window.as_weak();
-    let closing_store = frame_store.clone();
-    window.window().on_close_requested(move || {
+    ended.on_closed(move || {
         active.set(false);
         pending.borrow_mut().take();
         if let Some(window) = weak.upgrade() {
             window.set_question(SharedString::new());
             window.set_rating_menu(false);
-            crate::windows::save_named(window.window(), &closing_store, FRAME);
         }
         slots.close();
-        slint::CloseRequestResponse::HideWindow
     });
-    crate::windows::place_frame(&window, &frame_store, FRAME);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
