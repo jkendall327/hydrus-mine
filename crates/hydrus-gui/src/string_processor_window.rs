@@ -1272,7 +1272,13 @@ pub fn open_converter(
     applied: Rc<dyn Fn(StringConverter)>,
 ) -> Result<StringConverterWindow, slint::PlatformError> {
     // (`StringConverterButton`'s `DialogEdit` on `deeply_nested_dialog`)
-    open_converter_keyed(converter, example, slots, applied, Some("deeply_nested_dialog"))
+    open_converter_keyed(
+        converter,
+        example,
+        slots,
+        applied,
+        Some("deeply_nested_dialog"),
+    )
 }
 
 /// [`open_converter`], kept by `key` (none: `regular_dialog`, as the

@@ -1498,7 +1498,11 @@ fn cases() -> Vec<Named> {
                 Box::new(move || {
                     let _ = &dirs;
                     let (_review, keys) = api_keys(&ui, &bound);
-                    opened(keys, |w| w.invoke_apply_clicked(), |w| w.invoke_cancel_clicked())
+                    opened(
+                        keys,
+                        |w| w.invoke_apply_clicked(),
+                        |w| w.invoke_cancel_clicked(),
+                    )
                 }),
             )
         }),
@@ -3467,18 +3471,27 @@ fn the_deeply_nested_editors_take_escape_for_their_questions_and_children_first(
     processor.invoke_add();
     assert!(processor.get_asking());
     escape(processor.window());
-    assert!(!processor.get_asking(), "processor: Escape answers its choice");
+    assert!(
+        !processor.get_asking(),
+        "processor: Escape answers its choice"
+    );
     assert!(shown(processor.window()), "processor: still open");
     processor.invoke_add();
     processor.invoke_chosen(0);
     let step = take(&slots.step, "a processing step");
     escape(processor.window());
-    assert!(shown(processor.window()), "processor: its step editor holds it");
+    assert!(
+        shown(processor.window()),
+        "processor: its step editor holds it"
+    );
     assert!(shown(step.window()));
     escape(step.window());
     assert!(!shown(step.window()), "the step: Escape cancels it");
     escape(processor.window());
-    assert!(!shown(processor.window()), "processor: then Escape cancels it");
+    assert!(
+        !shown(processor.window()),
+        "processor: then Escape cancels it"
+    );
 
     // the string converter: its delete question
     let slots = hydrus_gui::string_processor_window::Slots::default();
@@ -3494,7 +3507,10 @@ fn the_deeply_nested_editors_take_escape_for_their_questions_and_children_first(
     converter.invoke_add();
     let conversion = take(&slots.conversion, "a conversion");
     escape(converter.window());
-    assert!(shown(converter.window()), "converter: its conversion holds it");
+    assert!(
+        shown(converter.window()),
+        "converter: its conversion holds it"
+    );
     conversion.invoke_apply();
     assert!(!shown(conversion.window()));
     converter.invoke_row_clicked(0, false, false);
@@ -3547,7 +3563,10 @@ fn the_deeply_nested_editors_take_escape_for_their_questions_and_children_first(
     assert!(page.get_question().is_empty(), "parser: Escape answers no");
     page.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
-    assert!(!page.get_question().is_empty(), "parser: its close asks too");
+    assert!(
+        !page.get_question().is_empty(),
+        "parser: its close asks too"
+    );
     page.invoke_answered(true);
     assert!(!shown(page.window()), "parser: discarded on yes");
     assert!(shown(list.window()));
@@ -3563,12 +3582,18 @@ fn the_deeply_nested_editors_take_escape_for_their_questions_and_children_first(
     script.invoke_action("delete-credential".into());
     assert!(!script.get_question().is_empty());
     escape(script.window());
-    assert!(script.get_question().is_empty(), "login script: Escape answers no");
+    assert!(
+        script.get_question().is_empty(),
+        "login script: Escape answers no"
+    );
     assert!(shown(script.window()));
     script.invoke_action("edit-credential".into());
     let definition = take(&slots.definition, "a credential definition");
     escape(script.window());
-    assert!(shown(script.window()), "login script: its definition holds it");
+    assert!(
+        shown(script.window()),
+        "login script: its definition holds it"
+    );
     escape(definition.window());
     assert!(!shown(definition.window()));
     escape(script.window());
