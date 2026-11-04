@@ -338,7 +338,7 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         &slots.import_list,
         hydrus_store::folder_activity::Kind::Import,
         Rc::new(move |window, ended, lease| {
-            open_import_folders_ready(&owned_store, &owned_slots, window, ended, lease)
+            open_import_folders_ready(&owned_store, &owned_slots, window, &ended, lease)
         }),
     )
 }
@@ -347,7 +347,7 @@ fn open_import_folders_ready(
     store: &Arc<Store>,
     slots: &Slots,
     window: FoldersWindow,
-    ended: crate::dialog::Dialog<FoldersWindow>,
+    ended: &crate::dialog::Dialog<FoldersWindow>,
     lease: hydrus_store::folder_activity::Edit,
 ) -> Result<(), String> {
     let lease = Rc::new(RefCell::new(Some(lease)));
@@ -1350,7 +1350,7 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         &slots.export_list,
         hydrus_store::folder_activity::Kind::Export,
         Rc::new(move |window, ended, lease| {
-            open_export_folders_ready(&owned_store, &owned_slots, window, ended, lease)
+            open_export_folders_ready(&owned_store, &owned_slots, window, &ended, lease)
         }),
     )
 }
@@ -1359,7 +1359,7 @@ fn open_export_folders_ready(
     store: &Arc<Store>,
     slots: &Slots,
     window: FoldersWindow,
-    ended: crate::dialog::Dialog<FoldersWindow>,
+    ended: &crate::dialog::Dialog<FoldersWindow>,
     lease: hydrus_store::folder_activity::Edit,
 ) -> Result<(), String> {
     let lease = Rc::new(RefCell::new(Some(lease)));

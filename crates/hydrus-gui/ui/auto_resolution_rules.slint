@@ -169,96 +169,109 @@ export component AutoResolutionRulesWindow inherits Window {
     callback cancelled();
     callback apply();
     callback cancel();
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        Label {
-            text: root.warning;
-            horizontal-alignment: center;
-            color: Theme.error;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        Label {
-            text: root.note;
-            horizontal-alignment: center;
-        }
-        ListTable {
-            vertical-stretch: 1;
-            columns: [
-                { title: "name", width: 180px },
-                { title: "search", width: 260px, stretch: true },
-                { title: "comparison", width: 220px },
-                { title: "action", width: 200px },
-                { title: "progress", width: 120px },
-                { title: "operation", width: 120px },
-            ];
-            rows: root.rows;
-            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
-            row-activated(row) => { root.edit(); }
-        }
-        if root.choosing-suggested: Rectangle {
-            border-width: 1px;
-            border-color: Theme.border;
-            background: Theme.panel;
-            VerticalLayout {
-                padding: 8px;
-                spacing: 4px;
-                Text {
-                    text: "Select which to add";
-                    font-weight: 700;
-                    color: Theme.text;
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            Label {
+                text: root.warning;
+                horizontal-alignment: center;
+                color: Theme.error;
+            }
+            Label {
+                text: root.note;
+                horizontal-alignment: center;
+            }
+            ListTable {
+                vertical-stretch: 1;
+                columns: [
+                    { title: "name", width: 180px },
+                    { title: "search", width: 260px, stretch: true },
+                    { title: "comparison", width: 220px },
+                    { title: "action", width: 200px },
+                    { title: "progress", width: 120px },
+                    { title: "operation", width: 120px },
+                ];
+                rows: root.rows;
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                row-activated(row) => { root.edit(); }
+            }
+            if root.choosing-suggested: Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                background: Theme.panel;
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 4px;
+                    Text {
+                        text: "Select which to add";
+                        font-weight: 700;
+                        color: Theme.text;
+                    }
+                    for name[i] in root.suggestions: Btn {
+                        text: name;
+                        clicked => { root.suggested-chosen(i); }
+                    }
+                    Btn {
+                        text: "cancel";
+                        clicked => { root.suggested-chosen(-1); }
+                    }
                 }
-                for name[i] in root.suggestions: Btn {
-                    text: name;
-                    clicked => { root.suggested-chosen(i); }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Btn {
+                    text: "add suggested";
+                    clicked => { root.add-suggested(); }
+                }
+                Btn {
+                    text: "add";
+                    clicked => { root.add(); }
+                }
+                Btn {
+                    text: "edit";
+                    enabled: root.one-selected;
+                    clicked => { root.edit(); }
+                }
+                Btn {
+                    text: "delete";
+                    enabled: root.any-selected;
+                    clicked => { root.delete(); }
+                }
+                SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to json file", "to png file"]; available: root.any-selected && !root.asking; selected(mode) => { root.exchange(mode); } }
+                SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from json files", "from png files (you can also drag and drop pngs onto this list)"]; available: !root.asking; selected(mode) => { root.exchange(mode + 3); } }
+                Btn {
+                    text: "duplicate";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.exchange(6); }
+                }
+                Rectangle { horizontal-stretch: 1; }
+                Btn {
+                    text: "apply";
+                    clicked => { root.apply(); }
                 }
                 Btn {
                     text: "cancel";
-                    clicked => { root.suggested-chosen(-1); }
+                    clicked => { root.cancel(); }
                 }
-            }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            chosen(i) => { root.chosen(i); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            spacing: 6px;
-            Btn {
-                text: "add suggested";
-                clicked => { root.add-suggested(); }
-            }
-            Btn {
-                text: "add";
-                clicked => { root.add(); }
-            }
-            Btn {
-                text: "edit";
-                enabled: root.one-selected;
-                clicked => { root.edit(); }
-            }
-            Btn {
-                text: "delete";
-                enabled: root.any-selected;
-                clicked => { root.delete(); }
-            }
-            SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to json file", "to png file"]; available: root.any-selected && !root.asking; selected(mode) => { root.exchange(mode); } }
-            SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from json files", "from png files (you can also drag and drop pngs onto this list)"]; available: !root.asking; selected(mode) => { root.exchange(mode + 3); } }
-            Btn {
-                text: "duplicate";
-                enabled: root.any-selected && !root.asking;
-                clicked => { root.exchange(6); }
-            }
-            Rectangle { horizontal-stretch: 1; }
-            Btn {
-                text: "apply";
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
             }
         }
     }
@@ -351,343 +364,356 @@ export component AutoResolutionRuleWindow inherits Window {
     in property <string> preview-fail-menu;
     callback apply();
     callback cancel();
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        Row {
-            label: "name: ";
-            LineEdit {
-                horizontal-stretch: 3;
-                text <=> root.name;
-                edited => { root.changed(); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
+            reject
         }
-        Row {
-            label: "paused: ";
-            CheckBox {
-                checked <=> root.paused;
-                toggled => { root.changed(); }
-            }
-        }
-        Row {
-            label: "operation: ";
-            ComboBox {
-                horizontal-stretch: 3;
-                model: root.operation-choices;
-                current-index <=> root.operation;
-                selected => { root.changed(); }
-            }
-        }
-        Row {
-            label: "max pending pairs (semi-automatic only): ";
-            CheckBox {
-                text: "no limit";
-                enabled: root.pending-limit-enabled;
-                checked <=> root.no-pending-limit;
-                toggled => { root.changed(); }
-            }
-            SpinBox {
-                enabled: root.pending-limit-enabled && !root.no-pending-limit;
-                minimum: 1;
-                maximum: 1000000;
-                value <=> root.pending-limit;
-                edited => { root.changed(); }
-            }
-        }
-        HorizontalLayout {
-            alignment: start;
-            Tab {
-                text: "search";
-                current: root.tab == 0;
-                clicked => { root.tab = 0; }
-            }
-            Tab {
-                text: "comparison";
-                current: root.tab == 1;
-                clicked => { root.tab = 1; }
-            }
-            Tab {
-                text: "action";
-                current: root.tab == 2;
-                clicked => { root.tab = 2; }
-            }
-            Tab {
-                text: "preview";
-                current: root.tab == 3;
-                clicked => {
-                    root.tab = 3;
-                    root.preview-shown();
-                }
-            }
-        }
-        if root.tab == 0: VerticalLayout {
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
-            vertical-stretch: 1;
-            Label {
-                text: root.search-text;
-                horizontal-alignment: center;
-            }
-            Text {
-                text: "potential duplicate pairs search";
-                font-weight: 700;
-                color: Theme.text;
-            }
-            ComboBox {
-                model: root.pair-search-choices;
-                current-index <=> root.pair-search;
-                selected => { root.changed(); }
-            }
-            HorizontalLayout {
-                spacing: 6px;
-                Label { text: "searching: "; }
-                Btn {
-                    text: root.location;
-                    clicked => { root.edit-location(); }
-                }
-                Label {
-                    horizontal-stretch: 1;
-                    text: "a search term a line (tags, or system predicates as the Client API takes them):";
-                }
-            }
-            HorizontalLayout {
-                spacing: 6px;
-                vertical-stretch: 1;
-                TextEdit {
-                    text <=> root.search-1;
-                    edited => { root.changed(); }
-                }
-                if root.pair-search == 2: TextEdit {
-                    text <=> root.search-2;
+            Row {
+                label: "name: ";
+                LineEdit {
+                    horizontal-stretch: 3;
+                    text <=> root.name;
                     edited => { root.changed(); }
                 }
             }
             Row {
-                label: "maximum search distance of pair: ";
-                SpinBox {
-                    enabled: root.pixel != 0;
-                    minimum: 0;
-                    maximum: 64;
-                    step-size: 2;
-                    value <=> root.distance;
-                    edited => { root.changed(); }
+                label: "paused: ";
+                CheckBox {
+                    checked <=> root.paused;
+                    toggled => { root.changed(); }
                 }
-            }
-            // the pair count of this search, as the duplicates page's
-            HorizontalLayout {
-                spacing: 4px;
-                Label { text: root.count; horizontal-stretch: 1; }
-                Btn {
-                    width: 30px;
-                    text: root.count-paused ? "▶" : "⏸";
-                    clicked => { root.count-action("pause count", 0); }
-                }
-                Btn { width: 30px; text: "⟳"; clicked => { root.count-action("refresh count", 0); } }
-                count-cog := ContextMenuArea {
-                    width: 30px;
-                    Menu {
-                        MenuItem {
-                            title: root.count-cog[0];
-                            checkable: true;
-                            checked: root.count-ticks[0];
-                            activated => { root.count-action("count option", 0); }
-                        }
-                        MenuSeparator { }
-                        MenuItem {
-                            title: root.count-cog[1];
-                            checkable: true;
-                            checked: root.count-ticks[1];
-                            activated => { root.count-action("count option", 1); }
-                        }
-                        MenuItem {
-                            title: root.count-cog[2];
-                            checkable: true;
-                            checked: root.count-ticks[2];
-                            activated => { root.count-action("count option", 2); }
-                        }
-                    }
-                    Btn {
-                        width: 30px;
-                        text: "⚙";
-                        clicked => { count-cog.show({ x: 0px, y: self.height }); }
-                    }
-                }
-            }
-            ComboBox {
-                model: root.pixel-choices;
-                current-index <=> root.pixel;
-                selected => { root.changed(); }
-            }
-        }
-        if root.tab == 1: VerticalLayout {
-            spacing: 6px;
-            vertical-stretch: 1;
-            Label {
-                text: root.comparison-text;
-                horizontal-alignment: center;
-            }
-            Text {
-                text: "pair comparison and selection";
-                font-weight: 700;
-                color: Theme.text;
-            }
-            ComparatorList {
-                vertical-stretch: 1;
-                rows: root.comparators;
-                selected: root.comparator-selected;
-                picked: root.comparator-picked;
-                kinds: root.comparator-kinds;
-                kind <=> root.comparator-kind;
-                clicked(i, control, shift) => { root.comparator-clicked(i, control, shift); }
-                add => { root.comparator-add(); }
-                edit => { root.comparator-edit(); }
-                delete => { root.comparator-delete(); }
-                exchanging: true;
-                exchange(mode) => { root.comparator-exchange(mode); }
-            }
-        }
-        if root.tab == 2: VerticalLayout {
-            spacing: 6px;
-            alignment: start;
-            Label {
-                text: root.action-text;
-                horizontal-alignment: center;
-            }
-            Text {
-                text: "pair actions";
-                font-weight: 700;
-                color: Theme.text;
             }
             Row {
-                label: "action: ";
+                label: "operation: ";
                 ComboBox {
-                    horizontal-stretch: 2;
-                    model: root.action-choices;
-                    current-index <=> root.action;
+                    horizontal-stretch: 3;
+                    model: root.operation-choices;
+                    current-index <=> root.operation;
                     selected => { root.changed(); }
                 }
             }
             Row {
-                label: "delete A: ";
+                label: "max pending pairs (semi-automatic only): ";
                 CheckBox {
-                    checked <=> root.delete-a;
+                    text: "no limit";
+                    enabled: root.pending-limit-enabled;
+                    checked <=> root.no-pending-limit;
                     toggled => { root.changed(); }
                 }
-            }
-            Row {
-                label: "delete B: ";
-                CheckBox {
-                    checked <=> root.delete-b;
-                    toggled => { root.changed(); }
+                SpinBox {
+                    enabled: root.pending-limit-enabled && !root.no-pending-limit;
+                    minimum: 1;
+                    maximum: 1000000;
+                    value <=> root.pending-limit;
+                    edited => { root.changed(); }
                 }
             }
-            Row {
-                label: "use default content merge options for action: ";
-                CheckBox {
-                    checked <=> root.default-merge;
-                    toggled => { root.changed(); }
-                }
-                Btn {
-                    text: "edit custom merge options";
-                    enabled: !root.default-merge;
-                    clicked => { root.edit-merge(); }
-                }
-            }
-        }
-        if root.tab == 3: VerticalLayout {
-            spacing: 6px;
-            vertical-stretch: 1;
-            Text {
-                text: "preview of rule work";
-                font-weight: 700;
-                color: Theme.text;
-            }
-            Text {
-                text: "search";
-                font-weight: 700;
-                color: Theme.text;
-            }
-            Label { text: root.preview-search-label; }
             HorizontalLayout {
+                alignment: start;
+                Tab {
+                    text: "search";
+                    current: root.tab == 0;
+                    clicked => { root.tab = 0; }
+                }
+                Tab {
+                    text: "comparison";
+                    current: root.tab == 1;
+                    clicked => { root.tab = 1; }
+                }
+                Tab {
+                    text: "action";
+                    current: root.tab == 2;
+                    clicked => { root.tab = 2; }
+                }
+                Tab {
+                    text: "preview";
+                    current: root.tab == 3;
+                    clicked => {
+                        root.tab = 3;
+                        root.preview-shown();
+                    }
+                }
+            }
+            if root.tab == 0: VerticalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                Label {
+                    text: root.search-text;
+                    horizontal-alignment: center;
+                }
+                Text {
+                    text: "potential duplicate pairs search";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                ComboBox {
+                    model: root.pair-search-choices;
+                    current-index <=> root.pair-search;
+                    selected => { root.changed(); }
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    Label { text: "searching: "; }
+                    Btn {
+                        text: root.location;
+                        clicked => { root.edit-location(); }
+                    }
+                    Label {
+                        horizontal-stretch: 1;
+                        text: "a search term a line (tags, or system predicates as the Client API takes them):";
+                    }
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    vertical-stretch: 1;
+                    TextEdit {
+                        text <=> root.search-1;
+                        edited => { root.changed(); }
+                    }
+                    if root.pair-search == 2: TextEdit {
+                        text <=> root.search-2;
+                        edited => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "maximum search distance of pair: ";
+                    SpinBox {
+                        enabled: root.pixel != 0;
+                        minimum: 0;
+                        maximum: 64;
+                        step-size: 2;
+                        value <=> root.distance;
+                        edited => { root.changed(); }
+                    }
+                }
+                // the pair count of this search, as the duplicates page's
+                HorizontalLayout {
+                    spacing: 4px;
+                    Label { text: root.count; horizontal-stretch: 1; }
+                    Btn {
+                        width: 30px;
+                        text: root.count-paused ? "▶" : "⏸";
+                        clicked => { root.count-action("pause count", 0); }
+                    }
+                    Btn { width: 30px; text: "⟳"; clicked => { root.count-action("refresh count", 0); } }
+                    count-cog := ContextMenuArea {
+                        width: 30px;
+                        Menu {
+                            MenuItem {
+                                title: root.count-cog[0];
+                                checkable: true;
+                                checked: root.count-ticks[0];
+                                activated => { root.count-action("count option", 0); }
+                            }
+                            MenuSeparator { }
+                            MenuItem {
+                                title: root.count-cog[1];
+                                checkable: true;
+                                checked: root.count-ticks[1];
+                                activated => { root.count-action("count option", 1); }
+                            }
+                            MenuItem {
+                                title: root.count-cog[2];
+                                checkable: true;
+                                checked: root.count-ticks[2];
+                                activated => { root.count-action("count option", 2); }
+                            }
+                        }
+                        Btn {
+                            width: 30px;
+                            text: "⚙";
+                            clicked => { count-cog.show({ x: 0px, y: self.height }); }
+                        }
+                    }
+                }
+                ComboBox {
+                    model: root.pixel-choices;
+                    current-index <=> root.pixel;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.tab == 1: VerticalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                Label {
+                    text: root.comparison-text;
+                    horizontal-alignment: center;
+                }
+                Text {
+                    text: "pair comparison and selection";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                ComparatorList {
+                    vertical-stretch: 1;
+                    rows: root.comparators;
+                    selected: root.comparator-selected;
+                    picked: root.comparator-picked;
+                    kinds: root.comparator-kinds;
+                    kind <=> root.comparator-kind;
+                    clicked(i, control, shift) => { root.comparator-clicked(i, control, shift); }
+                    add => { root.comparator-add(); }
+                    edit => { root.comparator-edit(); }
+                    delete => { root.comparator-delete(); }
+                    exchanging: true;
+                    exchange(mode) => { root.comparator-exchange(mode); }
+                }
+            }
+            if root.tab == 2: VerticalLayout {
                 spacing: 6px;
                 alignment: start;
-                Label { text: "only sample this many: "; }
-                SpinBox {
-                    enabled: !root.preview-fetch-all;
-                    minimum: 1;
-                    maximum: 100000000;
-                    value <=> root.preview-fetch-limit;
-                    edited => { root.preview-fetch-changed(); }
+                Label {
+                    text: root.action-text;
+                    horizontal-alignment: center;
                 }
-                CheckBox {
-                    text: "fetch all";
-                    checked <=> root.preview-fetch-all;
-                    toggled => { root.preview-fetch-changed(); }
+                Text {
+                    text: "pair actions";
+                    font-weight: 700;
+                    color: Theme.text;
                 }
-                Btn {
-                    // (the reference's refresh icon: "Fetch a sample of pairs")
-                    text: "fetch again";
-                    clicked => { root.preview-refetch(); }
+                Row {
+                    label: "action: ";
+                    ComboBox {
+                        horizontal-stretch: 2;
+                        model: root.action-choices;
+                        current-index <=> root.action;
+                        selected => { root.changed(); }
+                    }
                 }
+                Row {
+                    label: "delete A: ";
+                    CheckBox {
+                        checked <=> root.delete-a;
+                        toggled => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "delete B: ";
+                    CheckBox {
+                        checked <=> root.delete-b;
+                        toggled => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "use default content merge options for action: ";
+                    CheckBox {
+                        checked <=> root.default-merge;
+                        toggled => { root.changed(); }
+                    }
+                    Btn {
+                        text: "edit custom merge options";
+                        enabled: !root.default-merge;
+                        clicked => { root.edit-merge(); }
+                    }
+                }
+            }
+            if root.tab == 3: VerticalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                Text {
+                    text: "preview of rule work";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                Text {
+                    text: "search";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                Label { text: root.preview-search-label; }
+                HorizontalLayout {
+                    spacing: 6px;
+                    alignment: start;
+                    Label { text: "only sample this many: "; }
+                    SpinBox {
+                        enabled: !root.preview-fetch-all;
+                        minimum: 1;
+                        maximum: 100000000;
+                        value <=> root.preview-fetch-limit;
+                        edited => { root.preview-fetch-changed(); }
+                    }
+                    CheckBox {
+                        text: "fetch all";
+                        checked <=> root.preview-fetch-all;
+                        toggled => { root.preview-fetch-changed(); }
+                    }
+                    Btn {
+                        // (the reference's refresh icon: "Fetch a sample of pairs")
+                        text: "fetch again";
+                        clicked => { root.preview-refetch(); }
+                    }
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    Label {
+                        horizontal-stretch: 1;
+                        text: root.preview-to-test-label;
+                    }
+                    Btn {
+                        // ("Retest the fetched pairs")
+                        text: "test again";
+                        clicked => { root.preview-retest(); }
+                    }
+                }
+                Text {
+                    text: "pairs that will be actioned";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                Label { text: root.preview-pass-label; }
+                PairList {
+                    vertical-stretch: 2;
+                    min-height: 2 * 90px + 26px;
+                    columns: ["A", "B", "action"];
+                    rows: root.preview-pass-rows;
+                    row-activated(r) => { root.preview-pass-activated(r); }
+                    row-clicked(r, c, sh) => { root.preview-pass-clicked(r, c, sh); }
+                    menu-label: root.preview-pass-menu;
+                    show-in-page => { root.preview-pass-show(); }
+                }
+                Text {
+                    text: "pairs that will be skipped";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                Label { text: root.preview-fail-label; }
+                PairList {
+                    vertical-stretch: 1;
+                    min-height: 90px + 26px;
+                    columns: ["1", "2", ""];
+                    rows: root.preview-fail-rows;
+                    row-activated(r) => { root.preview-fail-activated(r); }
+                    row-clicked(r, c, sh) => { root.preview-fail-clicked(r, c, sh); }
+                    menu-label: root.preview-fail-menu;
+                    show-in-page => { root.preview-fail-show(); }
+                }
+            }
+            if root.errors != "": Label {
+                text: root.errors;
+                color: Theme.error;
             }
             HorizontalLayout {
+                alignment: end;
                 spacing: 6px;
-                Label {
-                    horizontal-stretch: 1;
-                    text: root.preview-to-test-label;
+                Btn {
+                    text: "apply";
+                    clicked => { root.apply(); }
                 }
                 Btn {
-                    // ("Retest the fetched pairs")
-                    text: "test again";
-                    clicked => { root.preview-retest(); }
+                    text: "cancel";
+                    clicked => { root.cancel(); }
                 }
-            }
-            Text {
-                text: "pairs that will be actioned";
-                font-weight: 700;
-                color: Theme.text;
-            }
-            Label { text: root.preview-pass-label; }
-            PairList {
-                vertical-stretch: 2;
-                min-height: 2 * 90px + 26px;
-                columns: ["A", "B", "action"];
-                rows: root.preview-pass-rows;
-                row-activated(r) => { root.preview-pass-activated(r); }
-                row-clicked(r, c, sh) => { root.preview-pass-clicked(r, c, sh); }
-                menu-label: root.preview-pass-menu;
-                show-in-page => { root.preview-pass-show(); }
-            }
-            Text {
-                text: "pairs that will be skipped";
-                font-weight: 700;
-                color: Theme.text;
-            }
-            Label { text: root.preview-fail-label; }
-            PairList {
-                vertical-stretch: 1;
-                min-height: 90px + 26px;
-                columns: ["1", "2", ""];
-                rows: root.preview-fail-rows;
-                row-activated(r) => { root.preview-fail-activated(r); }
-                row-clicked(r, c, sh) => { root.preview-fail-clicked(r, c, sh); }
-                menu-label: root.preview-fail-menu;
-                show-in-page => { root.preview-fail-show(); }
-            }
-        }
-        if root.errors != "": Label {
-            text: root.errors;
-            color: Theme.error;
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
             }
         }
     }
@@ -762,128 +788,141 @@ export component ComparatorWindow inherits Window {
     callback sub-delete();
     callback apply();
     callback cancel();
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        if root.kind == "search" || root.kind == "hardcoded": ComboBox {
-            model: root.looking-choices;
-            current-index <=> root.looking;
-            selected => { root.changed(); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        if root.kind == "hardcoded": ComboBox {
-            model: root.test-choices;
-            current-index <=> root.test;
-            selected => { root.changed(); }
-        }
-        if root.kind == "search": search := ConditionalSearch {
-            vertical-stretch: 1;
-            typed <=> root.search-typed;
-            suggestions: root.search-suggestions;
-            highlighted: root.search-highlighted;
-            predicates: root.search-predicates;
-            or-active: root.search-or-active;
-            or-rewind-visible: root.search-or-rewind-visible;
-            enabled: !root.search-blocked;
-            edited => { root.search-edited(); }
-            moved(key) => { root.search-moved(key); }
-            chosen(i, shift) => { root.search-chosen(i, shift); }
-            removed(i) => { root.search-removed(i); }
-            paste => { root.search-paste(); }
-            empty => { root.search-empty(); }
-            or-action(a) => { root.search-or-action(a); }
-            escape => { root.search-escape() }
-            focus-ticket: root.search-focus-ticket;
-        }
-        if root.kind == "relative": VerticalLayout {
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
-            alignment: start;
-            ComboBox {
-                model: root.property-choices;
-                current-index <=> root.property;
+            if root.kind == "search" || root.kind == "hardcoded": ComboBox {
+                model: root.looking-choices;
+                current-index <=> root.looking;
                 selected => { root.changed(); }
             }
-            if root.warning != "": Label {
-                text: root.warning;
-                color: Theme.error;
+            if root.kind == "hardcoded": ComboBox {
+                model: root.test-choices;
+                current-index <=> root.test;
+                selected => { root.changed(); }
             }
-            Row {
-                label: "operator: ";
+            if root.kind == "search": search := ConditionalSearch {
+                vertical-stretch: 1;
+                typed <=> root.search-typed;
+                suggestions: root.search-suggestions;
+                highlighted: root.search-highlighted;
+                predicates: root.search-predicates;
+                or-active: root.search-or-active;
+                or-rewind-visible: root.search-or-rewind-visible;
+                enabled: !root.search-blocked;
+                edited => { root.search-edited(); }
+                moved(key) => { root.search-moved(key); }
+                chosen(i, shift) => { root.search-chosen(i, shift); }
+                removed(i) => { root.search-removed(i); }
+                paste => { root.search-paste(); }
+                empty => { root.search-empty(); }
+                or-action(a) => { root.search-or-action(a); }
+                escape => { root.search-escape() }
+                focus-ticket: root.search-focus-ticket;
+            }
+            if root.kind == "relative": VerticalLayout {
+                spacing: 6px;
+                alignment: start;
+                ComboBox {
+                    model: root.property-choices;
+                    current-index <=> root.property;
+                    selected => { root.changed(); }
+                }
+                if root.warning != "": Label {
+                    text: root.warning;
+                    color: Theme.error;
+                }
+                Row {
+                    label: "operator: ";
+                    ComboBox {
+                        horizontal-stretch: 2;
+                        model: root.operator-choices;
+                        current-index <=> root.operator;
+                        selected => { root.changed(); }
+                    }
+                }
+                if root.approximate: Row {
+                    label: root.range-label;
+                    SpinBox {
+                        minimum: 0;
+                        maximum: 100000000;
+                        value <=> root.range;
+                        edited => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "multiplier (optional): ";
+                    LineEdit {
+                        text <=> root.multiplier;
+                        edited => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: root.delta-label;
+                    SpinBox {
+                        minimum: -100000000;
+                        maximum: 100000000;
+                        value <=> root.delta;
+                        edited => { root.changed(); }
+                    }
+                }
+            }
+            if root.kind == "visual": Row {
+                label: "A and B are at least ";
                 ComboBox {
                     horizontal-stretch: 2;
-                    model: root.operator-choices;
-                    current-index <=> root.operator;
+                    model: root.visual-choices;
+                    current-index <=> root.visual;
                     selected => { root.changed(); }
                 }
             }
-            if root.approximate: Row {
-                label: root.range-label;
-                SpinBox {
-                    minimum: 0;
-                    maximum: 100000000;
-                    value <=> root.range;
-                    edited => { root.changed(); }
+            if root.kind == "list": ComparatorList {
+                vertical-stretch: 1;
+                rows: root.subs;
+                selected: root.sub-selected;
+                picked: root.sub-picked;
+                kinds: root.sub-kinds;
+                kind <=> root.sub-kind;
+                clicked(i, control, shift) => { root.sub-clicked(i, control, shift); }
+                add => { root.sub-add(); }
+                edit => { root.sub-edit(); }
+                delete => { root.sub-delete(); }
+                exchanging: true;
+                exchange(mode) => { root.sub-exchange(mode); }
+            }
+            // (the room left, above the summary, unless a list takes it)
+            if root.kind != "list" && root.kind != "search": Rectangle { vertical-stretch: 1; }
+            Label {
+                text: root.summary;
+                color: Theme.muted;
+            }
+            if root.errors != "": Label {
+                text: root.errors;
+                color: Theme.error;
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    clicked => { root.apply(); }
                 }
-            }
-            Row {
-                label: "multiplier (optional): ";
-                LineEdit {
-                    text <=> root.multiplier;
-                    edited => { root.changed(); }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
                 }
-            }
-            Row {
-                label: root.delta-label;
-                SpinBox {
-                    minimum: -100000000;
-                    maximum: 100000000;
-                    value <=> root.delta;
-                    edited => { root.changed(); }
-                }
-            }
-        }
-        if root.kind == "visual": Row {
-            label: "A and B are at least ";
-            ComboBox {
-                horizontal-stretch: 2;
-                model: root.visual-choices;
-                current-index <=> root.visual;
-                selected => { root.changed(); }
-            }
-        }
-        if root.kind == "list": ComparatorList {
-            vertical-stretch: 1;
-            rows: root.subs;
-            selected: root.sub-selected;
-            picked: root.sub-picked;
-            kinds: root.sub-kinds;
-            kind <=> root.sub-kind;
-            clicked(i, control, shift) => { root.sub-clicked(i, control, shift); }
-            add => { root.sub-add(); }
-            edit => { root.sub-edit(); }
-            delete => { root.sub-delete(); }
-            exchanging: true;
-            exchange(mode) => { root.sub-exchange(mode); }
-        }
-        // (the room left, above the summary, unless a list takes it)
-        if root.kind != "list" && root.kind != "search": Rectangle { vertical-stretch: 1; }
-        Label {
-            text: root.summary;
-            color: Theme.muted;
-        }
-        if root.errors != "": Label {
-            text: root.errors;
-            color: Theme.error;
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
             }
         }
     }

@@ -186,29 +186,28 @@ pub(crate) fn open(
             let Ok(edit) = crate::app_title::new::<crate::EditValueWindow>() else {
                 return;
             };
+            // (the reference's "edit value", an ordinary dialog: kept by
+            // `regular_dialog` when applied)
+            let ended = crate::dialog::Dialog::new(&edit);
             edit.set_value(i32::try_from(count).unwrap_or(i32::MAX));
             edit.on_apply({
                 let weak = edit.as_weak();
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let ended = ended.clone();
                 move || {
                     if let Some(edit) = weak.upgrade() {
                         state
                             .borrow_mut()
                             .editor
                             .set_count(row, i64::from(edit.get_value()));
-                        let _ = edit.hide();
+                        ended.accept();
                         refresh();
                     }
                 }
             });
-            edit.on_cancel({
-                let weak = edit.as_weak();
-                move || {
-                    if let Some(edit) = weak.upgrade() {
-                        let _ = edit.hide();
-                    }
-                }
+            edit.on_cancel(move || {
+                ended.cancel();
             });
             if edit.show().is_ok() {
                 *editing.borrow_mut() = Some(edit);

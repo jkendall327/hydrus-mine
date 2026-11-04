@@ -714,6 +714,8 @@ fn open_inner(
     let active = Rc::new(Cell::new(true));
     let window =
         crate::app_title::new::<crate::ImportOptionsWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_favourite_editor(caller == CallerType::Favourites);
     window.set_favourite_name(name.unwrap_or_default().into());
     if caller == CallerType::Favourites {
@@ -1460,7 +1462,7 @@ fn open_inner(
         let weak = window.as_weak();
         let active = active.clone();
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !active.get()
                 || state.borrow().tag_filter.borrow().is_some()
@@ -1484,19 +1486,33 @@ fn open_inner(
                 name
             };
             done(name, state.borrow().value());
-            close();
+            ended.accept();
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (its tag filter, tag entry, overwrite, locations, external program
+    // and favourites windows are modal children)
+    ended.modal_child({
+        let state = state.clone();
+        move || {
+            let state = state.borrow();
+            state.tag_filter.borrow().is_some()
+                || state.write_tags.borrow().is_some()
+                || state.overwrite.borrow().is_some()
+                || state.locations.borrow().is_some()
+                || state.programs.busy()
+                || state.favourites.as_ref().is_some_and(|owner| owner.busy())
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     show(&window, &state.borrow());
     show_tag_services(&window, &state.borrow());

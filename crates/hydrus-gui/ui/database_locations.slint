@@ -35,85 +35,98 @@ export component DatabaseLocationsWindow inherits Window {
     callback sort(int, bool);
     callback action(string);
     callback close-window();
-    VerticalLayout {
-        padding: 8px;
-        spacing: 6px;
-        Text {
-            text: root.warning;
-            color: Theme.error;
-            horizontal-alignment: center;
-            font-weight: 700;
-        }
-        Rectangle {
-            border-width: 1px;
-            border-color: Theme.border;
-            VerticalLayout {
-                padding: 6px;
-                Text { text: "database components"; font-weight: 700; color: Theme.text; }
-                for line in root.components: Text { text: line; color: Theme.text; }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
+            reject
         }
-        Rectangle {
-            border-width: 1px;
-            border-color: Theme.border;
-            VerticalLayout {
-                padding: 6px;
-                spacing: 4px;
-                Text { text: "media file locations"; font-weight: 700; color: Theme.text; }
-                ListTable {
-                    min-height: 180px;
-                    rows: root.rows;
-                    sort-column: root.sort-column;
-                    ascending: root.ascending;
-                    columns: [
-                        { title: "location", width: 260px, stretch: true },
-                        { title: "beneath db dir?", width: 90px },
-                        { title: "disk free space", width: 100px },
-                        { title: "current usage", width: 170px },
-                        { title: "weight", width: 60px },
-                        { title: "max size", width: 80px },
-                        { title: "ideal usage", width: 170px },
-                    ];
-                    row-clicked(i, c, s) => { root.clicked(i, c, s); }
-                    row-activated(i) => { root.activated(i); }
-                    sort(i, a) => { root.sort(i, a); }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            Text {
+                text: root.warning;
+                color: Theme.error;
+                horizontal-alignment: center;
+                font-weight: 700;
+            }
+            Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                VerticalLayout {
+                    padding: 6px;
+                    Text { text: "database components"; font-weight: 700; color: Theme.text; }
+                    for line in root.components: Text { text: line; color: Theme.text; }
                 }
-                HorizontalLayout {
+            }
+            Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                VerticalLayout {
+                    padding: 6px;
                     spacing: 4px;
-                    Btn { text: "add new location for files"; clicked => { root.action("add"); } }
-                    Btn { text: "increase location weight"; enabled: root.buttons[0]; clicked => { root.action("increase"); } }
-                    Btn { text: "decrease location weight"; enabled: root.buttons[1]; clicked => { root.action("decrease"); } }
-                    Btn { text: "set max size"; enabled: root.buttons[2]; clicked => { root.action("max"); } }
-                    Btn { text: "remove location"; enabled: root.buttons[3]; clicked => { root.action("remove"); } }
-                }
-                HorizontalLayout {
-                    spacing: 4px;
-                    Text { text: "thumbnail location override"; vertical-alignment: center; color: Theme.text; }
-                    Text { text: root.thumbnail-location; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
-                    Btn { text: "set"; clicked => { root.action("set thumbnails"); } }
-                    Btn { text: "clear"; enabled: root.can-clear-thumbnails; clicked => { root.action("clear thumbnails"); } }
-                }
-                HorizontalLayout {
-                    spacing: 4px;
-                    Text { text: root.granularity; horizontal-alignment: right; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
-                    Btn { text: "manage granularity"; clicked => { root.action("granularity"); } }
-                }
-                HorizontalLayout {
-                    spacing: 4px;
-                    Text {
-                        text: root.rebalance-status;
-                        horizontal-alignment: right;
-                        vertical-alignment: center;
-                        color: root.can-rebalance ? Theme.error : Theme.text;
-                        horizontal-stretch: 1;
+                    Text { text: "media file locations"; font-weight: 700; color: Theme.text; }
+                    ListTable {
+                        min-height: 180px;
+                        rows: root.rows;
+                        sort-column: root.sort-column;
+                        ascending: root.ascending;
+                        columns: [
+                            { title: "location", width: 260px, stretch: true },
+                            { title: "beneath db dir?", width: 90px },
+                            { title: "disk free space", width: 100px },
+                            { title: "current usage", width: 170px },
+                            { title: "weight", width: 60px },
+                            { title: "max size", width: 80px },
+                            { title: "ideal usage", width: 170px },
+                        ];
+                        row-clicked(i, c, s) => { root.clicked(i, c, s); }
+                        row-activated(i) => { root.activated(i); }
+                        sort(i, a) => { root.sort(i, a); }
                     }
-                    Btn { text: "move files now"; enabled: root.can-rebalance; clicked => { root.action("rebalance"); } }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Btn { text: "add new location for files"; clicked => { root.action("add"); } }
+                        Btn { text: "increase location weight"; enabled: root.buttons[0]; clicked => { root.action("increase"); } }
+                        Btn { text: "decrease location weight"; enabled: root.buttons[1]; clicked => { root.action("decrease"); } }
+                        Btn { text: "set max size"; enabled: root.buttons[2]; clicked => { root.action("max"); } }
+                        Btn { text: "remove location"; enabled: root.buttons[3]; clicked => { root.action("remove"); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Text { text: "thumbnail location override"; vertical-alignment: center; color: Theme.text; }
+                        Text { text: root.thumbnail-location; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
+                        Btn { text: "set"; clicked => { root.action("set thumbnails"); } }
+                        Btn { text: "clear"; enabled: root.can-clear-thumbnails; clicked => { root.action("clear thumbnails"); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Text { text: root.granularity; horizontal-alignment: right; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
+                        Btn { text: "manage granularity"; clicked => { root.action("granularity"); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Text {
+                            text: root.rebalance-status;
+                            horizontal-alignment: right;
+                            vertical-alignment: center;
+                            color: root.can-rebalance ? Theme.error : Theme.text;
+                            horizontal-stretch: 1;
+                        }
+                        Btn { text: "move files now"; enabled: root.can-rebalance; clicked => { root.action("rebalance"); } }
+                    }
                 }
             }
-        }
-        HorizontalLayout {
-            alignment: end;
-            Btn { text: "close"; clicked => { root.close-window(); } }
+            HorizontalLayout {
+                alignment: end;
+                Btn { text: "close"; clicked => { root.close-window(); } }
+            }
         }
     }
 }
@@ -133,21 +146,34 @@ export component LocationMaxSizeWindow inherits Window {
     in-out property <int> unit: 3;
     callback apply();
     callback cancel();
-    VerticalLayout {
-        padding: 8px;
-        spacing: 6px;
-        Text { text: root.message; wrap: word-wrap; color: Theme.text; }
-        HorizontalLayout {
-            spacing: 4px;
-            SpinBox { minimum: 0; maximum: 1000000; value <=> root.amount; enabled: !root.no-limit; }
-            ComboBox { model: ["B", "KB", "MB", "GB", "TB"]; current-index <=> root.unit; enabled: !root.no-limit; }
-            CheckBox { text: "no limit"; checked <=> root.no-limit; }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout {
-            alignment: end;
+        VerticalLayout {
+            padding: 8px;
             spacing: 6px;
-            Btn { text: "apply"; clicked => { root.apply(); } }
-            Btn { text: "cancel"; clicked => { root.cancel(); } }
+            Text { text: root.message; wrap: word-wrap; color: Theme.text; }
+            HorizontalLayout {
+                spacing: 4px;
+                SpinBox { minimum: 0; maximum: 1000000; value <=> root.amount; enabled: !root.no-limit; }
+                ComboBox { model: ["B", "KB", "MB", "GB", "TB"]; current-index <=> root.unit; enabled: !root.no-limit; }
+                CheckBox { text: "no limit"; checked <=> root.no-limit; }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn { text: "apply"; clicked => { root.apply(); } }
+                Btn { text: "cancel"; clicked => { root.cancel(); } }
+            }
         }
     }
 }

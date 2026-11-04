@@ -133,53 +133,66 @@ export component SidecarRoutersWindow inherits Window {
     callback apply();
     callback cancel();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        EditList {
-            vertical-stretch: 1;
-            column: "sidecar actions";
-            rows: root.rows;
-            asking: root.asking || root.child-open;
-            one-selected: root.one-selected;
-            any-selected: root.any-selected;
-            row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
-            row-activated(r) => { root.row-activated(r); }
-            add => { root.add(); }
-            edit => { root.edit(); }
-            delete => { root.delete(); }
-            templates-menu := ContextMenuArea {
-                Menu {
-                    for template[i] in root.templates: MenuItem {
-                        title: template;
-                        activated => { root.template(i); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            EditList {
+                vertical-stretch: 1;
+                column: "sidecar actions";
+                rows: root.rows;
+                asking: root.asking || root.child-open;
+                one-selected: root.one-selected;
+                any-selected: root.any-selected;
+                row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                row-activated(r) => { root.row-activated(r); }
+                add => { root.add(); }
+                edit => { root.edit(); }
+                delete => { root.delete(); }
+                templates-menu := ContextMenuArea {
+                    Menu {
+                        for template[i] in root.templates: MenuItem {
+                            title: template;
+                            activated => { root.template(i); }
+                        }
+                    }
+                    if root.templates.length > 0: Btn {
+                        text: "★";
+                        enabled: !root.asking && !root.child-open;
+                        clicked => { templates-menu.show({ x: 0px, y: self.height }); }
                     }
                 }
-                if root.templates.length > 0: Btn {
-                    text: "★";
-                    enabled: !root.asking && !root.child-open;
-                    clicked => { templates-menu.show({ x: 0px, y: self.height }); }
-                }
             }
-        }
-        HorizontalLayout {
-            alignment: start; spacing: 6px;
-            Btn { text: "import"; enabled: !root.asking && !root.child-open; clicked => { root.exchange(true); } }
-            Btn { text: "export"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange(false); } }
-            Btn { text: "duplicate"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.duplicate(); } }
-        }
-        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            chosen(i) => { root.chosen(i); }
-            cancelled => { root.cancelled(); }
-        }
-        ApplyCancel {
-            enabled: !root.asking && !root.child-open;
-            apply => { root.apply(); }
-            cancel => { root.cancel(); }
+            HorizontalLayout {
+                alignment: start; spacing: 6px;
+                Btn { text: "import"; enabled: !root.asking && !root.child-open; clicked => { root.exchange(true); } }
+                Btn { text: "export"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange(false); } }
+                Btn { text: "duplicate"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.duplicate(); } }
+            }
+            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+            }
+            ApplyCancel {
+                enabled: !root.asking && !root.child-open;
+                apply => { root.apply(); }
+                cancel => { root.cancel(); }
+            }
         }
     }
 }
@@ -223,77 +236,90 @@ export component SidecarRouterWindow inherits Window {
     callback cancel();
     callback closed();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        Box {
-            vertical-stretch: 1;
-            title: "sources";
-            EditList {
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            Box {
                 vertical-stretch: 1;
-                column: "source";
-                rows: root.sources;
-                asking: root.asking || root.child-open;
-                one-selected: root.one-selected;
-                any-selected: root.any-selected;
-                row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
-                row-activated(r) => { root.row-activated(r); }
-                add => { root.add(); }
-                edit => { root.edit(); }
-                delete => { root.delete(); }
+                title: "sources";
+                EditList {
+                    vertical-stretch: 1;
+                    column: "source";
+                    rows: root.sources;
+                    asking: root.asking || root.child-open;
+                    one-selected: root.one-selected;
+                    any-selected: root.any-selected;
+                    row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                    row-activated(r) => { root.row-activated(r); }
+                    add => { root.add(); }
+                    edit => { root.edit(); }
+                    delete => { root.delete(); }
+                }
             }
-        }
-        Box {
-            title: "processing";
-            Text {
-                text: root.processing-note;
-                color: Theme.text;
-            }
-            Btn {
-                text: root.processing;
-                enabled: !root.asking && !root.child-open;
-                clicked => { root.edit-processing(); }
-            }
-        }
-        Box {
-            title: "destination";
-            HorizontalLayout {
-                spacing: 6px;
+            Box {
+                title: "processing";
                 Text {
-                    horizontal-stretch: 1;
-                    text: root.destination;
-                    wrap: word-wrap;
-                    vertical-alignment: center;
+                    text: root.processing-note;
                     color: Theme.text;
                 }
                 Btn {
-                    text: "edit";
+                    text: root.processing;
                     enabled: !root.asking && !root.child-open;
-                    clicked => { root.edit-destination(); }
+                    clicked => { root.edit-processing(); }
                 }
             }
-        }
-        Box {
-            title: "testing";
-            if root.test-note != "": Text {text: root.test-note;color: Theme.text;wrap: word-wrap;}
-            if root.test-sources.length > 1: ComboBox {model: root.test-sources;current-index <=> root.test-source;selected => {root.test-source-chosen();}}
-            if root.test-sources.length > 0: ListTable {
-                min-height: 160px;
-                columns: [{title: "file",width: 300px},{title: "source texts",width: 280px},{title: "processed texts",width: 280px,stretch: true}];
-                rows: root.test-rows;
+            Box {
+                title: "destination";
+                HorizontalLayout {
+                    spacing: 6px;
+                    Text {
+                        horizontal-stretch: 1;
+                        text: root.destination;
+                        wrap: word-wrap;
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    Btn {
+                        text: "edit";
+                        enabled: !root.asking && !root.child-open;
+                        clicked => { root.edit-destination(); }
+                    }
+                }
             }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            chosen(i) => { root.chosen(i); }
-            cancelled => { root.cancelled(); }
-        }
-        ApplyCancel {
-            enabled: !root.asking && !root.child-open;
-            apply => { root.apply(); }
-            cancel => { root.cancel(); }
+            Box {
+                title: "testing";
+                if root.test-note != "": Text {text: root.test-note;color: Theme.text;wrap: word-wrap;}
+                if root.test-sources.length > 1: ComboBox {model: root.test-sources;current-index <=> root.test-source;selected => {root.test-source-chosen();}}
+                if root.test-sources.length > 0: ListTable {
+                    min-height: 160px;
+                    columns: [{title: "file",width: 300px},{title: "source texts",width: 280px},{title: "processed texts",width: 280px,stretch: true}];
+                    rows: root.test-rows;
+                }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+            }
+            ApplyCancel {
+                enabled: !root.asking && !root.child-open;
+                apply => { root.apply(); }
+                cancel => { root.cancel(); }
+            }
         }
     }
 }
@@ -375,212 +401,225 @@ export component SidecarNodeWindow inherits Window {
     callback cancel();
     callback closed();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        Btn {
-            text: root.type-label;
-            enabled: !root.asking && !root.object-child-open;
-            clicked => { root.change-type(); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        if root.show-tags: VerticalLayout {
-            spacing: 4px;
-            Row {
-                label: "tag service: ";
-                Btn {
-                    horizontal-stretch: 1;
-                    text: root.service-label;
-                    enabled: !root.asking && !root.object-child-open;
-                    clicked => { root.choose-service(); }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            Btn {
+                text: root.type-label;
+                enabled: !root.asking && !root.object-child-open;
+                clicked => { root.change-type(); }
+            }
+            if root.show-tags: VerticalLayout {
+                spacing: 4px;
+                Row {
+                    label: "tag service: ";
+                    Btn {
+                        horizontal-stretch: 1;
+                        text: root.service-label;
+                        enabled: !root.asking && !root.object-child-open;
+                        clicked => { root.choose-service(); }
+                    }
+                }
+                if root.show-display: Row {
+                    label: "tag display type: ";
+                    ComboBox {
+                        horizontal-stretch: 1;
+                        model: root.displays;
+                        current-index <=> root.display;
+                        selected => { root.changed(); }
+                    }
                 }
             }
-            if root.show-display: Row {
-                label: "tag display type: ";
+            if root.show-forced: Box {
+                title: "name";
+                HorizontalLayout {
+                    spacing: 6px;
+                    CheckBox {
+                        text: "Forced Note Name: ";
+                        checked <=> root.forced-on;
+                        toggled => { root.changed(); }
+                    }
+                    LineEdit {
+                        horizontal-stretch: 1;
+                        enabled: root.forced-on;
+                        placeholder-text: "use \"name: text\" format";
+                        text <=> root.forced-name;
+                        edited => { root.changed(); }
+                    }
+                }
+            }
+            if root.show-timestamp: Box {
+                title: "timestamp type";
                 ComboBox {
-                    horizontal-stretch: 1;
-                    model: root.displays;
-                    current-index <=> root.display;
+                    model: root.timestamp-kinds;
+                    current-index <=> root.timestamp-kind;
                     selected => { root.changed(); }
                 }
-            }
-        }
-        if root.show-forced: Box {
-            title: "name";
-            HorizontalLayout {
-                spacing: 6px;
-                CheckBox {
-                    text: "Forced Note Name: ";
-                    checked <=> root.forced-on;
-                    toggled => { root.changed(); }
-                }
-                LineEdit {
-                    horizontal-stretch: 1;
-                    enabled: root.forced-on;
-                    placeholder-text: "use \"name: text\" format";
-                    text <=> root.forced-name;
-                    edited => { root.changed(); }
-                }
-            }
-        }
-        if root.show-timestamp: Box {
-            title: "timestamp type";
-            ComboBox {
-                model: root.timestamp-kinds;
-                current-index <=> root.timestamp-kind;
-                selected => { root.changed(); }
-            }
-            if root.detail == 1: ComboBox {
-                model: root.file-services;
-                current-index <=> root.file-service;
-                selected => { root.changed(); }
-            }
-            if root.detail == 2: ComboBox {
-                model: root.deleted-services;
-                current-index <=> root.deleted-service;
-                selected => { root.changed(); }
-            }
-            if root.detail == 3: ComboBox {
-                model: root.canvases;
-                current-index <=> root.canvas;
-                selected => { root.changed(); }
-            }
-            if root.detail == 4: Row {
-                label: "domain: ";
-                LineEdit {
-                    horizontal-stretch: 1;
-                    text <=> root.domain;
-                    edited => { root.changed(); }
-                }
-            }
-        }
-        if root.show-sidecar-help: HorizontalLayout {
-            alignment: end;
-            Btn {
-                text: "?";
-                enabled: !root.asking && !root.object-child-open;
-                clicked => { root.sidecar-help(); }
-            }
-        }
-        if root.show-nested: Box {
-            title: "JSON Objects structure";
-            HorizontalLayout {
-                ListTable {
-                    height: 90px;
-                    columns: [{title: "", width: 100px, stretch: true}]; rows: root.nested-rows;
-                    row-clicked(i,c,s) => {root.nested-clicked(i,c,s);}
-                    row-activated(i) => {root.nested-clicked(i,false,false);root.nested-action("edit");}
-                    delete-pressed => {root.nested-action("delete");}
-                }
-                VerticalLayout {
-                    Btn {text: "↑"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("up");}}
-                    Btn {text: "X"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("delete");}}
-                    Btn {text: "↓"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("down");}}
-                }
-            }
-            HorizontalLayout {
-                Btn {text: "add"; enabled: !root.asking && !root.object-child-open; clicked => {root.nested-action("add");}}
-                Btn {text: "edit"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("edit");}}
-            }
-        }
-        if root.show-json: Row {
-            label: "json parsing formula: ";
-            Btn {
-                horizontal-stretch: 1;
-                text: "edit parsing formula";
-                enabled: !root.asking && !root.object-child-open;
-                clicked => { root.edit-formula(); }
-            }
-        }
-        if root.show-separator: Box {
-            title: "sidecar txt separator";
-            Row {
-                label: "separator: ";
-                ComboBox {
-                    horizontal-stretch: 1;
-                    model: root.separators;
-                    current-index <=> root.separator;
+                if root.detail == 1: ComboBox {
+                    model: root.file-services;
+                    current-index <=> root.file-service;
                     selected => { root.changed(); }
                 }
-            }
-            Row {
-                label: "custom: ";
-                LineEdit {
-                    horizontal-stretch: 1;
-                    enabled: root.separator == 2;
-                    init => { root.custom-separator-enabled = self.enabled; }
-                    changed enabled => { root.custom-separator-enabled = self.enabled; }
-                    text <=> root.custom-separator;
-                    edited => { root.changed(); }
+                if root.detail == 2: ComboBox {
+                    model: root.deleted-services;
+                    current-index <=> root.deleted-service;
+                    selected => { root.changed(); }
+                }
+                if root.detail == 3: ComboBox {
+                    model: root.canvases;
+                    current-index <=> root.canvas;
+                    selected => { root.changed(); }
+                }
+                if root.detail == 4: Row {
+                    label: "domain: ";
+                    LineEdit {
+                        horizontal-stretch: 1;
+                        text <=> root.domain;
+                        edited => { root.changed(); }
+                    }
                 }
             }
-        }
-        if root.show-naming: Box {
-            title: "sidecar filename";
-            Row {
-                label: "remove file .ext?: ";
-                CheckBox {
-                    checked <=> root.remove-ext;
-                    toggled => { root.changed(); }
+            if root.show-sidecar-help: HorizontalLayout {
+                alignment: end;
+                Btn {
+                    text: "?";
+                    enabled: !root.asking && !root.object-child-open;
+                    clicked => { root.sidecar-help(); }
                 }
             }
-            Row {
-                label: "optional suffix: ";
-                LineEdit {
-                    horizontal-stretch: 1;
-                    text <=> root.suffix;
-                    edited => { root.changed(); }
+            if root.show-nested: Box {
+                title: "JSON Objects structure";
+                HorizontalLayout {
+                    ListTable {
+                        height: 90px;
+                        columns: [{title: "", width: 100px, stretch: true}]; rows: root.nested-rows;
+                        row-clicked(i,c,s) => {root.nested-clicked(i,c,s);}
+                        row-activated(i) => {root.nested-clicked(i,false,false);root.nested-action("edit");}
+                        delete-pressed => {root.nested-action("delete");}
+                    }
+                    VerticalLayout {
+                        Btn {text: "↑"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("up");}}
+                        Btn {text: "X"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("delete");}}
+                        Btn {text: "↓"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("down");}}
+                    }
+                }
+                HorizontalLayout {
+                    Btn {text: "add"; enabled: !root.asking && !root.object-child-open; clicked => {root.nested-action("add");}}
+                    Btn {text: "edit"; enabled: root.nested-selected && !root.asking && !root.object-child-open; clicked => {root.nested-action("edit");}}
                 }
             }
-            Row {
-                label: "ADVANCED: final sidecar filename conversion: ";
+            if root.show-json: Row {
+                label: "json parsing formula: ";
                 Btn {
                     horizontal-stretch: 1;
-                    text: root.converter-label;
+                    text: "edit parsing formula";
                     enabled: !root.asking && !root.object-child-open;
-                    clicked => { root.edit-converter(); }
+                    clicked => { root.edit-formula(); }
                 }
             }
-            Row {
-                label: "Test media path: ";
-                LineEdit {
-                    horizontal-stretch: 1;
-                    text <=> root.example;
-                    edited => { root.changed(); }
+            if root.show-separator: Box {
+                title: "sidecar txt separator";
+                Row {
+                    label: "separator: ";
+                    ComboBox {
+                        horizontal-stretch: 1;
+                        model: root.separators;
+                        current-index <=> root.separator;
+                        selected => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "custom: ";
+                    LineEdit {
+                        horizontal-stretch: 1;
+                        enabled: root.separator == 2;
+                        init => { root.custom-separator-enabled = self.enabled; }
+                        changed enabled => { root.custom-separator-enabled = self.enabled; }
+                        text <=> root.custom-separator;
+                        edited => { root.changed(); }
+                    }
                 }
             }
-            Row {
-                label: "Resulting sidecar path: ";
-                LineEdit {
-                    horizontal-stretch: 1;
-                    read-only: true;
-                    text: root.result;
+            if root.show-naming: Box {
+                title: "sidecar filename";
+                Row {
+                    label: "remove file .ext?: ";
+                    CheckBox {
+                        checked <=> root.remove-ext;
+                        toggled => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "optional suffix: ";
+                    LineEdit {
+                        horizontal-stretch: 1;
+                        text <=> root.suffix;
+                        edited => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "ADVANCED: final sidecar filename conversion: ";
+                    Btn {
+                        horizontal-stretch: 1;
+                        text: root.converter-label;
+                        enabled: !root.asking && !root.object-child-open;
+                        clicked => { root.edit-converter(); }
+                    }
+                }
+                Row {
+                    label: "Test media path: ";
+                    LineEdit {
+                        horizontal-stretch: 1;
+                        text <=> root.example;
+                        edited => { root.changed(); }
+                    }
+                }
+                Row {
+                    label: "Resulting sidecar path: ";
+                    LineEdit {
+                        horizontal-stretch: 1;
+                        read-only: true;
+                        text: root.result;
+                    }
                 }
             }
-        }
-        if root.show-processing: VerticalLayout {
-            spacing: 2px;
-            Text {
-                text: root.processing-note;
-                color: Theme.text;
+            if root.show-processing: VerticalLayout {
+                spacing: 2px;
+                Text {
+                    text: root.processing-note;
+                    color: Theme.text;
+                }
+                Btn {
+                    text: root.processing;
+                    enabled: !root.asking && !root.object-child-open;
+                    clicked => { root.edit-processing(); }
+                }
             }
-            Btn {
-                text: root.processing;
+            Rectangle { vertical-stretch: 1; }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+            }
+            ApplyCancel {
                 enabled: !root.asking && !root.object-child-open;
-                clicked => { root.edit-processing(); }
+                apply => { root.apply(); }
+                cancel => { root.cancel(); }
             }
-        }
-        Rectangle { vertical-stretch: 1; }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            chosen(i) => { root.chosen(i); }
-            cancelled => { root.cancelled(); }
-        }
-        ApplyCancel {
-            enabled: !root.asking && !root.object-child-open;
-            apply => { root.apply(); }
-            cancel => { root.cancel(); }
         }
     }
 }

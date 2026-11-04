@@ -181,476 +181,489 @@ export component ImportOptionsWindow inherits Window {
     callback refresh-favourites();
     callback favourite(int, string);
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 8px;
-        Label {
-            text: root.description;
-            horizontal-alignment: center;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        if root.favourite-editor: HorizontalLayout {
-            spacing: 6px;
-            Label { text: "name: "; }
-            LineEdit { horizontal-stretch: 1; text <=> root.favourite-name; }
-        }
-        HorizontalLayout {
-            spacing: 10px;
-            vertical-stretch: 1;
-            Rectangle {
-                width: 300px;
-                border-width: 1px;
-                border-color: Theme.border;
-                VerticalLayout {
-                    alignment: start;
-                    for label[i] in root.labels: Rectangle {
-                        height: 26px;
-                        background: i == root.shown ? Theme.highlight : transparent;
-                        Text {
-                            x: 6px;
-                            width: parent.width - 12px;
-                            text: label;
-                            vertical-alignment: center;
-                            overflow: elide;
-                            color: i == root.shown ? Theme.highlight-text : Theme.text;
-                        }
-                        TouchArea {
-                            clicked => { root.kind-clicked(i); }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 8px;
+            Label {
+                text: root.description;
+                horizontal-alignment: center;
+            }
+            if root.favourite-editor: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "name: "; }
+                LineEdit { horizontal-stretch: 1; text <=> root.favourite-name; }
+            }
+            HorizontalLayout {
+                spacing: 10px;
+                vertical-stretch: 1;
+                Rectangle {
+                    width: 300px;
+                    border-width: 1px;
+                    border-color: Theme.border;
+                    VerticalLayout {
+                        alignment: start;
+                        for label[i] in root.labels: Rectangle {
+                            height: 26px;
+                            background: i == root.shown ? Theme.highlight : transparent;
+                            Text {
+                                x: 6px;
+                                width: parent.width - 12px;
+                                text: label;
+                                vertical-alignment: center;
+                                overflow: elide;
+                                color: i == root.shown ? Theme.highlight-text : Theme.text;
+                            }
+                            TouchArea {
+                                clicked => { root.kind-clicked(i); }
+                            }
                         }
                     }
                 }
-            }
-            ScrollView {
-                horizontal-stretch: 1;
-                VerticalLayout {
-                    spacing: 8px;
-                    alignment: start;
-                    Text {
-                        text: root.kind;
-                        font-weight: 700;
-                        horizontal-alignment: center;
-                        color: Theme.text;
-                    }
-                    Label {
-                        text: root.kind-description;
-                        horizontal-alignment: center;
-                    }
-                    ComboBox {
-                        enabled: root.default-choice-enabled;
-                        model: root.custom-choices;
-                        current-index <=> root.custom-index;
-                        selected => { root.changed(); }
-                    }
-                    if root.custom-index == 1 && root.kind == "presentation": HorizontalLayout {
-                        spacing: 6px;
-                        ComboBox {
-                            model: root.status-choices;
-                            current-index <=> root.status-index;
-                            selected => { root.changed(); }
-                        }
-                        ComboBox {
-                            enabled: root.presentation-gates-enabled;
-                            model: root.inbox-choices;
-                            current-index <=> root.inbox-index;
-                            selected => { root.changed(); }
-                        }
-                        ComboBox {
-                            enabled: root.presentation-gates-enabled;
-                            model: root.location-choices;
-                            current-index <=> root.location-index;
-                            selected => { root.location-picked("presentation", self.current-index); }
-                        }
+                ScrollView {
+                    horizontal-stretch: 1;
+                    VerticalLayout {
+                        spacing: 8px;
+                        alignment: start;
                         Text {
-                            text: root.location-label;
-                            vertical-alignment: center;
+                            text: root.kind;
+                            font-weight: 700;
+                            horizontal-alignment: center;
                             color: Theme.text;
                         }
-                    }
-                    if root.custom-index == 1 && root.kind == "prefetch logic": VerticalLayout {
-                        spacing: 6px;
                         Label {
-                            text: "BE CAREFUL, PREFETCH LOGIC IS ADVANCED";
-                            horizontal-alignment: center;
-                            color: Theme.error;
-                        }
-                        Row {
-                            label: "check hashes to determine \"already in db/previously deleted\" outcome?: ";
-                            ComboBox {
-                                model: ["do not check", "check", "check - and matches are dispositive"];
-                                current-index <=> root.hash-index;
-                                selected => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "check URLs to determine \"already in db/previously deleted\" outcome?: ";
-                            ComboBox {
-                                model: ["do not check", "check", "check - and matches are dispositive"];
-                                current-index <=> root.url-index;
-                                selected => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "force metadata/page fetch even if hash recognised and file appears \"already in db\"?: ";
-                            CheckBox {
-                                checked <=> root.fetch-hash;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "force metadata/page fetch even if url recognised and file appears \"already in db\"?: ";
-                            CheckBox {
-                                checked <=> root.fetch-url;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "during URL check, check for neighbour-spam?: ";
-                            CheckBox {
-                                enabled: root.url-index != 0;
-                                checked <=> root.neighbour-spam;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                    }
-                    if root.custom-index == 1 && root.kind == "file filtering": VerticalLayout {
-                        spacing: 6px;
-                        Row {
-                            label: "allowed filetypes: ";
-                            Label { text: root.filetypes; }
-                        }
-                        FiletypeTree {
-                            rows: root.filetype-rows;
-                            expanded(group, on) => { root.filetype-expanded(group, on); }
-                            ticked(group, option, on) => { root.filetype-ticked(group, option, on); }
-                        }
-                        Row {
-                            label: "exclude previously deleted files: ";
-                            CheckBox {
-                                checked <=> root.exclude-deleted;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "allow decompression bombs: ";
-                            CheckBox {
-                                checked <=> root.bombs;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        for size[i] in root.sizes: Row {
-                            label: size.label;
-                            CheckBox {
-                                checked: size.on;
-                                toggled => { root.size-edited(i, self.checked, size.value, size.unit); }
-                            }
-                            SpinBox {
-                                enabled: size.on;
-                                minimum: 0;
-                                maximum: 1048576;
-                                value: size.value;
-                                edited(v) => { root.size-edited(i, size.on, v, size.unit); }
-                            }
-                            ComboBox {
-                                enabled: size.on;
-                                model: ["B", "KB", "MB", "GB", "TB"];
-                                current-index: size.unit;
-                                selected => { root.size-edited(i, size.on, size.value, self.current-index); }
-                            }
-                        }
-                        for res[i] in root.resolutions: Row {
-                            label: res.label;
-                            CheckBox {
-                                checked: res.on;
-                                toggled => { root.resolution-edited(i, self.checked, res.width, res.height); }
-                            }
-                            SpinBox {
-                                enabled: res.on;
-                                minimum: 0;
-                                maximum: 1000000;
-                                value: res.width;
-                                edited(v) => { root.resolution-edited(i, res.on, v, res.height); }
-                            }
-                            Label { text: "x"; }
-                            SpinBox {
-                                enabled: res.on;
-                                minimum: 0;
-                                maximum: 1000000;
-                                value: res.height;
-                                edited(v) => { root.resolution-edited(i, res.on, res.width, v); }
-                            }
-                        }
-                    }
-                    if root.custom-index == 1 && root.kind == "locations": VerticalLayout {
-                        spacing: 6px;
-                        if root.destination-warning: Text {
-                            text: "THIS WILL NOT IMPORT ANYWHERE! Any import queue using this File Import Options will halt!\n\nWas the file service it was previously importing to deleted?";
-                            color: Theme.error;
-                            wrap: word-wrap;
+                            text: root.kind-description;
                             horizontal-alignment: center;
                         }
-                        Row {
-                            label: "destination file service(s):";
+                        ComboBox {
+                            enabled: root.default-choice-enabled;
+                            model: root.custom-choices;
+                            current-index <=> root.custom-index;
+                            selected => { root.changed(); }
+                        }
+                        if root.custom-index == 1 && root.kind == "presentation": HorizontalLayout {
+                            spacing: 6px;
+                            ComboBox {
+                                model: root.status-choices;
+                                current-index <=> root.status-index;
+                                selected => { root.changed(); }
+                            }
+                            ComboBox {
+                                enabled: root.presentation-gates-enabled;
+                                model: root.inbox-choices;
+                                current-index <=> root.inbox-index;
+                                selected => { root.changed(); }
+                            }
+                            ComboBox {
+                                enabled: root.presentation-gates-enabled;
+                                model: root.location-choices;
+                                current-index <=> root.location-index;
+                                selected => { root.location-picked("presentation", self.current-index); }
+                            }
+                            Text {
+                                text: root.location-label;
+                                vertical-alignment: center;
+                                color: Theme.text;
+                            }
+                        }
+                        if root.custom-index == 1 && root.kind == "prefetch logic": VerticalLayout {
+                            spacing: 6px;
+                            Label {
+                                text: "BE CAREFUL, PREFETCH LOGIC IS ADVANCED";
+                                horizontal-alignment: center;
+                                color: Theme.error;
+                            }
+                            Row {
+                                label: "check hashes to determine \"already in db/previously deleted\" outcome?: ";
+                                ComboBox {
+                                    model: ["do not check", "check", "check - and matches are dispositive"];
+                                    current-index <=> root.hash-index;
+                                    selected => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "check URLs to determine \"already in db/previously deleted\" outcome?: ";
+                                ComboBox {
+                                    model: ["do not check", "check", "check - and matches are dispositive"];
+                                    current-index <=> root.url-index;
+                                    selected => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "force metadata/page fetch even if hash recognised and file appears \"already in db\"?: ";
+                                CheckBox {
+                                    checked <=> root.fetch-hash;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "force metadata/page fetch even if url recognised and file appears \"already in db\"?: ";
+                                CheckBox {
+                                    checked <=> root.fetch-url;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "during URL check, check for neighbour-spam?: ";
+                                CheckBox {
+                                    enabled: root.url-index != 0;
+                                    checked <=> root.neighbour-spam;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                        }
+                        if root.custom-index == 1 && root.kind == "file filtering": VerticalLayout {
+                            spacing: 6px;
+                            Row {
+                                label: "allowed filetypes: ";
+                                Label { text: root.filetypes; }
+                            }
+                            FiletypeTree {
+                                rows: root.filetype-rows;
+                                expanded(group, on) => { root.filetype-expanded(group, on); }
+                                ticked(group, option, on) => { root.filetype-ticked(group, option, on); }
+                            }
+                            Row {
+                                label: "exclude previously deleted files: ";
+                                CheckBox {
+                                    checked <=> root.exclude-deleted;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "allow decompression bombs: ";
+                                CheckBox {
+                                    checked <=> root.bombs;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            for size[i] in root.sizes: Row {
+                                label: size.label;
+                                CheckBox {
+                                    checked: size.on;
+                                    toggled => { root.size-edited(i, self.checked, size.value, size.unit); }
+                                }
+                                SpinBox {
+                                    enabled: size.on;
+                                    minimum: 0;
+                                    maximum: 1048576;
+                                    value: size.value;
+                                    edited(v) => { root.size-edited(i, size.on, v, size.unit); }
+                                }
+                                ComboBox {
+                                    enabled: size.on;
+                                    model: ["B", "KB", "MB", "GB", "TB"];
+                                    current-index: size.unit;
+                                    selected => { root.size-edited(i, size.on, size.value, self.current-index); }
+                                }
+                            }
+                            for res[i] in root.resolutions: Row {
+                                label: res.label;
+                                CheckBox {
+                                    checked: res.on;
+                                    toggled => { root.resolution-edited(i, self.checked, res.width, res.height); }
+                                }
+                                SpinBox {
+                                    enabled: res.on;
+                                    minimum: 0;
+                                    maximum: 1000000;
+                                    value: res.width;
+                                    edited(v) => { root.resolution-edited(i, res.on, v, res.height); }
+                                }
+                                Label { text: "x"; }
+                                SpinBox {
+                                    enabled: res.on;
+                                    minimum: 0;
+                                    maximum: 1000000;
+                                    value: res.height;
+                                    edited(v) => { root.resolution-edited(i, res.on, res.width, v); }
+                                }
+                            }
+                        }
+                        if root.custom-index == 1 && root.kind == "locations": VerticalLayout {
+                            spacing: 6px;
+                            if root.destination-warning: Text {
+                                text: "THIS WILL NOT IMPORT ANYWHERE! Any import queue using this File Import Options will halt!\n\nWas the file service it was previously importing to deleted?";
+                                color: Theme.error;
+                                wrap: word-wrap;
+                                horizontal-alignment: center;
+                            }
+                            Row {
+                                label: "destination file service(s):";
+                                HorizontalLayout {
+                                    spacing: 6px;
+                                    ComboBox {
+                                        enabled: !root.location-child-open && !root.program-child-open;
+                                        model: root.destination-choices;
+                                        current-index <=> root.destination-index;
+                                        selected => { root.location-picked("destination", self.current-index); }
+                                    }
+                                    Text {
+                                        text: root.destination-label;
+                                        vertical-alignment: center;
+                                        color: Theme.text;
+                                    }
+                                }
+                            }
+                            Row {
+                                label: "-- ensure 'already in db' files are added to destinations?: ";
+                                CheckBox {
+                                    checked <=> root.already-destinations;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "auto-archive imports: ";
+                                CheckBox {
+                                    checked <=> root.archive;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "-- even for 'already in db' files?: ";
+                                CheckBox {
+                                    enabled: root.archive-already-enabled;
+                                    checked <=> root.archive-already;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            if root.downloader: Row {
+                                label: "associate primary urls: ";
+                                CheckBox {
+                                    checked <=> root.primary-urls;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            if root.downloader: Row {
+                                label: "associate (and trust) additional source urls: ";
+                                CheckBox {
+                                    checked <=> root.source-urls;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                        }
+                        if root.custom-index == 1 && root.kind == "notes": VerticalLayout {
+                            spacing: 6px;
+                            Row {
+                                label: "get notes: ";
+                                CheckBox {
+                                    checked <=> root.get-notes;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "if possible, extend existing notes: ";
+                                CheckBox {
+                                    checked <=> root.extend-notes;
+                                    toggled => { root.changed(); }
+                                }
+                            }
+                            Row {
+                                label: "if existing note-name conflict, what to do: ";
+                                ComboBox {
+                                    model: ["replace the existing note", "do not add the new note", "append the new note to the end of the existing note", "add the new note under a new name"];
+                                    current-index <=> root.conflict-index;
+                                    selected => { root.changed(); }
+                                }
+                            }
+                            Label { text: "only allow these note names\n(leave blank for 'get all'), one a line: "; }
+                            TextEdit {
+                                height: 80px;
+                                text <=> root.note-whitelist;
+                                edited => { root.changed(); }
+                            }
+                            Label { text: "rename these notes as they come in (\"parser name -> saved name\", one a line): "; }
+                            TextEdit {
+                                height: 80px;
+                                text <=> root.note-renames;
+                                edited => { root.changed(); }
+                            }
+                            Row {
+                                label: "rename spare note(s) to this: ";
+                                CheckBox {
+                                    checked <=> root.rename-all-on;
+                                    toggled => { root.changed(); }
+                                }
+                                LineEdit {
+                                    enabled: root.rename-all-on;
+                                    placeholder-text: "do not mass-rename";
+                                    text <=> root.rename-all;
+                                    edited => { root.changed(); }
+                                }
+                            }
+                        }
+                        if root.custom-index == 1 && root.kind == "tag filtering": VerticalLayout {
+                            spacing: 6px;
                             HorizontalLayout {
                                 spacing: 6px;
-                                ComboBox {
-                                    enabled: !root.location-child-open && !root.program-child-open;
-                                    model: root.destination-choices;
-                                    current-index <=> root.destination-index;
-                                    selected => { root.location-picked("destination", self.current-index); }
-                                }
-                                Text {
-                                    text: root.destination-label;
-                                    vertical-alignment: center;
-                                    color: Theme.text;
+                                Label { text: "file blacklist: "; }
+                                TipButton {
+                                    horizontal-stretch: 1;
+                                    text: root.tag-blacklist;
+                                    tip: root.tag-blacklist-tooltip;
+                                    clicked => { root.edit-blacklist(); }
                                 }
                             }
-                        }
-                        Row {
-                            label: "-- ensure 'already in db' files are added to destinations?: ";
-                            CheckBox {
-                                checked <=> root.already-destinations;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "auto-archive imports: ";
-                            CheckBox {
-                                checked <=> root.archive;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "-- even for 'already in db' files?: ";
-                            CheckBox {
-                                enabled: root.archive-already-enabled;
-                                checked <=> root.archive-already;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        if root.downloader: Row {
-                            label: "associate primary urls: ";
-                            CheckBox {
-                                checked <=> root.primary-urls;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        if root.downloader: Row {
-                            label: "associate (and trust) additional source urls: ";
-                            CheckBox {
-                                checked <=> root.source-urls;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                    }
-                    if root.custom-index == 1 && root.kind == "notes": VerticalLayout {
-                        spacing: 6px;
-                        Row {
-                            label: "get notes: ";
-                            CheckBox {
-                                checked <=> root.get-notes;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "if possible, extend existing notes: ";
-                            CheckBox {
-                                checked <=> root.extend-notes;
-                                toggled => { root.changed(); }
-                            }
-                        }
-                        Row {
-                            label: "if existing note-name conflict, what to do: ";
-                            ComboBox {
-                                model: ["replace the existing note", "do not add the new note", "append the new note to the end of the existing note", "add the new note under a new name"];
-                                current-index <=> root.conflict-index;
-                                selected => { root.changed(); }
-                            }
-                        }
-                        Label { text: "only allow these note names\n(leave blank for 'get all'), one a line: "; }
-                        TextEdit {
-                            height: 80px;
-                            text <=> root.note-whitelist;
-                            edited => { root.changed(); }
-                        }
-                        Label { text: "rename these notes as they come in (\"parser name -> saved name\", one a line): "; }
-                        TextEdit {
-                            height: 80px;
-                            text <=> root.note-renames;
-                            edited => { root.changed(); }
-                        }
-                        Row {
-                            label: "rename spare note(s) to this: ";
-                            CheckBox {
-                                checked <=> root.rename-all-on;
-                                toggled => { root.changed(); }
-                            }
-                            LineEdit {
-                                enabled: root.rename-all-on;
-                                placeholder-text: "do not mass-rename";
-                                text <=> root.rename-all;
+                            Label { text: "file whitelist (a file must have one of these tags, if any are set; a tag a line): "; }
+                            Btn { text: "edit whitelist tags…"; enabled: !root.tag-child-open; clicked => { root.edit-whitelist(); } }
+                            TextEdit {
+                                height: 100px;
+                                text <=> root.tag-whitelist;
                                 edited => { root.changed(); }
                             }
                         }
-                    }
-                    if root.custom-index == 1 && root.kind == "tag filtering": VerticalLayout {
-                        spacing: 6px;
-                        HorizontalLayout {
-                            spacing: 6px;
-                            Label { text: "file blacklist: "; }
-                            TipButton {
-                                horizontal-stretch: 1;
-                                text: root.tag-blacklist;
-                                tip: root.tag-blacklist-tooltip;
-                                clicked => { root.edit-blacklist(); }
+                        if root.custom-index == 1 && root.kind == "tags": VerticalLayout {
+                            spacing: 8px;
+                            if root.gets-no-tags: Label {
+                                text: "THIS CURRENTLY GETS NO TAGS";
+                                horizontal-alignment: center;
+                                color: Theme.error;
                             }
-                        }
-                        Label { text: "file whitelist (a file must have one of these tags, if any are set; a tag a line): "; }
-                        Btn { text: "edit whitelist tags…"; enabled: !root.tag-child-open; clicked => { root.edit-whitelist(); } }
-                        TextEdit {
-                            height: 100px;
-                            text <=> root.tag-whitelist;
-                            edited => { root.changed(); }
-                        }
-                    }
-                    if root.custom-index == 1 && root.kind == "tags": VerticalLayout {
-                        spacing: 8px;
-                        if root.gets-no-tags: Label {
-                            text: "THIS CURRENTLY GETS NO TAGS";
-                            horizontal-alignment: center;
-                            color: Theme.error;
-                        }
-                        for service[i] in root.tag-services: Rectangle {
-                            border-width: 1px;
-                            border-color: Theme.border;
-                            VerticalLayout {
-                                padding: 6px;
-                                spacing: 4px;
-                                Text {
-                                    text: service.name;
-                                    font-weight: 700;
-                                    color: Theme.text;
-                                }
-                                if root.downloader: HorizontalLayout {
-                                    spacing: 6px;
+                            for service[i] in root.tag-services: Rectangle {
+                                border-width: 1px;
+                                border-color: Theme.border;
+                                VerticalLayout {
+                                    padding: 6px;
+                                    spacing: 4px;
+                                    Text {
+                                        text: service.name;
+                                        font-weight: 700;
+                                        color: Theme.text;
+                                    }
+                                    if root.downloader: HorizontalLayout {
+                                        spacing: 6px;
+                                        CheckBox {
+                                            text: "get tags";
+                                            checked: service.get-tags;
+                                            toggled => { root.tag-service-toggled(i, "get-tags", self.checked); }
+                                        }
+                                        TipButton {
+                                            text: service.filter;
+                                            tip: service.filter-tooltip;
+                                            enabled: service.get-tags && !root.tag-child-open;
+                                            horizontal-stretch: 1;
+                                            clicked => { root.edit-get-tags-filter(i); }
+                                        }
+                                    }
+                                    Btn { text: service.additional; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
                                     CheckBox {
-                                        text: "get tags";
-                                        checked: service.get-tags;
-                                        toggled => { root.tag-service-toggled(i, "get-tags", self.checked); }
+                                        text: "apply tags to new files";
+                                        checked: service.to-new;
+                                        toggled => { root.tag-service-toggled(i, "to-new", self.checked); }
                                     }
-                                    TipButton {
-                                        text: service.filter;
-                                        tip: service.filter-tooltip;
-                                        enabled: service.get-tags && !root.tag-child-open;
-                                        horizontal-stretch: 1;
-                                        clicked => { root.edit-get-tags-filter(i); }
+                                    CheckBox {
+                                        text: "apply tags to files already in inbox";
+                                        checked: service.to-inbox;
+                                        toggled => { root.tag-service-toggled(i, "to-inbox", self.checked); }
                                     }
-                                }
-                                Btn { text: service.additional; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
-                                CheckBox {
-                                    text: "apply tags to new files";
-                                    checked: service.to-new;
-                                    toggled => { root.tag-service-toggled(i, "to-new", self.checked); }
-                                }
-                                CheckBox {
-                                    text: "apply tags to files already in inbox";
-                                    checked: service.to-inbox;
-                                    toggled => { root.tag-service-toggled(i, "to-inbox", self.checked); }
-                                }
-                                CheckBox {
-                                    text: "apply tags to files already in archive";
-                                    checked: service.to-archive;
-                                    toggled => { root.tag-service-toggled(i, "to-archive", self.checked); }
-                                }
-                                if root.downloader: CheckBox {
-                                    text: "parsed tags overwrite previously deleted tags";
-                                    checked: service.get-overwrite;
-                                    toggled => { root.tag-service-toggled(i, "get-overwrite", self.checked); }
-                                }
-                                CheckBox {
-                                    text: "additional tags overwrite previously deleted tags";
-                                    checked: service.additional-overwrite;
-                                    toggled => { root.tag-service-toggled(i, "additional-overwrite", self.checked); }
-                                }
-                                CheckBox {
-                                    text: "only add tags that already exist";
-                                    checked: service.only-existing;
-                                    toggled => { root.tag-service-toggled(i, "only-existing", self.checked); }
-                                }
-                                Btn {
-                                    text: "set a filter for already-exist test";
-                                    enabled: !root.tag-child-open;
-                                    clicked => { root.edit-existing-tags-filter(i); }
+                                    CheckBox {
+                                        text: "apply tags to files already in archive";
+                                        checked: service.to-archive;
+                                        toggled => { root.tag-service-toggled(i, "to-archive", self.checked); }
+                                    }
+                                    if root.downloader: CheckBox {
+                                        text: "parsed tags overwrite previously deleted tags";
+                                        checked: service.get-overwrite;
+                                        toggled => { root.tag-service-toggled(i, "get-overwrite", self.checked); }
+                                    }
+                                    CheckBox {
+                                        text: "additional tags overwrite previously deleted tags";
+                                        checked: service.additional-overwrite;
+                                        toggled => { root.tag-service-toggled(i, "additional-overwrite", self.checked); }
+                                    }
+                                    CheckBox {
+                                        text: "only add tags that already exist";
+                                        checked: service.only-existing;
+                                        toggled => { root.tag-service-toggled(i, "only-existing", self.checked); }
+                                    }
+                                    Btn {
+                                        text: "set a filter for already-exist test";
+                                        enabled: !root.tag-child-open;
+                                        clicked => { root.edit-existing-tags-filter(i); }
+                                    }
                                 }
                             }
                         }
-                    }
-                    if root.custom-index == 1 && root.kind == "external programs": VerticalLayout {
-                        spacing: 6px;
-                        ListTable {
-                            height: 150px;
-                            columns: root.program-columns;
-                            rows: root.program-rows;
-                            row-clicked(row, ctrl, shift) => { root.program-clicked(row, ctrl, shift); }
-                            row-activated(row) => { root.program-clicked(row, false, false); root.program-action("edit"); }
-                            delete-pressed => { root.program-action("delete"); }
-                        }
-                        HorizontalLayout {
+                        if root.custom-index == 1 && root.kind == "external programs": VerticalLayout {
                             spacing: 6px;
-                            Btn { horizontal-stretch: 1; text: "add"; enabled: !root.program-child-open; clicked => { root.program-action("add"); } }
-                            Btn { horizontal-stretch: 1; text: "edit"; enabled: !root.program-child-open && root.program-any-selected; clicked => { root.program-action("edit"); } }
-                            Btn { horizontal-stretch: 1; text: "delete"; enabled: !root.program-child-open && root.program-any-selected; clicked => { root.program-action("delete"); } }
+                            ListTable {
+                                height: 150px;
+                                columns: root.program-columns;
+                                rows: root.program-rows;
+                                row-clicked(row, ctrl, shift) => { root.program-clicked(row, ctrl, shift); }
+                                row-activated(row) => { root.program-clicked(row, false, false); root.program-action("edit"); }
+                                delete-pressed => { root.program-action("delete"); }
+                            }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                Btn { horizontal-stretch: 1; text: "add"; enabled: !root.program-child-open; clicked => { root.program-action("add"); } }
+                                Btn { horizontal-stretch: 1; text: "edit"; enabled: !root.program-child-open && root.program-any-selected; clicked => { root.program-action("edit"); } }
+                                Btn { horizontal-stretch: 1; text: "delete"; enabled: !root.program-child-open && root.program-any-selected; clicked => { root.program-action("delete"); } }
+                            }
                         }
-                    }
-                    if root.custom-index == 1 && root.summary != "": Label {
-                        text: root.summary;
-                    }
-                }
-            }
-        }
-        if root.clipboard-error != "": Text { text: root.clipboard-error; color: Theme.error; wrap: word-wrap; }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            ImportFavouritesButton {
-                rows: root.favourites;
-                edit-allowed: !root.favourite-editor;
-                enabled: !root.favourite-child-open && !root.overwrite-open && !root.tag-child-open && !root.location-child-open && !root.program-child-open;
-                refresh => { root.refresh-favourites(); }
-                selected(action, name) => { root.favourite(action, name); }
-            }
-            Btn { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open; clicked => { root.copy-options(); } }
-            Rectangle {
-                width: 66px;
-                height: 28px;
-                Btn { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open; clicked => { clipboard-menu.show(); } }
-                clipboard-menu := PopupWindow {
-                    y: parent.height;
-                    width: 320px;
-                    height: root.global-defaults ? 90px : 148px;
-                    Rectangle {
-                        background: Theme.panel;
-                        border-color: Theme.border;
-                        border-width: 1px;
-                        VerticalLayout {
-                            padding: 4px;
-                            spacing: 2px;
-                            Btn { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
-                            Rectangle { height: 1px; background: Theme.border; }
-                            Btn { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
-                            // (the global defaults are only merged into)
-                            if !root.global-defaults: Btn { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
-                            if !root.global-defaults: Btn { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
+                        if root.custom-index == 1 && root.summary != "": Label {
+                            text: root.summary;
                         }
                     }
                 }
             }
-            Btn {
-                text: "apply";
-                enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open;
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            if root.clipboard-error != "": Text { text: root.clipboard-error; color: Theme.error; wrap: word-wrap; }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                ImportFavouritesButton {
+                    rows: root.favourites;
+                    edit-allowed: !root.favourite-editor;
+                    enabled: !root.favourite-child-open && !root.overwrite-open && !root.tag-child-open && !root.location-child-open && !root.program-child-open;
+                    refresh => { root.refresh-favourites(); }
+                    selected(action, name) => { root.favourite(action, name); }
+                }
+                Btn { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open; clicked => { root.copy-options(); } }
+                Rectangle {
+                    width: 66px;
+                    height: 28px;
+                    Btn { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open; clicked => { clipboard-menu.show(); } }
+                    clipboard-menu := PopupWindow {
+                        y: parent.height;
+                        width: 320px;
+                        height: root.global-defaults ? 90px : 148px;
+                        Rectangle {
+                            background: Theme.panel;
+                            border-color: Theme.border;
+                            border-width: 1px;
+                            VerticalLayout {
+                                padding: 4px;
+                                spacing: 2px;
+                                Btn { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
+                                Rectangle { height: 1px; background: Theme.border; }
+                                Btn { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
+                                // (the global defaults are only merged into)
+                                if !root.global-defaults: Btn { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
+                                if !root.global-defaults: Btn { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
+                            }
+                        }
+                    }
+                }
+                Btn {
+                    text: "apply";
+                    enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open;
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

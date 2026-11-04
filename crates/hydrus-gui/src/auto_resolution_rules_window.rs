@@ -489,6 +489,8 @@ fn open_comparator(
     done: Rc<dyn Fn(Comparator)>,
 ) -> Result<ComparatorWindow, String> {
     let window = crate::app_title::new::<crate::ComparatorWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(comparator_title(&comparator).into());
     window.set_kind(comparator_kind(&comparator).into());
     let search = match &comparator {
@@ -669,7 +671,7 @@ fn open_comparator(
     window.on_apply({
         let weak = window.as_weak();
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -683,20 +685,30 @@ fn open_comparator(
                 }
                 state.comparator.clone()
             };
-            close();
+            ended.accept();
             done(comparator);
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a nested comparator's editor and its search's editors are modal children)
+    ended.modal_child({
+        let stack = stack.clone();
+        let children = children.clone();
+        move || {
+            stack.borrow().last().is_some_and(|(n, _)| *n != number)
+                || children.predicate_editor.borrow().is_some()
+                || children.search_or.borrow().is_some()
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     show_comparator(&window, &mut state.borrow_mut());
     window.show().map_err(|e| e.to_string())?;
@@ -866,6 +878,8 @@ fn open_rule(
 ) -> Result<AutoResolutionRuleWindow, String> {
     let window =
         crate::app_title::new::<crate::AutoResolutionRuleWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(title.into());
     window.set_operation_choices(strings(
         OPERATION_CHOICES.iter().map(|c| c.0.to_owned()).collect(),
@@ -1260,7 +1274,7 @@ fn open_rule(
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -1279,20 +1293,32 @@ fn open_rule(
                 }
                 state.rule.clone()
             };
-            close();
+            ended.accept();
             done(rule);
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (its comparator, merge options, locations and duplicate filter windows are modal children)
+    ended.modal_child({
+        let slots = slots.clone();
+        move || {
+            !slots.comparators.borrow().is_empty()
+                || slots.merge_options.borrow().is_some()
+                || slots.locations.borrow().is_some()
+                || slots.preview_filter.borrow().is_some()
+                || slots.conditional.predicate_editor.borrow().is_some()
+                || slots.conditional.search_or.borrow().is_some()
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     show_rule(&window, &state.borrow(), true);
     window.show().map_err(|e| e.to_string())?;
@@ -1412,6 +1438,8 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
     }));
     let window =
         crate::app_title::new::<crate::AutoResolutionRulesWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_warning(RULES_WARNING.into());
     window.set_note(RULES_ORDER_NOTE.into());
     window.set_suggestions(strings(
@@ -1591,7 +1619,7 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
     window.on_apply({
         let state = state.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             let taken = std::mem::replace(
                 &mut *state.borrow_mut(),
@@ -1609,20 +1637,37 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
             if let Err(e) = write_rules(&store, taken) {
                 eprintln!("could not write the rules: {e}");
             }
-            close();
+            ended.accept();
             applied();
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
+    });
+    // (its rule editor is a modal child)
+    ended.modal_child({
+        let rule = slots.rule.clone();
+        move || rule.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     show_list(&window, &state.borrow());
     window.show().map_err(|e| e.to_string())?;

@@ -248,6 +248,9 @@ pub(crate) fn open(
         return window.show();
     }
     let window = crate::app_title::new::<crate::DatabaseLocationsWindow>()?;
+    // (a `DialogNullipotent`: its close button is its OK, keeping
+    // `regular_dialog`; Escape and its window's close cancel it)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(model::TITLE.into());
     window.set_warning(model::WARNING.into());
     let mut state = State {
@@ -307,15 +310,31 @@ pub(crate) fn open(
         move |action| act(&state, &refresh, &slots, action.as_str())
     });
     window.on_close_window({
-        let slots = slots.clone();
-        move || close(&slots)
+        let ended = ended.clone();
+        move || ended.accept()
     });
-    window.window().on_close_requested({
+    // (its max size, run time and custom time windows are modal children)
+    ended.modal_child({
         let slots = slots.clone();
         move || {
-            close(&slots);
-            slint::CloseRequestResponse::HideWindow
+            let slot = slots.borrow();
+            slot.max_size
+                .as_ref()
+                .is_some_and(|w| w.window().is_visible())
+                || slot
+                    .runtime
+                    .as_ref()
+                    .is_some_and(|w| w.window().is_visible())
+                || slot
+                    .custom
+                    .as_ref()
+                    .is_some_and(|w| w.window().is_visible())
         }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let slots = slots.clone();
+        move || close(&slots)
     });
     show(&window, &state.borrow());
     window.show()?;
@@ -325,17 +344,26 @@ pub(crate) fn open(
 }
 
 fn close(slots: &Slots) {
-    let mut slot = slots.borrow_mut();
-    if let Some(w) = slot.max_size.take() {
+    let (max_size, runtime, custom, window) = {
+        let mut slot = slots.borrow_mut();
+        (
+            slot.max_size.take(),
+            slot.runtime.take(),
+            slot.custom.take(),
+            slot.window.take(),
+        )
+    };
+    // (its children cancelled with it, through their helpers)
+    if let Some(w) = max_size {
+        w.invoke_cancel();
+    }
+    if let Some(w) = runtime {
         let _ = w.hide();
     }
-    if let Some(w) = slot.runtime.take() {
-        let _ = w.hide();
+    if let Some(w) = custom {
+        w.invoke_cancel();
     }
-    if let Some(w) = slot.custom.take() {
-        let _ = w.hide();
-    }
-    if let Some(w) = slot.window.take() {
+    if let Some(w) = window {
         let _ = w.hide();
     }
 }
@@ -403,6 +431,8 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
             let Ok(window) = crate::app_title::new::<crate::LocationMaxSizeWindow>() else {
                 return;
             };
+            // (an ordinary dialog: kept by `regular_dialog` when applied)
+            let ended = crate::dialog::Dialog::new(&window);
             window.set_window_title(model::MAX_SIZE_TITLE.into());
             window.set_message(model::MAX_SIZE_MESSAGE.into());
             let (amount, unit) = split_bytes(l.max_bytes.unwrap_or(model::MAX_SIZE_DEFAULT));
@@ -413,6 +443,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                 let weak = window.as_weak();
                 let (state, refresh) = (state.clone(), refresh.clone());
                 let path = l.path.clone();
+                let ended = ended.clone();
                 move || {
                     let Some(w) = weak.upgrade() else {
                         return;
@@ -421,7 +452,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                         i64::from(w.get_amount())
                             * 1024_i64.pow(u32::try_from(w.get_unit()).unwrap_or(0))
                     });
-                    let _ = w.hide();
+                    ended.accept();
                     let path = path.clone();
                     state
                         .borrow_mut()
@@ -429,13 +460,8 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                     refresh();
                 }
             });
-            window.on_cancel({
-                let weak = window.as_weak();
-                move || {
-                    if let Some(w) = weak.upgrade() {
-                        let _ = w.hide();
-                    }
-                }
+            window.on_cancel(move || {
+                ended.cancel();
             });
             if window.show().is_ok() {
                 MAX_SIZE.with(|w| *w.borrow_mut() = window.as_weak());
@@ -590,27 +616,25 @@ fn custom_runtime(state: &Rc<RefCell<State>>, slots: &Slots) {
     let Ok(window) = crate::app_title::new::<crate::EditValueWindow>() else {
         return;
     };
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title("set time to run (minutes)".into());
     window.set_minimum(1);
     window.set_value(120);
     window.on_apply({
         let weak = window.as_weak();
         let (state, slots) = (state.clone(), slots.clone());
+        let ended = ended.clone();
         move || {
             if let Some(w) = weak.upgrade() {
                 let minutes = i64::from(w.get_value());
-                let _ = w.hide();
+                ended.accept();
                 start(&state, &slots, Some(minutes * 60));
             }
         }
     });
-    window.on_cancel({
-        let weak = window.as_weak();
-        move || {
-            if let Some(w) = weak.upgrade() {
-                let _ = w.hide();
-            }
-        }
+    window.on_cancel(move || {
+        ended.cancel();
     });
     if window.show().is_ok() {
         CUSTOM.with(|w| *w.borrow_mut() = window.as_weak());
