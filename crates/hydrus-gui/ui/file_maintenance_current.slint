@@ -55,7 +55,11 @@ export component FileMaintenanceWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
+                // (its yes/no questions answered no, its information
+                // dismissed, as their own dialogs are in the reference)
                 if root.question != "" { root.answered(false); return accept; }
+                if root.new-question != "" { root.new-answered(false); return accept; }
+                if root.information != "" { root.information-closed(); return accept; }
                 root.escape();
                 return accept;
             }

@@ -200,8 +200,10 @@ pub fn open(
         .any(|s| matches!(s.kind, ServiceKind::LocalFileStorage) && media.is_current_in(s.id));
     // Hide any previous window. Its worker only owns its own result channel,
     // and the old window's close callback cannot remove a newer slot.
-    if let Some(previous) = slot.borrow_mut().take() {
-        let _ = previous.hide();
+    let previous = slot.borrow_mut().take();
+    if let Some(previous) = previous {
+        // (through the dialog helper, as its close button)
+        previous.invoke_dismissed();
     }
     let window =
         crate::app_title::new::<crate::EmbeddedMetadataWindow>().map_err(|e| e.to_string())?;

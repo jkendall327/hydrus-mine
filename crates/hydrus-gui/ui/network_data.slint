@@ -201,6 +201,12 @@ export component NetworkJobsWindow inherits Window {
     in-out property <string> refresh-seconds: "0.25";
     callback refresh-changed();
     in property <[MenuPane]> menu-panes;
+    // (once its menus close, however they close, the window's keys take
+    // the focus back from them, so Escape reaches it again)
+    property <bool> menu-open: root.menu-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { escape-keys.focus(); }
+    }
     callback row-menu(int, length, length);
     callback menu-line-hovered(int, int, length, length, length);
     callback menu-line-clicked(int, int, length, length, length);

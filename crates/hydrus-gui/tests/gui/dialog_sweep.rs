@@ -1064,10 +1064,7 @@ fn frames() -> Vec<NamedFrame> {
                     .last()
                     .expect("what is this")
                     .clone_strong();
-                Framed {
-                    window: Box::new(window),
-                    close: None,
-                }
+                framed(window, |w| w.invoke_close_clicked())
             })
         }),
         ("detailed file metadata", || {
@@ -1172,6 +1169,9 @@ fn every_helper_frame_keeps_its_frame_as_it_is_resized_and_nothing_as_it_closes(
                 for (how, recorded) in [
                     ("close button", case("close_button")),
                     ("window close", case("window_close")),
+                    // (the recording has no frame Escape: the reference's
+                    // `keyPressEvent` closes the frame, `self.close()`, as its
+                    // window's close does, so Escape replays that case)
                     ("escape", case("window_close")),
                 ] {
                     keep(&store, baseline.clone());
@@ -1228,6 +1228,18 @@ fn escape_answers_a_frames_question_or_waits_on_its_child_first() {
         "migrate tags: the question answered no"
     );
     assert!(migration.window().is_visible(), "migrate tags: still open");
+    // (its tag filter editor is a modal child)
+    migration.invoke_edit_filter(false);
+    let filter = hydrus_gui::tag_filter_window::last_opened().expect("a tag filter");
+    escape(migration.window());
+    migration
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        migration.window().is_visible() && filter.window().is_visible(),
+        "migrate tags: waits on its tag filter"
+    );
+    filter.invoke_cancel();
     escape(migration.window());
     assert!(
         !migration.window().is_visible(),
@@ -1261,6 +1273,16 @@ fn escape_answers_a_frames_question_or_waits_on_its_child_first() {
         "review bandwidth usage and edit rules",
     );
     let review = hydrus_gui::network_data_window::last_bandwidth().expect("bandwidth");
+    // ("reset default bandwidth rules" asks first)
+    until("bandwidth loads", || !review.get_busy());
+    review.invoke_reset_clicked();
+    assert!(!review.get_question().is_empty());
+    escape(review.window());
+    assert!(
+        review.get_question().is_empty(),
+        "bandwidth: the question answered no"
+    );
+    assert!(review.window().is_visible(), "bandwidth: still open");
     let editor = (0..250)
         .find_map(|_| {
             if !review.get_busy() {
@@ -1290,4 +1312,165 @@ fn escape_answers_a_frames_question_or_waits_on_its_child_first() {
     }
     escape(review.window());
     assert!(!review.window().is_visible(), "bandwidth: then closed");
+}
+
+/// Spin the event loop until `ready`, for at most five seconds.
+fn until(what: &str, mut ready: impl FnMut() -> bool) {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while !ready() {
+        assert!(std::time::Instant::now() < deadline, "{what}");
+        spin(std::time::Duration::from_millis(20));
+    }
+}
+
+/// Network jobs: the rules editor its cog opens is a modal child, and once
+/// a job's menu is dismissed by a click, Escape reaches the window again.
+#[test]
+fn network_jobs_wait_on_their_rules_editor_and_take_escape_after_a_menu() {
+    let _windows = headless::init();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let mut snapshot = crate::network_job_control::snapshot();
+    snapshot.jobs[0].wait = hydrus_store::network_runtime::WaitReason::ServerBandwidth;
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &snapshot))
+        .unwrap();
+    let slots = hydrus_gui::network_data_window::Slots::default();
+    let jobs = hydrus_gui::network_data_window::open_jobs(store.clone(), &slots).unwrap();
+    let win = jobs.window();
+    widgets::lay_out(win, 1100.0, 590.0);
+    until("a job", || jobs.get_rows().row_count() == 1);
+    jobs.invoke_row_clicked(0, false, false);
+    jobs.invoke_control_menu();
+    // (the cog's "edit bandwidth rules")
+    jobs.invoke_control_action(100);
+    until("a rules editor", || {
+        hydrus_gui::network_data_window::last_rules().is_some()
+    });
+    escape(win);
+    win.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(win.is_visible(), "network jobs: waits on its rules editor");
+    hydrus_gui::network_data_window::last_rules()
+        .unwrap()
+        .invoke_cancel_clicked();
+    until("the rules editor closes", || {
+        hydrus_gui::network_data_window::last_rules().is_none()
+    });
+    // a job's menu, dismissed by a click beside it
+    jobs.invoke_row_menu(0, 300.0, 200.0);
+    assert!(
+        jobs.get_menu_panes().row_count() > 0,
+        "the job's menu opens"
+    );
+    widgets::click_at(
+        win,
+        slint::LogicalPosition::new(20.0, 560.0),
+        slint::platform::PointerEventButton::Left,
+    );
+    spin(std::time::Duration::from_millis(50));
+    assert_eq!(
+        jobs.get_menu_panes().row_count(),
+        0,
+        "the menu is dismissed"
+    );
+    escape(win);
+    assert!(
+        !win.is_visible(),
+        "network jobs: Escape closes it after the menu"
+    );
+}
+
+/// Review files to import: "Remove them?" is answered no by Escape, and
+/// its import options editor and filename tagging (modal children) hold
+/// Escape and the window's close; auto-resolution's "Are you sure?" takes
+/// Escape first.
+#[test]
+fn review_imports_and_auto_resolution_take_escape_for_their_questions_first() {
+    std::thread::spawn(|| {
+        let _windows = headless::init();
+        let (_dirs, store) = crate::subscriptions::store();
+        let (ui, bound) = client(&store);
+        let work = tempfile::tempdir().unwrap();
+        let file = work.path().join("a.png");
+        std::fs::copy(hydrus_testkit::fixture_path("media/png_1x1.png"), &file).unwrap();
+        let review = || {
+            crate::common::main_menu::choose(&ui, &["file"], "import files\u{2026}");
+            let review = bound
+                .review_imports
+                .borrow()
+                .as_ref()
+                .map(|(w, _)| w.clone_strong())
+                .expect("review imports");
+            widgets::lay_out(review.window(), 900.0, 700.0);
+            review.invoke_path_entered(file.display().to_string().into());
+            until("parsed", || {
+                !review.get_working() && review.get_rows().row_count() > 0
+            });
+            review
+        };
+        // "Remove them?"
+        let first = review();
+        first.invoke_row_clicked(0, false, false);
+        widgets::key(first.window(), Key::Delete);
+        assert!(first.get_asking_remove(), "review imports: asks to remove");
+        escape(first.window());
+        assert!(!first.get_asking_remove(), "review imports: answered no");
+        assert_eq!(first.get_rows().row_count(), 1, "nothing removed");
+        assert!(first.window().is_visible(), "review imports: still open");
+        // its import options editor
+        first.invoke_import_options();
+        assert!(bound.review_import_options.borrow().is_some());
+        escape(first.window());
+        first
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(
+            first.window().is_visible(),
+            "review imports: waits on its import options"
+        );
+        // (its cancel ends both)
+        first.invoke_cancel();
+        assert!(!first.window().is_visible());
+        // its filename tagging
+        let second = review();
+        second.invoke_add_tags();
+        assert!(bound.filename_tagging.borrow().is_some());
+        escape(second.window());
+        second
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(
+            second.window().is_visible(),
+            "review imports: waits on its filename tagging"
+        );
+        second.invoke_cancel();
+        assert!(!second.window().is_visible());
+    })
+    .join()
+    .unwrap();
+
+    let _windows = headless::init();
+    let crate::auto_resolution_review::Opened { ui, bound, .. } =
+        crate::auto_resolution_review::opened();
+    let name = hydrus_testkit::fixture_json("auto_resolution_review.json")["reviewed"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let window = crate::auto_resolution_review::review(&ui, &bound, &name);
+    // approve one, then undo it from the actioned tab: "Are you sure?"
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_approve();
+    crate::auto_resolution_review::settle(&window);
+    window.invoke_tab_chosen(1);
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_undo();
+    assert!(window.get_asking(), "auto-resolution: asks first");
+    escape(window.window());
+    assert!(!window.get_asking(), "auto-resolution: answered no");
+    assert!(window.window().is_visible(), "auto-resolution: still open");
+    escape(window.window());
+    assert!(
+        !window.window().is_visible(),
+        "auto-resolution: then closed"
+    );
 }

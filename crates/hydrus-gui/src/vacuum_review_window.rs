@@ -61,10 +61,9 @@ impl Slot {
 impl crate::Bound {
     /// The open "review vacuum data" window, for tests.
     #[must_use]
-    // (the Bound's field is underscored: it is held, never read, outside tests)
-    #[allow(clippy::used_underscore_binding)]
+    #[doc(hidden)]
     pub fn vacuum_review(&self) -> Option<VacuumReviewWindow> {
-        self._vacuum_review_owner.0.window()
+        self.vacuum_review_owner.0.window()
     }
 }
 
@@ -95,6 +94,8 @@ struct Confirmation {
     review: RefCell<State>,
     accepted: Rc<dyn Fn()>,
     timer: Timer,
+    /// How it ends (the dialog helper's frame).
+    ended: crate::dialog::Dialog<VacuumReviewWindow>,
 }
 impl Confirmation {
     fn close(self: &Rc<Self>) {
@@ -103,6 +104,8 @@ impl Confirmation {
         }
         self.pending.set(false);
         self.timer.stop();
+        // (however it closes, it ends through the dialog helper)
+        self.ended.cancel_confirmed();
         if let Some(window) = self.window.upgrade() {
             window.set_question(SharedString::new());
             let _ = window.hide();
@@ -304,6 +307,7 @@ fn open_using_with_admission(
         }),
         accepted,
         timer: Timer::default(),
+        ended: ended.clone(),
     });
     paint(&window, &state.review.borrow());
     window.on_clicked({
@@ -400,12 +404,8 @@ mod tests {
     use super::*;
     use slint::Model as _;
 
-    #[expect(
-        clippy::used_underscore_binding,
-        reason = "tests inspect the lifetime-only Bound owner"
-    )]
     fn bound_window(bound: &crate::Bound) -> Option<VacuumReviewWindow> {
-        bound._vacuum_review_owner.0.window()
+        bound.vacuum_review()
     }
 
     fn store() -> (tempfile::TempDir, Arc<Store>) {

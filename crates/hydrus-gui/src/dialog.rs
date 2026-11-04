@@ -345,6 +345,10 @@ impl<C: Escapes + 'static> Dialog<C> {
     /// already closed).
     pub(crate) fn cancel(&self) -> bool {
         if !self.is_open() {
+            // (a window already ended, shown again, is only hidden)
+            if let Some(component) = self.inner.window.upgrade() {
+                let _ = component.hide();
+            }
             return true;
         }
         let may = self

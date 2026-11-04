@@ -2824,9 +2824,19 @@ extends: a dialog ended by a real Escape, its cancel and its apply, a frame
 resized and then ended by its close button, its window's close and a real
 Escape; there too, a
 question or inline editor within a dialog takes Escape first and a modal
-child (the reference's) holds it, the dialog staying open (in a frame, migrate
-tags' and the vacuum review's questions answered no, bandwidth waiting on its
-rules editor). "manage granularity" waits for its close button (the
+child (the reference's) holds it, the dialog staying open (in a frame: the
+questions of migrate tags, the vacuum review, bandwidth, file maintenance
+(its add question too), review files to import ("Remove them?") and the
+auto-resolution review answered no, file maintenance's information
+dismissed; migrate tags waiting on its tag filter, bandwidth and network
+jobs on their rules editors, review files to import on its import options
+and filename tagging). Closing file maintenance while an "add job" write
+is still queued behind the database writer cancels that write (the window's
+retirement stops it inside the writer's transaction); the reference's
+`AsyncQtJob` would finish it. The login test result is swept from where
+the login script editor opens it (`open_result`), since reaching it from
+the menus needs a live login site; the menu path is proved in
+`login_workflows.rs`. "manage granularity" waits for its close button (the
 reference's `DialogNullipotent` keeps its frame by it). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape,

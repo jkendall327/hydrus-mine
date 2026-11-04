@@ -431,7 +431,7 @@ pub struct Bound {
     pub database_maintenance: database_maintenance_window::Slot,
     _database_maintenance_owner: Rc<database_maintenance_window::Owner>,
     pub viewing_maintenance: viewing_maintenance_window::Slot,
-    _vacuum_review_owner: Rc<vacuum_review_window::Owner>,
+    vacuum_review_owner: Rc<vacuum_review_window::Owner>,
     /// Independent global file-history frame.
     pub file_history: file_history_window::Slot,
     pub file_maintenance: Option<file_maintenance_current::Control>,
@@ -5645,7 +5645,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let force_idle_owner = Rc::new(force_idle.owner());
     let bound = Bound {
         tray,
-        _vacuum_review_owner: Rc::new(vacuum_review_window::Owner::new(&vacuum_review)),
+        vacuum_review_owner: Rc::new(vacuum_review_window::Owner::new(&vacuum_review)),
         _file_maintenance_owner: file_maintenance
             .as_ref()
             .map(|control| Rc::new(control.owner())),

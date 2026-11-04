@@ -367,7 +367,8 @@ pub(crate) type Windows = Rc<RefCell<Vec<(u64, AutoResolutionReviewWindow)>>>;
 pub(crate) fn close_all(windows: &Windows) {
     let open: Vec<_> = windows.borrow_mut().drain(..).collect();
     for (_, window) in open {
-        let _ = window.hide();
+        // (through the dialog helper, as its close button)
+        window.invoke_close_window();
     }
 }
 

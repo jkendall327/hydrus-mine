@@ -216,7 +216,7 @@ pub fn open(
                     }
                 }
             });
-            if let Err(e) = crate::tag_filter_window::open(
+            match crate::tag_filter_window::open(
                 &store,
                 &filter,
                 false,
@@ -228,9 +228,14 @@ pub fn open(
                 "Only tags passing this filter are migrated.",
                 &filter_slot,
                 chosen,
-            ) && let Some(w) = weak.upgrade()
-            {
-                w.set_error(e.to_string().into());
+            ) {
+                // (kept, so the frame waits on it and closes it with itself)
+                Ok(editor) => *filter_slot.borrow_mut() = Some(editor),
+                Err(e) => {
+                    if let Some(w) = weak.upgrade() {
+                        w.set_error(e.to_string().into());
+                    }
+                }
             }
         }
     });
@@ -400,6 +405,22 @@ pub fn open(
             if let Some(job) = job_window.borrow().as_ref().and_then(slint::Weak::upgrade) {
                 job.invoke_cancel_job();
             }
+        }
+    });
+    // (its tag filter and locations editors are modal children in the
+    // reference: `TagFilterButton`'s and the location button's `DialogEdit`)
+    ended.modal_child({
+        let filter_slot = filter_slot.clone();
+        let location_slot = location_slot.clone();
+        move || {
+            filter_slot
+                .borrow()
+                .as_ref()
+                .is_some_and(|w| w.window().is_visible())
+                || location_slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|w| w.window().is_visible())
         }
     });
     let close = {
