@@ -233,4 +233,31 @@ fn an_inc_dec_ratings_middle_click_types_its_count_in_an_edit_value_dialog() {
     );
     dialog.invoke_apply();
     assert_eq!(ratings(&store, a).get(&counter), Some(&Rating::IncDec(250)));
+
+    // "edit value" is modal over it: while it is open, the dialog's
+    // buttons, Escape and its window's close do nothing
+    let dialog = open(&ui, &bound, 0);
+    dialog.invoke_rating_middle(row as i32);
+    let edit = bound
+        .rating_count_editor
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("opens");
+    edit.set_value(77);
+    assert!(dialog.get_editing(), "its buttons are disabled");
+    dialog.invoke_apply();
+    dialog.invoke_cancel();
+    crate::common::widgets::key(dialog.window(), slint::platform::Key::Escape);
+    dialog
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(dialog.window().is_visible() && edit.window().is_visible());
+    assert_eq!(ratings(&store, a).get(&counter), Some(&Rating::IncDec(250)));
+    // once it is cancelled, the dialog's apply writes the count from before
+    edit.invoke_cancel();
+    assert!(!dialog.get_editing());
+    dialog.invoke_apply();
+    assert!(!dialog.window().is_visible());
+    assert_eq!(ratings(&store, a).get(&counter), Some(&Rating::IncDec(250)));
 }

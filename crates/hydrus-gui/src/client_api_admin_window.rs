@@ -596,6 +596,7 @@ pub fn open(
     // edit what it asked for
     window.on_add_from_api_clicked({
         let open_edit = open_edit.clone();
+        let ended = ended.clone();
         let weak = window.as_weak();
         let store = store.clone();
         let slots = slots.clone();
@@ -676,6 +677,7 @@ pub fn open(
                     let waited = waited.clone();
                     let open_edit = open_edit.clone();
                     let slot = Rc::downgrade(&slots.request);
+                    let owner = ended.clone();
                     move || {
                         renew_registration(&store);
                         let Ok(registration) = store.read(
@@ -698,7 +700,8 @@ pub fn open(
                         if slot.upgrade().is_none() {
                             return;
                         }
-                        crate::debug_actions::message("Information", "Got request!");
+                        // (`ShowInformation` over the keys window)
+                        owner.message("Information", "Got request!");
                         open_edit(
                             true,
                             Some(AccessPermissions {

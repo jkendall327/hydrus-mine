@@ -2916,7 +2916,14 @@ the rules editors' import and export messages, a string processor's and
 a formula's import messages) open as message or question windows it
 waits on, as on the reference's modal ones; other dialogs' are still
 opened apart from them. Manage ratings' "edit value" editor holds it, as
-the reference's modal one. No migrated dialog yet has a panel check that refuses an apply
+the reference's modal one: its ratings, copy, paste, apply and cancel do
+nothing until that closes. A dialog ended by its own buttons while it
+holds a window it opened (its own messages and questions, manage ratings'
+"edit value", the folders' logs and editors) closes that window with it,
+by the window's own close, so nothing it held outlives it. A menu open in
+a window (a favourites menu, a log's or a subscription's menu) takes
+Escape first and closes, and once it is dismissed the keys come back to
+the window, so Escape then reaches the dialog. No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
 vetoed apply does).
 The windows that end through the helper are fitted to the screens once

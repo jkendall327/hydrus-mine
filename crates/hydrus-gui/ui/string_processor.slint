@@ -320,6 +320,12 @@ export component StringStepWindow inherits Window {
     callback cancel();
     callback closed();
     in property <bool> child-open;
+    // (the favourites menu takes the keys while open; once it closes, they
+    // come back, so Escape reaches the dialog again)
+    property <bool> menu-open: root.favourite-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { escape-keys.focus(); }
+    }
 
     // (Escape, which the dialog helper takes: a dialog cancelled, a frame
     // closed, as the reference's `keyPressEvent`)

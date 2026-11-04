@@ -1196,18 +1196,18 @@ fn cases() -> Vec<Named> {
         // (batch 5: the windows the reference opens by other frame keys,
         // and the dialogs that keep no frame)
         ("string processor", || {
-            keyed_case(|store, _| {
-                let slots = hydrus_gui::string_processor_window::Slots::default();
-                let w = hydrus_gui::string_processor_window::open(
-                    store,
-                    &hydrus_core::url::strings::StringProcessor::default(),
-                    vec!["example".into()],
-                    &slots,
-                    Rc::new(|_| {}),
+            // (a content parser's formula's "edit processing")
+            parser_case(|b, content| {
+                let formula = formula_of(b, content);
+                formula.invoke_edit_processing();
+                opened(
+                    take(
+                        &b.parser_editors.formula.strings.processor,
+                        "the string processor",
+                    ),
+                    |w| w.invoke_apply(),
+                    |w| w.invoke_cancel(),
                 )
-                .unwrap();
-                *slots.processor.borrow_mut() = Some(w.clone_strong());
-                opened(w, |w| w.invoke_apply(), |w| w.invoke_cancel())
             })
         }),
         ("processing step", || {
@@ -1255,18 +1255,30 @@ fn cases() -> Vec<Named> {
             })
         }),
         ("string converter", || {
-            keyed_case(|_, _| {
-                let slots = hydrus_gui::string_processor_window::Slots::default();
-                let w = hydrus_gui::string_processor_window::open_converter(
-                    &hydrus_core::url::strings::StringConverter::default(),
-                    Some("example".into()),
-                    &slots,
-                    Rc::new(|_| {}),
-                )
-                .unwrap();
-                *slots.converter.borrow_mut() = Some(w.clone_strong());
-                opened(w, |w| w.invoke_apply(), |w| w.invoke_cancel())
-            })
+            // (a parser's "converter")
+            let (dir, store, _) = crate::parser_editors::setup();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(&ui, &["network", "downloaders"], "parsers\u{2026}");
+            let list = take(&bound.parser_editors.list, "parsers");
+            list.invoke_row_clicked(0, false, false);
+            list.invoke_action("edit".into());
+            let page = take(&bound.parser_editors.page, "a parser");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dir, &ui, &list);
+                    let b = &bound;
+                    page.invoke_action("converter".into());
+                    opened(
+                        take(
+                            &b.parser_editors.formula.strings.converter,
+                            "the string converter",
+                        ),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
         }),
         ("conversion", || {
             let (dirs, store) = crate::subscriptions::store();
@@ -1295,18 +1307,14 @@ fn cases() -> Vec<Named> {
             )
         }),
         ("formula", || {
-            keyed_case(|store, _| {
-                let slots = hydrus_gui::formula_window::Slots::default();
-                let w = hydrus_gui::formula_window::open(
-                    store,
-                    &hydrus_gui::formula_editors::new_formula(false),
-                    hydrus_gui::formula_window::FormulaTestData::default(),
-                    &slots,
-                    Rc::new(|_| {}),
+            // (a content parser's "formula")
+            parser_case(|b, content| {
+                content.invoke_action("formula".into());
+                opened(
+                    take(&b.parser_editors.formula.formula, "the formula"),
+                    |w| w.invoke_apply(),
+                    |w| w.invoke_cancel(),
                 )
-                .unwrap();
-                *slots.formula.borrow_mut() = Some(w.clone_strong());
-                opened(w, |w| w.invoke_apply(), |w| w.invoke_cancel())
             })
         }),
         ("formula rule", || {
@@ -1507,6 +1515,37 @@ fn cases() -> Vec<Named> {
             )
         }),
     ]
+}
+
+/// parsers > a parser > its first content parser, kept open: `open` opens a
+/// window from the parser or that content parser, as a user does.
+fn parser_case(open: fn(&Bound, &hydrus_gui::ParserEditWindow) -> Opened) -> Case {
+    let (dir, store, _) = crate::parser_editors::setup();
+    let (ui, bound) = client(&store);
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "parsers\u{2026}");
+    let list = take(&bound.parser_editors.list, "parsers");
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = take(&bound.parser_editors.page, "a parser");
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = take(&bound.parser_editors.content, "a content parser");
+    (
+        store,
+        Box::new(move || {
+            let _ = (&dir, &ui, &list, &page);
+            open(&bound, &content)
+        }),
+    )
+}
+
+/// The content parser's formula, opened by its "formula" button.
+fn formula_of(bound: &Bound, content: &hydrus_gui::ParserEditWindow) -> hydrus_gui::FormulaWindow {
+    let open = bound.parser_editors.formula.formula.borrow().is_none();
+    if open {
+        content.invoke_action("formula".into());
+    }
+    take(&bound.parser_editors.formula.formula, "the formula")
 }
 
 /// A client on the `basic` fixture opening a window by `open` on its store.
@@ -3598,4 +3637,58 @@ fn the_deeply_nested_editors_take_escape_for_their_questions_and_children_first(
     assert!(!shown(definition.window()));
     escape(script.window());
     assert!(!shown(script.window()));
+}
+
+/// A menu opened in a dialog takes Escape first and closes, the dialog
+/// staying open; once a menu is dismissed by a click, the keys come back,
+/// so the next Escape reaches the dialog. Driven with real clicks and keys
+/// in each helper window with a favourites menu.
+#[test]
+fn a_dialogs_menu_takes_escape_first_and_gives_the_keys_back_once_closed() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (_ui, _bound) = client(&store);
+    let check = |name: &str,
+                 win: &slint::Window,
+                 open: &dyn Fn(),
+                 panes: &dyn Fn() -> usize,
+                 inner_escape: &dyn Fn()| {
+        widgets::lay_out(win, 900.0, 700.0);
+        open();
+        assert!(panes() > 0, "{name}: the menu opens");
+        escape(win);
+        assert_eq!(panes(), 0, "{name}: Escape closes the menu first");
+        assert!(win.is_visible(), "{name}: the dialog stays open");
+        open();
+        // (a click away from the menu dismisses it)
+        widgets::click_at(
+            win,
+            slint::LogicalPosition::new(890.0, 690.0),
+            slint::platform::PointerEventButton::Left,
+        );
+        assert_eq!(panes(), 0, "{name}: a click dismisses it");
+        inner_escape();
+        escape(win);
+        assert!(!win.is_visible(), "{name}: then Escape reaches the dialog");
+    };
+
+    // a string match's "favourites ▾"
+    let slots = hydrus_gui::string_processor_window::Slots::default();
+    hydrus_gui::string_processor_window::open_match(
+        &store,
+        &hydrus_core::url::strings::StringMatch::any(),
+        &slots,
+        Rc::new(|_| {}),
+    );
+    let matcher = take(&slots.step, "a string match");
+    // (its regex controls show for a regex match)
+    matcher.set_match_type(3);
+    matcher.invoke_changed();
+    check(
+        "string match",
+        matcher.window(),
+        &|| widgets::click(matcher.window(), "favourites ▾"),
+        &|| matcher.get_favourite_panes().row_count(),
+        &|| {},
+    );
 }
