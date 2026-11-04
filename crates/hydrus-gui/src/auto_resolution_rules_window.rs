@@ -1656,6 +1656,12 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
                 w.invoke_cancelled();
                 !w.get_asking()
             }
+            // ("add suggested"'s chooser, the reference's `SelectFromList`:
+            // none chosen)
+            Some(w) if w.get_choosing_suggested() => {
+                w.invoke_suggested_chosen(-1);
+                !w.get_choosing_suggested()
+            }
             _ => false,
         }
     });

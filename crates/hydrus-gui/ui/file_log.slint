@@ -31,6 +31,12 @@ export component FileLogWindow inherits Window {
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
     in property <[MenuPane]> menu-panes;
+    // (once its menu closes, however it closes, the window's keys take the
+    // focus back from it, so Escape reaches it again)
+    property <bool> menu-open: root.menu-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { keys.focus(); }
+    }
     in property <bool> asking;
     in property <bool> busy;
     in property <string> asking-title;
