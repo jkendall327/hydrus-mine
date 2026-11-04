@@ -2153,3 +2153,67 @@ fn a_windows_close_answers_its_question_or_inline_editor_first() {
     close(regex.window());
     assert!(!regex.window().is_visible());
 }
+
+/// Filename tagging: its regex menu, opened from within the "configure
+/// quick namespace" editor, is closed by Escape first, the editor and its
+/// text kept; the next Escape cancels the editor; the window's close then
+/// takes the same order.
+#[test]
+fn filename_tagging_escape_closes_its_regex_menu_before_the_quick_namespace_editor() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    let watched = tempfile::tempdir().unwrap();
+    crate::folders::open(&ui, "manage import folders\u{2026}");
+    let list = take(&bound.folders.import_list, "import folders");
+    list.invoke_add();
+    let folder = take(&bound.folders.import_edit, "an import folder");
+    folder.set_path(watched.path().to_string_lossy().into_owned().into());
+    let mine = (0..folder.get_tagging_choices().row_count())
+        .find(|&i| folder.get_tagging_choices().row_data(i).unwrap() == "my tags")
+        .unwrap();
+    folder.set_tagging_choice(i32::try_from(mine).unwrap());
+    folder.invoke_tagging_add();
+    let dialog = take(&bound.folders.filename_tagging, "filename tagging");
+    dialog.set_advanced(true);
+    let win = dialog.window();
+    widgets::lay_out(win, 900.0, 700.0);
+    let open_menu = || {
+        dialog.invoke_rule_action("quick_add".into());
+        assert!(dialog.get_rule_child(), "the quick namespace editor opens");
+        dialog.set_rule_namespace("series".into());
+        widgets::click(win, ".*");
+        assert!(
+            dialog.get_regex_panes().row_count() > 0,
+            "its regex menu opens"
+        );
+    };
+    open_menu();
+    escape(win);
+    assert_eq!(
+        dialog.get_regex_panes().row_count(),
+        0,
+        "Escape: the menu first"
+    );
+    assert!(dialog.get_rule_child(), "Escape: the editor kept");
+    assert_eq!(
+        dialog.get_rule_namespace(),
+        "series",
+        "Escape: its text kept"
+    );
+    escape(win);
+    assert!(!dialog.get_rule_child(), "Escape: then the editor");
+    assert!(win.is_visible(), "Escape: the dialog still open");
+    open_menu();
+    win.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert_eq!(
+        dialog.get_regex_panes().row_count(),
+        0,
+        "close: the menu first"
+    );
+    assert!(dialog.get_rule_child(), "close: the editor kept");
+    win.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!dialog.get_rule_child(), "close: then the editor");
+    assert!(win.is_visible(), "close: the dialog still open");
+    dialog.invoke_cancel();
+}

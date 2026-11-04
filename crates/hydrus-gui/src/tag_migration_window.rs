@@ -137,7 +137,7 @@ pub fn open(
             };
             if !w.get_question().is_empty() {
                 w.invoke_answer(false);
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }

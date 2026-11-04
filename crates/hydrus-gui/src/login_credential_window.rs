@@ -194,7 +194,7 @@ pub fn open_credentials(
             };
             if !w.get_question().is_empty() {
                 w.invoke_action("back".into());
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }

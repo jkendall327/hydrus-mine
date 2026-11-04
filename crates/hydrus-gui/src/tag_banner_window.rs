@@ -85,11 +85,11 @@ pub fn open(
             };
             if w.get_asking() {
                 w.invoke_prompt_cancelled();
-                return true;
+                return !w.get_asking();
             }
             if w.get_confirming() {
                 w.invoke_answer(false);
-                return true;
+                return !w.get_confirming();
             }
             false
         }

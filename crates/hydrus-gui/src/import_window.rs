@@ -73,7 +73,7 @@ pub(crate) fn open(
             };
             if w.get_asking_remove() {
                 w.set_asking_remove(false);
-                return true;
+                return !w.get_asking_remove();
             }
             false
         }

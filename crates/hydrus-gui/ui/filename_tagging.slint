@@ -146,6 +146,9 @@ export component FilenameTaggingWindow inherits Window {
         capture-key-pressed(event) => {
             if root.regex-child-open || root.tags-child-open { return accept; }
             if event.text == Key.Escape {
+                // (its regex menu first, even over the quick namespace
+                // editor that opens it)
+                if root.regex-panes.length > 0 { root.regex-dismissed(); return accept; }
                 if root.rule-child || root.rule-delete { root.rule-cancel(); }
                 else { root.escape(); }
                 return accept;
@@ -400,12 +403,21 @@ export component FilenameTaggingWindow inherits Window {
         width: root.width; height: root.height;
         TouchArea { }
     }
-    if root.regex-panes.length > 0: MenuPanes {
-        width: root.width; height: root.height; panes: root.regex-panes;
-        dismiss => { root.regex-dismissed(); }
-        placed(p, x, y, w) => { root.regex-placed(p, x / 1px, y / 1px, w / 1px); }
-        line-hovered(p, l, r, t, left) => { root.regex-hovered(p, l, r / 1px, t / 1px, left / 1px); }
-        line-clicked(p, l, r, t, left) => { root.regex-clicked(p, l, r / 1px, t / 1px, left / 1px); }
+    // (the menu takes the keys' focus while open: Escape closes it first,
+    // before the quick namespace editor or the dialog)
+    if root.regex-panes.length > 0: FocusScope {
+        width: root.width; height: root.height;
+        key-pressed(event) => {
+            if event.text == Key.Escape { root.regex-dismissed(); return accept; }
+            reject
+        }
+        MenuPanes {
+            width: root.width; height: root.height; panes: root.regex-panes;
+            dismiss => { root.regex-dismissed(); }
+            placed(p, x, y, w) => { root.regex-placed(p, x / 1px, y / 1px, w / 1px); }
+            line-hovered(p, l, r, t, left) => { root.regex-hovered(p, l, r / 1px, t / 1px, left / 1px); }
+            line-clicked(p, l, r, t, left) => { root.regex-clicked(p, l, r / 1px, t / 1px, left / 1px); }
+        }
     }
 
 }

@@ -460,7 +460,7 @@ fn open_set(
             };
             if w.get_remove_question() {
                 w.invoke_remove_chosen(false);
-                return true;
+                return !w.get_remove_question();
             }
             false
         }

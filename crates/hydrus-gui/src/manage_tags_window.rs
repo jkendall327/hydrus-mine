@@ -864,13 +864,14 @@ pub(crate) fn open(
             };
             if !w.get_question().is_empty() {
                 w.invoke_paste_answered(false);
-                return true;
+                return w.get_question().is_empty();
             }
             if slint::Model::row_count(&w.get_tag_menu_panes()) > 0
                 || !w.get_tag_menu_question().is_empty()
             {
                 w.invoke_tag_menu_dismissed();
-                return true;
+                return slint::Model::row_count(&w.get_tag_menu_panes()) == 0
+                    && w.get_tag_menu_question().is_empty();
             }
             false
         }

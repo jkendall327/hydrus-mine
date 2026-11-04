@@ -714,7 +714,7 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
             };
             if !w.get_question().is_empty() {
                 w.invoke_answer(false);
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }

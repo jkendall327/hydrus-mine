@@ -731,9 +731,16 @@ fn build(
             let Some(w) = weak.upgrade() else {
                 return false;
             };
+            // (the regex menu, then the quick namespace editor or the
+            // delete question: Escape takes these in the .slint handler,
+            // the window's close here)
             if w.get_regex_panes().row_count() > 0 {
                 w.invoke_regex_dismissed();
-                return true;
+                return w.get_regex_panes().row_count() == 0;
+            }
+            if w.get_rule_child() || w.get_rule_delete() {
+                w.invoke_rule_cancel();
+                return !w.get_rule_child() && !w.get_rule_delete();
             }
             false
         }

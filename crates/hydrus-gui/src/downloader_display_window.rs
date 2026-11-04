@@ -113,7 +113,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
             };
             if !w.get_question().is_empty() {
                 w.invoke_answer(-1);
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }

@@ -370,15 +370,15 @@ impl Control {
                 };
                 if !w.get_question().is_empty() {
                     w.invoke_answered(false);
-                    return true;
+                    return w.get_question().is_empty();
                 }
                 if !w.get_new_question().is_empty() {
                     w.invoke_new_answered(false);
-                    return true;
+                    return w.get_new_question().is_empty();
                 }
                 if !w.get_information().is_empty() {
                     w.invoke_information_closed();
-                    return true;
+                    return w.get_information().is_empty();
                 }
                 false
             }

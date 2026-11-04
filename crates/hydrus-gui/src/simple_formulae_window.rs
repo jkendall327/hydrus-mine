@@ -96,11 +96,11 @@ pub fn open(
             };
             if w.get_naming() {
                 w.invoke_name_cancelled();
-                return true;
+                return !w.get_naming();
             }
             if !w.get_question().is_empty() {
                 w.invoke_cancelled();
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }

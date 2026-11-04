@@ -195,7 +195,7 @@ fn edit(
             };
             if w.get_changing_key() {
                 w.invoke_cancel_key();
-                return true;
+                return !w.get_changing_key();
             }
             false
         }

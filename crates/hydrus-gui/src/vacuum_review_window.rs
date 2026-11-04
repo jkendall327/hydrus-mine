@@ -304,7 +304,7 @@ fn open_using_with_admission(
             };
             if !w.get_question().is_empty() {
                 w.invoke_answered(false);
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }

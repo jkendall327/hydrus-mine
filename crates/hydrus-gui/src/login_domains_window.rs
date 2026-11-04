@@ -179,7 +179,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
                     }
                     .into(),
                 );
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }

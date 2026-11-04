@@ -324,7 +324,7 @@ pub(crate) fn open(
             };
             if w.get_asking() {
                 w.invoke_cancelled();
-                return true;
+                return !w.get_asking();
             }
             false
         }

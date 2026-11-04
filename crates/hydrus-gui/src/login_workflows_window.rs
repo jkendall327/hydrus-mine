@@ -1149,7 +1149,7 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
             };
             if w.get_deleting() {
                 w.invoke_action("back".into());
-                return true;
+                return !w.get_deleting();
             }
             false
         }

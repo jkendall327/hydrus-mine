@@ -113,11 +113,11 @@ pub fn open_owned(
             };
             if w.get_editing() {
                 w.invoke_action("cancel-row".into());
-                return true;
+                return !w.get_editing();
             }
             if w.get_deleting() {
                 w.invoke_action("cancel-delete".into());
-                return true;
+                return !w.get_deleting();
             }
             false
         }

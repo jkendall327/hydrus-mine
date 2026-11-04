@@ -1297,7 +1297,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
             };
             if !w.get_question().is_empty() {
                 w.invoke_answered(false);
-                return true;
+                return w.get_question().is_empty();
             }
             false
         }
