@@ -32,7 +32,7 @@ fn names(dialog: &ManageRatingsWindow) -> Vec<String> {
 }
 
 /// "manage > ratings" on the thumbnails selected.
-fn open(ui: &MainWindow, bound: &Bound, index: i32) -> ManageRatingsWindow {
+pub(crate) fn open(ui: &MainWindow, bound: &Bound, index: i32) -> ManageRatingsWindow {
     ui.invoke_thumbnail_menu_requested(index);
     let manage = ui.get_thumbnail_menu().manage;
     let id = (0..manage.row_count())

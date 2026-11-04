@@ -798,6 +798,365 @@ fn cases() -> Vec<Named> {
                 }),
             )
         }),
+        ("edit import folders", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            (
+                store,
+                Box::new(move || {
+                    let _ = &dirs;
+                    crate::folders::open(&ui, "manage import folders\u{2026}");
+                    opened(
+                        crate::folders::import_list(&bound),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit export folders", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            (
+                store,
+                Box::new(move || {
+                    let _ = &dirs;
+                    crate::folders::open(&ui, "manage export folders\u{2026}");
+                    opened(
+                        take(&bound.folders.export_list, "export folders"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit import folder", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let watched = tempfile::tempdir().unwrap();
+            crate::folders::open(&ui, "manage import folders\u{2026}");
+            let list = crate::folders::import_list(&bound);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &watched);
+                    list.invoke_add();
+                    let edit = take(&bound.folders.import_edit, "an import folder");
+                    edit.set_path(watched.path().to_string_lossy().into_owned().into());
+                    opened(edit, |w| w.invoke_apply(), |w| w.invoke_cancel())
+                }),
+            )
+        }),
+        ("edit export folder", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            crate::folders::open(&ui, "manage export folders\u{2026}");
+            let list = take(&bound.folders.export_list, "export folders");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui);
+                    list.invoke_add();
+                    let edit = take(&bound.folders.export_edit, "an export folder");
+                    edit.set_path("/tmp/exported".into());
+                    opened(edit, |w| w.invoke_apply(), |w| w.invoke_cancel())
+                }),
+            )
+        }),
+        ("an import folder's file log", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            crate::folders::open(&ui, "manage import folders\u{2026}");
+            let list = crate::folders::import_list(&bound);
+            list.invoke_add();
+            let folder = take(&bound.folders.import_edit, "an import folder");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &list);
+                    folder.invoke_file_log();
+                    // (a folder's copy: its `DialogEdit`'s apply, its close
+                    // button a cancel)
+                    opened(
+                        take(&bound.folders.log, "the file log"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_close_window(),
+                    )
+                }),
+            )
+        }),
+        ("edit import options", || {
+            let s = crate::import_options_fields::setup();
+            let store = s.store.clone();
+            (
+                store,
+                Box::new(move || opened(s.editor(), |w| w.invoke_apply(), |w| w.invoke_cancel())),
+            )
+        }),
+        ("edit external program call", || {
+            let s = crate::import_options_fields::setup();
+            crate::external_calls::seed(&s.store);
+            let editor = s.editor();
+            // (import options' external programs)
+            editor.invoke_kind_clicked(6);
+            editor.set_custom_index(1);
+            editor.invoke_changed();
+            let store = s.store.clone();
+            (
+                store,
+                Box::new(move || {
+                    let _ = &s;
+                    editor.invoke_program_action("add".into());
+                    opened(
+                        hydrus_gui::external_program_entry_window().expect("the entry editor"),
+                        |w| w.invoke_accepted(),
+                        |w| w.invoke_cancelled(),
+                    )
+                }),
+            )
+        }),
+        ("edit metadata migration routers", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let watched = tempfile::tempdir().unwrap();
+            crate::folders::open(&ui, "manage import folders\u{2026}");
+            let list = crate::folders::import_list(&bound);
+            list.invoke_add();
+            let edit = take(&bound.folders.import_edit, "an import folder");
+            edit.set_path(watched.path().to_string_lossy().into_owned().into());
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &watched, &list);
+                    edit.invoke_edit_sidecars();
+                    opened(
+                        take(&bound.folders.sidecars.routers, "routers"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit metadata migration router", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let watched = tempfile::tempdir().unwrap();
+            crate::folders::open(&ui, "manage import folders\u{2026}");
+            let list = crate::folders::import_list(&bound);
+            list.invoke_add();
+            let edit = take(&bound.folders.import_edit, "an import folder");
+            edit.set_path(watched.path().to_string_lossy().into_owned().into());
+            edit.invoke_edit_sidecars();
+            let routers = take(&bound.folders.sidecars.routers, "routers");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &watched, &list, &edit);
+                    routers.invoke_add();
+                    opened(
+                        take(&bound.folders.sidecars.router, "a router"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit metadata migration destination", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let watched = tempfile::tempdir().unwrap();
+            crate::folders::open(&ui, "manage import folders\u{2026}");
+            let list = crate::folders::import_list(&bound);
+            list.invoke_add();
+            let edit = take(&bound.folders.import_edit, "an import folder");
+            edit.set_path(watched.path().to_string_lossy().into_owned().into());
+            edit.invoke_edit_sidecars();
+            let routers = take(&bound.folders.sidecars.routers, "routers");
+            routers.invoke_add();
+            let router = take(&bound.folders.sidecars.router, "a router");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &watched, &list, &edit, &routers);
+                    router.invoke_edit_destination();
+                    opened(
+                        take(&bound.folders.sidecars.node, "a destination"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("database locations", || {
+            let (dirs, store) = database_locations_store();
+            let (ui, bound) = client(&store);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &bound);
+                    crate::database_menu_jobs::from_menu_path(&ui, &[], "locations\u{2026}");
+                    // (`DialogNullipotent`: its close button is its OK)
+                    opened(
+                        hydrus_gui::database_locations_window::opened().expect("locations"),
+                        |w| w.invoke_close_window(),
+                        |w| w.invoke_escape(),
+                    )
+                }),
+            )
+        }),
+        ("edit max size", || {
+            let (dirs, store) = database_locations_store();
+            let (ui, bound) = client(&store);
+            crate::database_menu_jobs::from_menu_path(&ui, &[], "locations\u{2026}");
+            let window = hydrus_gui::database_locations_window::opened().expect("locations");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    window.invoke_clicked(0, false, false);
+                    window.invoke_action("max".into());
+                    opened(
+                        hydrus_gui::database_locations_window::max_size_window()
+                            .expect("edit max size"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("a rating's edit value", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let counter = store.snapshot().services.by_name("counter").unwrap().id;
+            let ui = MainWindow::new().unwrap();
+            ui.show().unwrap();
+            let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+            ui.invoke_search_edited("system:everything".into());
+            ui.invoke_search_accepted();
+            let a = bound.current.borrow().borrow().results()[0];
+            store
+                .write_content(move |w| w.set_incdec(counter, &[a], 3))
+                .unwrap();
+            ui.invoke_thumbnail_clicked(0, false, false);
+            let dialog = crate::manage_ratings::open(&ui, &bound, 0);
+            let row = dialog
+                .get_names()
+                .iter()
+                .position(|n| n == "counter")
+                .unwrap() as i32;
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui);
+                    dialog.invoke_rating_middle(row);
+                    opened(
+                        take(&bound.rating_count_editor, "edit value"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit rules", || {
+            let crate::duplicates_lane_page::Opened {
+                _windows: platform,
+                _dir: kept,
+                store,
+                ui,
+                bound,
+            } = crate::duplicates_lane_page::opened();
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&platform, &kept);
+                    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+                    opened(
+                        crate::duplicates_lane_page::list_of(&bound),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit rule", || {
+            let crate::duplicates_lane_page::Opened {
+                _windows: platform,
+                _dir: kept,
+                store,
+                ui,
+                bound,
+            } = crate::duplicates_lane_page::opened();
+            ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+            let list = crate::duplicates_lane_page::list_of(&bound);
+            list.invoke_add_suggested();
+            list.invoke_suggested_chosen(0);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&platform, &kept, &ui);
+                    list.invoke_row_clicked(0, false, false);
+                    list.invoke_edit();
+                    opened(
+                        crate::duplicates_lane_page::rule_window(&bound),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit comparator", || {
+            let crate::duplicates_lane_page::Opened {
+                _windows: platform,
+                _dir: kept,
+                store,
+                ui,
+                bound,
+            } = crate::duplicates_lane_page::opened();
+            ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+            let list = crate::duplicates_lane_page::list_of(&bound);
+            list.invoke_add();
+            let rule = crate::duplicates_lane_page::rule_window(&bound);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&platform, &kept, &ui, &list);
+                    rule.set_comparator_kind(crate::duplicates_lane_page::kind_index(
+                        &rule,
+                        "test A against B using file info",
+                    ));
+                    rule.invoke_comparator_add();
+                    opened(
+                        crate::duplicates_lane_page::newest_comparator(&bound),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("system:filesize", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let ui = MainWindow::new().unwrap();
+            ui.show().unwrap();
+            let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+            (
+                store,
+                Box::new(move || {
+                    // (the whole client kept: the editor's owner is in it)
+                    let _ = (&dirs, &bound);
+                    ui.invoke_search_edited("".into());
+                    let i = ui
+                        .get_suggestions()
+                        .iter()
+                        .position(|s| s.text == "system:filesize")
+                        .unwrap();
+                    ui.invoke_suggestion_chosen(i32::try_from(i).unwrap());
+                    opened(
+                        take(&bound.predicate_editor, "the predicate editor"),
+                        |w| w.invoke_ok(0),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
     ]
 }
 
@@ -839,6 +1198,22 @@ fn api_keys(
     review.invoke_manage_api_keys();
     let keys = hydrus_gui::client_api_admin_window::last_opened().expect("api keys");
     (review, keys)
+}
+
+/// The `basic` fixture with a second storage location, so database
+/// locations can set a location's max size (its directories kept alive).
+type LocationDirs = ([tempfile::TempDir; 2], tempfile::TempDir);
+fn database_locations_store() -> (LocationDirs, Arc<Store>) {
+    let (dirs, store) = crate::subscriptions::store();
+    std::fs::create_dir_all(store.dir().join("client_files")).unwrap();
+    let other = tempfile::tempdir().unwrap();
+    let path = other.path().to_path_buf();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::storage_locations::add_location(ctx.conn(), &path)
+        })
+        .unwrap();
+    ((dirs, other), store)
 }
 
 /// tags > manage tag siblings or parents.
@@ -920,7 +1295,14 @@ fn each_case(body: impl Fn(&'static str, Case) + Send + Sync + Copy + 'static) {
 }
 
 /// The cases whose clients set up the headless platform themselves.
-const INITS_ITSELF: &[&str] = &["merge options", "media view options", "tag filter"];
+const INITS_ITSELF: &[&str] = &[
+    "merge options",
+    "media view options",
+    "tag filter",
+    "edit rules",
+    "edit rule",
+    "edit comparator",
+];
 
 /// Each window, opened afresh three times: Escape and cancel keep nothing,
 /// apply keeps the size it was given.
@@ -2216,4 +2598,158 @@ fn filename_tagging_escape_closes_its_regex_menu_before_the_quick_namespace_edit
     assert!(!dialog.get_rule_child(), "close: then the editor");
     assert!(win.is_visible(), "close: the dialog still open");
     dialog.invoke_cancel();
+}
+
+/// The folder, sidecar, database and rules dialogs: a question or chooser
+/// up within takes Escape and the window's close first, and a child the
+/// reference opens modally holds both.
+#[test]
+fn escape_and_close_answer_the_folder_database_and_rules_dialogs_sub_states_first() {
+    let close = |w: &slint::Window| w.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    std::thread::spawn(move || {
+        let _windows = headless::init();
+        let (_dirs, store) = crate::subscriptions::store();
+        let (ui, bound) = client(&store);
+        // edit import folder: its apply with no path is refused by a notice
+        crate::folders::open(&ui, "manage import folders\u{2026}");
+        let list = crate::folders::import_list(&bound);
+        list.invoke_add();
+        let edit = take(&bound.folders.import_edit, "an import folder");
+        edit.invoke_apply();
+        assert!(edit.get_asking(), "import folder: no path, refused");
+        escape(edit.window());
+        assert!(
+            !edit.get_asking(),
+            "import folder: Escape closes the notice"
+        );
+        assert!(edit.window().is_visible());
+        edit.invoke_apply();
+        close(edit.window());
+        assert!(
+            !edit.get_asking(),
+            "import folder: its close closes the notice"
+        );
+        assert!(edit.window().is_visible());
+        // the folder list waits on the folder; the folder on its file log
+        escape(list.window());
+        close(list.window());
+        assert!(
+            list.window().is_visible(),
+            "import folders: waits on its folder"
+        );
+        edit.invoke_file_log();
+        let log = take(&bound.folders.log, "the file log");
+        escape(edit.window());
+        close(edit.window());
+        assert!(
+            edit.window().is_visible() && log.window().is_visible(),
+            "import folder: waits on its file log"
+        );
+        log.invoke_close_window();
+        // the sidecars: routers wait on a router, a router on its destination
+        let watched = tempfile::tempdir().unwrap();
+        edit.set_path(watched.path().to_string_lossy().into_owned().into());
+        edit.invoke_edit_sidecars();
+        let routers = take(&bound.folders.sidecars.routers, "routers");
+        escape(edit.window());
+        assert!(
+            edit.window().is_visible(),
+            "import folder: waits on its sidecars"
+        );
+        routers.invoke_add();
+        let router = take(&bound.folders.sidecars.router, "a router");
+        escape(routers.window());
+        close(routers.window());
+        assert!(routers.window().is_visible(), "routers: wait on a router");
+        router.invoke_edit_destination();
+        let node = take(&bound.folders.sidecars.node, "a destination");
+        escape(router.window());
+        close(router.window());
+        assert!(
+            router.window().is_visible() && node.window().is_visible(),
+            "router: waits on its destination"
+        );
+        node.invoke_cancel();
+        router.invoke_cancel();
+        routers.invoke_cancel();
+        edit.invoke_cancel();
+        list.invoke_cancel();
+        assert!(!list.window().is_visible());
+    })
+    .join()
+    .unwrap();
+
+    std::thread::spawn(move || {
+        // edit rules: its "add suggested" chooser is closed first; it waits
+        // on a rule's editor, and the rule on a comparator's
+        let crate::duplicates_lane_page::Opened {
+            _windows,
+            _dir,
+            ui,
+            bound,
+            ..
+        } = crate::duplicates_lane_page::opened();
+        ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+        let list = crate::duplicates_lane_page::list_of(&bound);
+        list.invoke_add_suggested();
+        assert!(list.get_choosing_suggested());
+        escape(list.window());
+        assert!(
+            !list.get_choosing_suggested(),
+            "rules: Escape closes the chooser"
+        );
+        assert!(list.window().is_visible());
+        list.invoke_add_suggested();
+        close(list.window());
+        assert!(
+            !list.get_choosing_suggested(),
+            "rules: the close closes it too"
+        );
+        assert!(list.window().is_visible());
+        list.invoke_add();
+        let rule = crate::duplicates_lane_page::rule_window(&bound);
+        escape(list.window());
+        close(list.window());
+        assert!(list.window().is_visible(), "rules: wait on a rule");
+        rule.set_comparator_kind(crate::duplicates_lane_page::kind_index(
+            &rule,
+            "test A against B using file info",
+        ));
+        rule.invoke_comparator_add();
+        let comparator = crate::duplicates_lane_page::newest_comparator(&bound);
+        escape(rule.window());
+        close(rule.window());
+        assert!(
+            rule.window().is_visible() && comparator.window().is_visible(),
+            "rule: waits on its comparator"
+        );
+        comparator.invoke_cancel();
+        rule.invoke_cancel();
+        list.invoke_cancel();
+        assert!(!list.window().is_visible());
+    })
+    .join()
+    .unwrap();
+
+    // database locations: waits on its max size editor
+    let _windows = headless::init();
+    let (_dirs, store) = database_locations_store();
+    let (ui, _bound) = client(&store);
+    crate::database_menu_jobs::from_menu_path(&ui, &[], "locations\u{2026}");
+    let window = hydrus_gui::database_locations_window::opened().expect("locations");
+    window.invoke_clicked(0, false, false);
+    window.invoke_action("max".into());
+    let max = hydrus_gui::database_locations_window::max_size_window().expect("edit max size");
+    escape(window.window());
+    close(window.window());
+    assert!(
+        window.window().is_visible() && max.window().is_visible(),
+        "database locations: waits on its max size editor"
+    );
+    max.invoke_cancel();
+    escape(window.window());
+    assert!(
+        !window.window().is_visible(),
+        "database locations: then cancelled"
+    );
 }
