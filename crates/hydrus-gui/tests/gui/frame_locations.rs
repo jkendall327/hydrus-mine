@@ -69,6 +69,7 @@ fn edit_recorded(window: &FrameLocationWindow) {
 // leaf: audit-options-gui-frame-locations-flip-remember-size
 // leaf: audit-options-gui-frame-locations-reset-last-position
 // leaf: audit-options-gui-frame-locations-reset-last-size
+// leaf: audit-options-geometry
 #[test]
 fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

@@ -235,6 +235,7 @@ fn default_gravity_and_position_decide_where_a_child_window_next_opens() {
 /// of it when it closes, in every combination the reference's real window
 /// was put through (oracle/record_frame_state.py).
 // leaf: audit-options-nested-frame-location-state
+// leaf: audit-options-geometry
 #[test]
 #[allow(clippy::cast_possible_truncation)]
 fn the_start_maximised_and_fullscreen_switches_open_and_keep_the_window_as_the_reference_does() {

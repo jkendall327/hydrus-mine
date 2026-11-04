@@ -105,7 +105,7 @@ impl Client {
     }
 
     /// The first thumbnail's menu, `pick` choosing an entry from it.
-    fn thumbnail_menu(&self, pick: impl Fn(&hydrus_gui::ThumbnailMenu) -> i32) {
+    pub(crate) fn thumbnail_menu(&self, pick: impl Fn(&hydrus_gui::ThumbnailMenu) -> i32) {
         self.ui.invoke_thumbnail_clicked(0, false, false);
         self.ui.invoke_thumbnail_menu_requested(0);
         let id = pick(&self.ui.get_thumbnail_menu());
@@ -120,7 +120,7 @@ impl Client {
     }
 }
 
-fn row(rows: &slint::ModelRc<hydrus_gui::MenuRow>, label: &str) -> i32 {
+pub(crate) fn row(rows: &slint::ModelRc<hydrus_gui::MenuRow>, label: &str) -> i32 {
     rows.iter()
         .find(|r| r.label == label)
         .unwrap_or_else(|| panic!("{label} in the menu"))

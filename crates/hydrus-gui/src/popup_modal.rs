@@ -193,9 +193,13 @@ impl Controller {
             );
             let effects = {
                 let mut state = self.state.borrow_mut();
-                // (a job done closes it as its OK, `okSignal`)
-                state.closing_ok = true;
-                state.modals.tick(&job_facts)
+                let effects = state.modals.tick(&job_facts);
+                // (a job done closes it as its OK, `okSignal`; a tick that
+                // closes nothing leaves what was asked for as it was)
+                if effects.iter().any(|e| matches!(e, Effect::Close)) {
+                    state.closing_ok = true;
+                }
+                effects
             };
             self.run(effects);
         }

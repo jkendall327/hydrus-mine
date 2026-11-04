@@ -2876,7 +2876,10 @@ the login script editor opens it (`open_result`), since reaching it from
 the menus needs a live login site; the menu path is proved in
 `login_workflows.rs`. The last of them (batch 6) are on it too: the
 date-time editor and the bandwidth rules editor (dialogs; the rules
-editor's apply keeps its frame once its rules are saved), a downloader
+editor's apply keeps its frame once its rules are saved, on the review's
+worker: if its owner closes while that save is still queued, the editor
+closes as a cancel and the save is still written, where the reference's
+save is synchronous and done before anything else can close it), a downloader
 export (a `DialogNullipotent`: its button its OK) and import (a frame), a
 held job's modal dialog (a `DialogNullipotent`: its close button and its
 job finishing its OK, Escape its cancel, each asking the job first as

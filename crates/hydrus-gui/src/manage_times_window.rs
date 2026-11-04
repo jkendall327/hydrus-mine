@@ -366,10 +366,8 @@ pub(crate) fn open(
                 let ended = crate::dialog::Dialog::new(&dialog);
                 let (now_s, now_ms) = now();
                 let editor = Rc::new(RefCell::new(DateTimeEditor::new(value, now_ms, tz.clone())));
-                let told: Rc<RefCell<Vec<(String, String)>>> = Rc::default();
                 let draw = {
                     let editor = editor.clone();
-                    let told = told.clone();
                     let weak = dialog.as_weak();
                     let tz = tz.clone();
                     Rc::new(move |fields: bool| {
@@ -386,12 +384,6 @@ pub(crate) fn open(
                             dialog.set_step(editor.step_ms.to_string().into());
                         }
                         dialog.set_value(editor.value().text(now_s, &tz).into());
-                        let told = told.borrow();
-                        dialog.set_asking(!told.is_empty());
-                        if let Some((title, message)) = told.first() {
-                            dialog.set_asking_title(title.as_str().into());
-                            dialog.set_asking_message(message.as_str().into());
-                        }
                     })
                 };
                 // (its warnings are its own `ShowWarning`s, waited on)
@@ -476,18 +468,6 @@ pub(crate) fn open(
                     move || {
                         editor.borrow_mut().now();
                         draw(true);
-                    }
-                });
-                dialog.on_dismissed({
-                    let told = told.clone();
-                    let draw = draw.clone();
-                    move || {
-                        let mut told = told.borrow_mut();
-                        if !told.is_empty() {
-                            told.remove(0);
-                        }
-                        drop(told);
-                        draw(false);
                     }
                 });
                 let finish = {

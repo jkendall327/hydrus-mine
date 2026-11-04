@@ -3818,6 +3818,21 @@ fn a_dialogs_menu_takes_escape_first_and_gives_the_keys_back_once_closed() {
         &|| tags.get_tag_menu_panes().row_count(),
         &|| {},
     );
+    // export files' tag menu (a tag's context menu)
+    let client = crate::frame_geometry::Client::new();
+    client.thumbnail_menu(|m| crate::frame_geometry::row(&m.share_export, "export files"));
+    let export = take(&client.bound.export_files.window, "export files");
+    assert!(
+        export.get_tags().row_count() > 0,
+        "the file's tags are listed"
+    );
+    check(
+        "export files",
+        export.window(),
+        &|| export.invoke_tag_context_menu(0, 20.0, 20.0),
+        &|| export.get_tag_menu_panes().row_count(),
+        &|| {},
+    );
 }
 
 /// Each frame the options' frame locations list offers, and the tests that
@@ -3885,7 +3900,6 @@ const FRAME_COVERAGE: &[(&str, &str)] = &[
 /// coverage table names, so a frame added to the list without a test that
 /// drives its windows against the recording fails here; and every other key
 /// the sweep replays on is one of them.
-// leaf: audit-options-geometry
 #[test]
 fn every_frame_the_options_list_offers_is_driven_against_the_recording() {
     let _windows = headless::init();
@@ -3978,7 +3992,14 @@ fn a_modal_popups_dialog_keeps_its_frame_by_its_ok_only() {
             "escape" => {
                 widgets::lay_out(dialog.window(), 400.0, 200.0);
                 escape(dialog.window());
-                controller.question().expect("it asks").invoke_chosen(0);
+                let question = controller.question().expect("it asks");
+                // (the dialog's job is ticked over while the user thinks:
+                // still its cancel once answered)
+                let asked = std::time::Instant::now();
+                until("some ticks", || {
+                    asked.elapsed() > std::time::Duration::from_millis(600)
+                });
+                question.invoke_chosen(0);
             }
             _ => {
                 store

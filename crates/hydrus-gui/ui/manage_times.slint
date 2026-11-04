@@ -285,14 +285,10 @@ export component DateTimeEditorWindow inherits Window {
     // what it would set ("2 files set to ...")
     in property <string> value;
     in property <string> notice;
-    in property <bool> asking;
-    in property <string> asking-title;
-    in property <string> asking-message;
     callback edited();
     callback copy();
     callback paste();
     callback now();
-    callback dismissed();
     callback apply();
     callback cancel();
 
@@ -377,20 +373,11 @@ export component DateTimeEditorWindow inherits Window {
                     clicked => { root.now(); }
                 }
             }
-            if root.asking: Asking {
-                title: root.asking-title;
-                message: root.asking-message;
-                choices: ["ok"];
-                wants-text: false;
-                chosen(index) => { root.dismissed(); }
-                cancelled => { root.dismissed(); }
-            }
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
                 Btn {
                     text: "apply";
-                    enabled: !root.asking;
                     clicked => { root.apply(); }
                 }
                 Btn {
