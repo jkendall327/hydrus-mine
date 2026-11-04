@@ -94,9 +94,15 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
         })
         .unwrap();
     assert!(w.invoke_paste_requested(false));
+    // (the close answers the paste question no first, as the reference's
+    // modal question keeps the window's close from passing it)
     w.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
-    // (changes staged: it asks first, the paste question giving way)
+    assert!(w.get_question() == "" && w.get_tag_menu_question() == "");
+    assert!(w.window().is_visible());
+    w.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    // (changes staged: the next close asks first)
     assert!(w.get_tag_menu_question() != "" && w.get_question() == "");
     w.invoke_tag_menu_answered(true);
     w.invoke_paste_answered(true);
