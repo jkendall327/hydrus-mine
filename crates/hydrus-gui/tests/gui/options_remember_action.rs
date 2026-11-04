@@ -26,7 +26,7 @@ fn decode(value: &serde_json::Value) -> Option<DeletionAction> {
 }
 
 /// The recording's pair: a file in one local domain, and one in two.
-fn pair(store: &Arc<Store>, single: &str) -> [HashId; 2] {
+pub(crate) fn pair(store: &Arc<Store>, single: &str) -> [HashId; 2] {
     let snapshot = store.snapshot();
     let roles = hydrus_store::content::DomainRoles::new(&snapshot.services).unwrap();
     let mut page = super::common::all_local_page(store.clone());
@@ -55,7 +55,7 @@ fn pair(store: &Arc<Store>, single: &str) -> [HashId; 2] {
     [single, double]
 }
 
-fn open(store: &Arc<Store>, files: &[HashId]) -> hydrus_gui::DeleteFilesWindow {
+pub(crate) fn open(store: &Arc<Store>, files: &[HashId]) -> hydrus_gui::DeleteFilesWindow {
     delete_files_window::open(
         &delete_files_window::Slot::default(),
         store,

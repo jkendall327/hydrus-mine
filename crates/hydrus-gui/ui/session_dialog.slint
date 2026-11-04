@@ -53,6 +53,12 @@ export component SessionDialog inherits Window {
     callback cancelled();
     callback answered(bool);
     forward-focus: keyboard;
+    // (the favourites menu takes the keys while open; once it closes, they
+    // come back to the dialog)
+    property <bool> menu-open: root.favourite-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { keyboard.focus(); }
+    }
 
     keyboard := FocusScope {
         forward-focus: name;

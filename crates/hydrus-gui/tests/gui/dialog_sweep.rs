@@ -1193,7 +1193,373 @@ fn cases() -> Vec<Named> {
                 }),
             )
         }),
+        // (batch 5: the windows the reference opens by other frame keys,
+        // and the dialogs that keep no frame)
+        ("string processor", || {
+            // (a content parser's formula's "edit processing")
+            parser_case(|b, content| {
+                let formula = formula_of(b, content);
+                formula.invoke_edit_processing();
+                opened(
+                    take(
+                        &b.parser_editors.formula.strings.processor,
+                        "the string processor",
+                    ),
+                    |w| w.invoke_apply(),
+                    |w| w.invoke_cancel(),
+                )
+            })
+        }),
+        ("processing step", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let slots = hydrus_gui::string_processor_window::Slots::default();
+            let processor = hydrus_gui::string_processor_window::open(
+                &store,
+                &hydrus_core::url::strings::StringProcessor::default(),
+                vec!["example".into()],
+                &slots,
+                Rc::new(|_| {}),
+            )
+            .unwrap();
+            *slots.processor.borrow_mut() = Some(processor.clone_strong());
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    // "add", a splitter
+                    processor.invoke_add();
+                    processor.invoke_chosen(0);
+                    opened(
+                        take(&slots.step, "a processing step"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("string match", || {
+            keyed_case(|store, _| {
+                let slots = hydrus_gui::string_processor_window::Slots::default();
+                hydrus_gui::string_processor_window::open_match(
+                    store,
+                    &hydrus_core::url::strings::StringMatch::any(),
+                    &slots,
+                    Rc::new(|_| {}),
+                );
+                opened(
+                    take(&slots.step, "a string match"),
+                    |w| w.invoke_apply(),
+                    |w| w.invoke_cancel(),
+                )
+            })
+        }),
+        ("string converter", || {
+            // (a parser's "converter")
+            let (dir, store, _) = crate::parser_editors::setup();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(&ui, &["network", "downloaders"], "parsers\u{2026}");
+            let list = take(&bound.parser_editors.list, "parsers");
+            list.invoke_row_clicked(0, false, false);
+            list.invoke_action("edit".into());
+            let page = take(&bound.parser_editors.page, "a parser");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dir, &ui, &list);
+                    let b = &bound;
+                    page.invoke_action("converter".into());
+                    opened(
+                        take(
+                            &b.parser_editors.formula.strings.converter,
+                            "the string converter",
+                        ),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("conversion", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let slots = hydrus_gui::string_processor_window::Slots::default();
+            slots.set_store(&store);
+            let converter = hydrus_gui::string_processor_window::open_converter(
+                &hydrus_core::url::strings::StringConverter::default(),
+                Some("example".into()),
+                &slots,
+                Rc::new(|_| {}),
+            )
+            .unwrap();
+            *slots.converter.borrow_mut() = Some(converter.clone_strong());
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    converter.invoke_add();
+                    opened(
+                        take(&slots.conversion, "a conversion"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("formula", || {
+            // (a content parser's "formula")
+            parser_case(|b, content| {
+                content.invoke_action("formula".into());
+                opened(
+                    take(&b.parser_editors.formula.formula, "the formula"),
+                    |w| w.invoke_apply(),
+                    |w| w.invoke_cancel(),
+                )
+            })
+        }),
+        ("formula rule", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            let slots = hydrus_gui::formula_window::Slots::default();
+            let formula = hydrus_gui::formula_window::open(
+                &store,
+                &hydrus_gui::formula_editors::new_formula(false),
+                hydrus_gui::formula_window::FormulaTestData::default(),
+                &slots,
+                Rc::new(|_| {}),
+            )
+            .unwrap();
+            *slots.formula.borrow_mut() = Some(formula.clone_strong());
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    formula.invoke_row_clicked(0, false, false);
+                    formula.invoke_edit();
+                    opened(
+                        take(&slots.rule, "a formula rule"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit parser", || {
+            let (dir, store, _) = crate::parser_editors::setup();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(&ui, &["network", "downloaders"], "parsers\u{2026}");
+            let list = take(&bound.parser_editors.list, "parsers");
+            (
+                store,
+                Box::new(move || {
+                    let _ = &dir;
+                    list.invoke_row_clicked(0, false, false);
+                    list.invoke_action("edit".into());
+                    opened(
+                        take(&bound.parser_editors.page, "a parser"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("select parser", || {
+            let (dir, store, _) = crate::parser_editors::setup();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(
+                &ui,
+                &["network", "downloaders"],
+                "url class links\u{2026}",
+            );
+            let links = take(&bound.parser_editors.links, "url class links");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dir, &ui);
+                    links.invoke_row_clicked(0, false, false);
+                    links.invoke_action("pick-parser".into());
+                    opened(
+                        take(&bound.parser_editors.picker, "the parser picker"),
+                        |w| w.invoke_answered(true),
+                        |w| w.invoke_answered(false),
+                    )
+                }),
+            )
+        }),
+        ("login script", || {
+            let (dir, store, _) = crate::login_workflows::store();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(&ui, &["network", "logins"], "login scripts\u{2026}");
+            let list = take(&bound.login_workflows.scripts, "login scripts");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dir, &ui);
+                    list.invoke_row_clicked(0, false, false);
+                    list.invoke_action("edit".into());
+                    opened(
+                        take(&bound.login_workflows.script, "a login script"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("login credential definition", || {
+            let (dir, store, _) = crate::login_workflows::store();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(&ui, &["network", "logins"], "login scripts\u{2026}");
+            let list = take(&bound.login_workflows.scripts, "login scripts");
+            list.invoke_row_clicked(0, false, false);
+            list.invoke_action("edit".into());
+            let script = take(&bound.login_workflows.script, "a login script");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dir, &list, &ui);
+                    script.invoke_credential_clicked(0, false, false);
+                    script.invoke_action("edit-credential".into());
+                    opened(
+                        take(&bound.login_workflows.definition, "a credential definition"),
+                        |w| w.invoke_action("apply".into()),
+                        |w| w.invoke_action("cancel".into()),
+                    )
+                }),
+            )
+        }),
+        ("delete files", || {
+            let (dirs, store) = crate::options_window::store();
+            store
+                .write(|ctx| {
+                    let mut prefs: hydrus_store::settings::DeletionPreferences =
+                        hydrus_store::settings::get(ctx.conn())?;
+                    prefs.advanced = true;
+                    hydrus_store::settings::set(ctx.conn(), &prefs)
+                })
+                .unwrap();
+            let (ui, bound) = client(&store);
+            let fixture = hydrus_testkit::fixture_json("files_trash.json");
+            let files = crate::options_remember_action::pair(
+                &store,
+                fixture["advanced"][0]["hash"].as_str().unwrap(),
+            );
+            let opener = store.clone();
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    opened(
+                        crate::options_remember_action::open(&opener, &files),
+                        |w| w.invoke_accept_deletion(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("frame location", || {
+            let (dirs, store) = crate::options_window::store();
+            let (ui, bound) = client(&store);
+            let options = options_page(&ui, &bound, "gui");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui);
+                    let rows = options.get_frame_rows();
+                    let at = (0..rows.row_count())
+                        .position(|i| {
+                            rows.row_data(i).unwrap().cells.row_data(0).unwrap() == "media_viewer"
+                        })
+                        .unwrap();
+                    options.invoke_frame_clicked(at as i32, false, false);
+                    options.invoke_frame_action("edit".into());
+                    opened(
+                        take(&bound.options_frame_child, "the frame location editor"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("manage ratings", || {
+            let (dirs, store) = crate::options_window::store();
+            let (ui, bound) = client(&store);
+            ui.invoke_search_edited("system:everything".into());
+            ui.invoke_search_accepted();
+            (
+                store,
+                Box::new(move || {
+                    let _ = &dirs;
+                    ui.invoke_thumbnail_clicked(0, false, false);
+                    opened(
+                        crate::manage_ratings::open(&ui, &bound, 0),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("manage api keys", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            (
+                store,
+                Box::new(move || {
+                    let _ = &dirs;
+                    let (_review, keys) = api_keys(&ui, &bound);
+                    opened(
+                        keys,
+                        |w| w.invoke_apply_clicked(),
+                        |w| w.invoke_cancel_clicked(),
+                    )
+                }),
+            )
+        }),
     ]
+}
+
+/// parsers > a parser > its first content parser, kept open: `open` opens a
+/// window from the parser or that content parser, as a user does.
+fn parser_case(open: fn(&Bound, &hydrus_gui::ParserEditWindow) -> Opened) -> Case {
+    let (dir, store, _) = crate::parser_editors::setup();
+    let (ui, bound) = client(&store);
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "parsers\u{2026}");
+    let list = take(&bound.parser_editors.list, "parsers");
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = take(&bound.parser_editors.page, "a parser");
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = take(&bound.parser_editors.content, "a content parser");
+    (
+        store,
+        Box::new(move || {
+            let _ = (&dir, &ui, &list, &page);
+            open(&bound, &content)
+        }),
+    )
+}
+
+/// The content parser's formula, opened by its "formula" button.
+fn formula_of(bound: &Bound, content: &hydrus_gui::ParserEditWindow) -> hydrus_gui::FormulaWindow {
+    let open = bound.parser_editors.formula.formula.borrow().is_none();
+    if open {
+        content.invoke_action("formula".into());
+    }
+    take(&bound.parser_editors.formula.formula, "the formula")
+}
+
+/// A client on the `basic` fixture opening a window by `open` on its store.
+fn keyed_case(open: fn(&Arc<Store>, &Bound) -> Opened) -> Case {
+    let (dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    let opener = store.clone();
+    (
+        store,
+        Box::new(move || {
+            let _ = (&dirs, &ui);
+            open(&opener, &bound)
+        }),
+    )
 }
 
 /// A client on the `basic` fixture opening a dialog from the main menu.
@@ -1346,22 +1712,59 @@ fn recorded_frame(row: &Value) -> FrameLocation {
 }
 
 fn frame(store: &Store) -> FrameLocation {
+    frame_of(store, "regular_dialog")
+}
+
+fn frame_of(store: &Store, key: &str) -> FrameLocation {
     store
         .read(hydrus_store::settings::get::<WindowSettings>)
         .unwrap()
-        .frame("regular_dialog")
+        .frame(key)
         .unwrap()
         .clone()
 }
 
 fn keep(store: &Store, frame: FrameLocation) {
+    keep_as(store, "regular_dialog", frame);
+}
+
+fn keep_as(store: &Store, key: &'static str, frame: FrameLocation) {
     store
         .write(move |ctx| {
             let mut settings: WindowSettings = hydrus_store::settings::get(ctx.conn())?;
-            settings.set_frame("regular_dialog", frame);
+            settings.set_frame(key, frame);
             hydrus_store::settings::set(ctx.conn(), &settings)
         })
         .unwrap();
+}
+
+/// The cases the reference opens by a frame key of their own: their
+/// `DialogEdit` keeps that frame, as `regular_dialog`'s keeps its own.
+const KEYED: &[(&str, &str)] = &[
+    ("string processor", "deeply_nested_dialog"),
+    ("string match", "deeply_nested_dialog"),
+    ("string converter", "deeply_nested_dialog"),
+    ("conversion", "deeply_nested_dialog"),
+    ("formula", "deeply_nested_dialog"),
+    ("formula rule", "deeply_nested_dialog"),
+    ("edit parser", "deeply_nested_dialog"),
+    ("login script", "deeply_nested_dialog"),
+    ("login credential definition", "deeply_nested_dialog"),
+    ("select parser", "quick_select_dialog"),
+    ("delete files", "quick_select_dialog"),
+    ("frame location", "quick_entry_dialog"),
+];
+
+/// The cases the reference doesn't size or place (an old
+/// `ClientGUIDialogs.Dialog`; a panel of review services): whatever ends
+/// them keeps nothing, as the recording's cancel.
+const PLAIN: &[&str] = &["manage ratings", "manage api keys"];
+
+fn key_of(name: &str) -> &'static str {
+    KEYED
+        .iter()
+        .find(|(n, _)| *n == name)
+        .map_or("regular_dialog", |(_, key)| key)
 }
 
 /// Run `body` for each case in a thread of its own (each with its own
@@ -1412,8 +1815,11 @@ fn every_helper_dialog_keeps_its_frame_only_when_applied() {
         // is its OK, and Escape, as its `keyPressEvent`, is its window's
         // close)
         let nullipotent = NULLIPOTENT.contains(&name);
+        let plain = PLAIN.contains(&name);
+        let key = key_of(name);
         let case = |action: &str| {
             let (kind, action) = match (nullipotent, action) {
+                (false, _) if plain => ("edit", "cancel"),
                 (false, action) => ("edit", action),
                 (true, "apply") => ("nullipotent", "close_button"),
                 (true, _) => ("nullipotent", "window_close"),
@@ -1431,7 +1837,7 @@ fn every_helper_dialog_keeps_its_frame_only_when_applied() {
             ("cancel", case("cancel")),
             ("apply", case("apply")),
         ] {
-            keep(&store, baseline.clone());
+            keep_as(&store, key, baseline.clone());
             let shown = open();
             let window = shown.window.win();
             assert!(window.is_visible(), "{name}: opened");
@@ -1451,7 +1857,7 @@ fn every_helper_dialog_keeps_its_frame_only_when_applied() {
             if after != baseline {
                 after.last_position = Some(windows::state(window).position);
             }
-            assert_eq!(frame(&store), after, "{name}: {how}");
+            assert_eq!(frame_of(&store, key), after, "{name}: {how} ({key})");
         }
     });
 }
@@ -1986,9 +2392,13 @@ fn every_helper_frame_keeps_its_frame_as_it_is_resized_and_nothing_as_it_closes(
                     assert!(window.is_visible(), "{name}: opened");
                     // the user resizes it; a moment later it is kept
                     window.set_size(slint::LogicalSize::new(moved.0 as f32, moved.1 as f32));
-                    spin(std::time::Duration::from_millis(700));
                     let mut after_move = recorded_frame(&recorded["after_move"]);
                     after_move.last_position = Some(windows::state(window).position);
+                    // (kept a moment after: waited for, however busy the machine)
+                    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+                    while frame(&store) != after_move && std::time::Instant::now() < deadline {
+                        spin(std::time::Duration::from_millis(20));
+                    }
                     assert_eq!(frame(&store), after_move, "{name}: kept as it was resized");
                     // as it closes, nothing more
                     keep(&store, baseline.clone());
@@ -2173,7 +2583,9 @@ fn network_jobs_wait_on_their_rules_editor_and_take_escape_after_a_menu() {
         slint::LogicalPosition::new(20.0, 560.0),
         slint::platform::PointerEventButton::Left,
     );
-    spin(std::time::Duration::from_millis(50));
+    until("the menu is dismissed", || {
+        jobs.get_menu_panes().row_count() == 0
+    });
     assert_eq!(
         jobs.get_menu_panes().row_count(),
         0,
@@ -3077,4 +3489,212 @@ fn a_dialogs_own_questions_and_messages_hold_it_as_the_references_modal_ones() {
     assert!(hash.window().is_visible(), "hash: waits on its notice");
     hash.invoke_cancel();
     assert!(!hash.window().is_visible());
+}
+
+/// The deeply nested editors (batch 5): a question or choice up within one
+/// takes Escape first, answered no; a child editor it opened holds it, as
+/// the reference's modal child dialogs do; a parser changed asks before
+/// it is discarded, and the window's close answers that no.
+#[test]
+fn the_deeply_nested_editors_take_escape_for_their_questions_and_children_first() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (_ui, _bound) = client(&store);
+    let shown = |w: &slint::Window| w.is_visible();
+
+    // the string processor: "add"'s choice, then a step editor open
+    let slots = hydrus_gui::string_processor_window::Slots::default();
+    let processor = hydrus_gui::string_processor_window::open(
+        &store,
+        &hydrus_core::url::strings::StringProcessor::default(),
+        vec!["example".into()],
+        &slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    *slots.processor.borrow_mut() = Some(processor.clone_strong());
+    processor.invoke_add();
+    assert!(processor.get_asking());
+    escape(processor.window());
+    assert!(
+        !processor.get_asking(),
+        "processor: Escape answers its choice"
+    );
+    assert!(shown(processor.window()), "processor: still open");
+    processor.invoke_add();
+    processor.invoke_chosen(0);
+    let step = take(&slots.step, "a processing step");
+    escape(processor.window());
+    assert!(
+        shown(processor.window()),
+        "processor: its step editor holds it"
+    );
+    assert!(shown(step.window()));
+    escape(step.window());
+    assert!(!shown(step.window()), "the step: Escape cancels it");
+    escape(processor.window());
+    assert!(
+        !shown(processor.window()),
+        "processor: then Escape cancels it"
+    );
+
+    // the string converter: its delete question
+    let slots = hydrus_gui::string_processor_window::Slots::default();
+    slots.set_store(&store);
+    let converter = hydrus_gui::string_processor_window::open_converter(
+        &hydrus_core::url::strings::StringConverter::default(),
+        Some("example".into()),
+        &slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    *slots.converter.borrow_mut() = Some(converter.clone_strong());
+    converter.invoke_add();
+    let conversion = take(&slots.conversion, "a conversion");
+    escape(converter.window());
+    assert!(
+        shown(converter.window()),
+        "converter: its conversion holds it"
+    );
+    conversion.invoke_apply();
+    assert!(!shown(conversion.window()));
+    converter.invoke_row_clicked(0, false, false);
+    converter.invoke_delete();
+    assert!(converter.get_asking());
+    escape(converter.window());
+    assert!(!converter.get_asking(), "converter: Escape answers no");
+    assert!(shown(converter.window()));
+    assert_eq!(converter.get_rows().row_count(), 1, "nothing deleted");
+    escape(converter.window());
+    assert!(!shown(converter.window()));
+
+    // a formula: its remove question, then its rule editor open
+    let slots = hydrus_gui::formula_window::Slots::default();
+    let formula = hydrus_gui::formula_window::open(
+        &store,
+        &hydrus_gui::formula_editors::new_formula(false),
+        hydrus_gui::formula_window::FormulaTestData::default(),
+        &slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(formula.clone_strong());
+    formula.invoke_row_clicked(0, false, false);
+    formula.invoke_delete();
+    assert!(formula.get_deleting());
+    escape(formula.window());
+    assert!(!formula.get_deleting(), "formula: Escape answers no");
+    assert!(shown(formula.window()));
+    formula.invoke_edit();
+    let rule = take(&slots.rule, "a rule");
+    escape(formula.window());
+    assert!(shown(formula.window()), "formula: its rule editor holds it");
+    escape(rule.window());
+    assert!(!shown(rule.window()));
+    escape(formula.window());
+    assert!(!shown(formula.window()));
+
+    // a parser, changed: cancel asks; Escape and the window's close answer no
+    let (_dir, store, slots) = crate::parser_editors::setup();
+    let list = hydrus_gui::parser_editors_window::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = take(&slots.page, "a parser");
+    page.invoke_text_edited(0, "edited page".into());
+    escape(page.window());
+    assert!(!page.get_question().is_empty(), "parser: Escape asks first");
+    assert!(shown(page.window()));
+    escape(page.window());
+    assert!(page.get_question().is_empty(), "parser: Escape answers no");
+    page.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !page.get_question().is_empty(),
+        "parser: its close asks too"
+    );
+    page.invoke_answered(true);
+    assert!(!shown(page.window()), "parser: discarded on yes");
+    assert!(shown(list.window()));
+
+    // a login script: its remove question
+    let (_dir, store, _) = crate::login_workflows::store();
+    let slots = hydrus_gui::login_workflows_window::Slots::default();
+    let scripts = hydrus_gui::login_workflows_window::open_scripts(&store, &slots).unwrap();
+    scripts.invoke_row_clicked(0, false, false);
+    scripts.invoke_action("edit".into());
+    let script = take(&slots.script, "a login script");
+    script.invoke_credential_clicked(0, false, false);
+    script.invoke_action("delete-credential".into());
+    assert!(!script.get_question().is_empty());
+    escape(script.window());
+    assert!(
+        script.get_question().is_empty(),
+        "login script: Escape answers no"
+    );
+    assert!(shown(script.window()));
+    script.invoke_action("edit-credential".into());
+    let definition = take(&slots.definition, "a credential definition");
+    escape(script.window());
+    assert!(
+        shown(script.window()),
+        "login script: its definition holds it"
+    );
+    escape(definition.window());
+    assert!(!shown(definition.window()));
+    escape(script.window());
+    assert!(!shown(script.window()));
+}
+
+/// A menu opened in a dialog takes Escape first and closes, the dialog
+/// staying open; once a menu is dismissed by a click, the keys come back,
+/// so the next Escape reaches the dialog. Driven with real clicks and keys
+/// in each helper window with a favourites menu.
+#[test]
+fn a_dialogs_menu_takes_escape_first_and_gives_the_keys_back_once_closed() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (_ui, _bound) = client(&store);
+    let check = |name: &str,
+                 win: &slint::Window,
+                 open: &dyn Fn(),
+                 panes: &dyn Fn() -> usize,
+                 inner_escape: &dyn Fn()| {
+        widgets::lay_out(win, 900.0, 700.0);
+        open();
+        assert!(panes() > 0, "{name}: the menu opens");
+        escape(win);
+        assert_eq!(panes(), 0, "{name}: Escape closes the menu first");
+        assert!(win.is_visible(), "{name}: the dialog stays open");
+        open();
+        // (a click away from the menu dismisses it)
+        widgets::click_at(
+            win,
+            slint::LogicalPosition::new(890.0, 690.0),
+            slint::platform::PointerEventButton::Left,
+        );
+        assert_eq!(panes(), 0, "{name}: a click dismisses it");
+        inner_escape();
+        escape(win);
+        assert!(!win.is_visible(), "{name}: then Escape reaches the dialog");
+    };
+
+    // a string match's "favourites ▾"
+    let slots = hydrus_gui::string_processor_window::Slots::default();
+    hydrus_gui::string_processor_window::open_match(
+        &store,
+        &hydrus_core::url::strings::StringMatch::any(),
+        &slots,
+        Rc::new(|_| {}),
+    );
+    let matcher = take(&slots.step, "a string match");
+    // (its regex controls show for a regex match)
+    matcher.set_match_type(3);
+    matcher.invoke_changed();
+    check(
+        "string match",
+        matcher.window(),
+        &|| widgets::click(matcher.window(), "favourites ▾"),
+        &|| matcher.get_favourite_panes().row_count(),
+        &|| {},
+    );
 }

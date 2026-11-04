@@ -51,6 +51,8 @@ pub fn open_definition(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::LoginCredentialDefinitionWindow>()?;
+    // (the login script's `DialogEdit` on `deeply_nested_dialog`)
+    let ended = crate::dialog::Dialog::keyed(&window, "deeply_nested_dialog");
     window.set_name(value.name.as_str().into());
     window.set_kind(i32::from(value.kind == CredentialKind::Hidden));
     window.set_matcher(value.string_match.describe(false, false).into());
@@ -83,7 +85,7 @@ pub fn open_definition(
         let strings = strings.clone();
         let active = active.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move |action| {
             if !active.get() {
                 return;
@@ -92,7 +94,7 @@ pub fn open_definition(
                 return;
             };
             if action == "cancel" {
-                close();
+                ended.cancel();
                 return;
             }
             if strings.has_open() {
@@ -139,7 +141,7 @@ pub fn open_definition(
                         CredentialKind::Normal
                     };
                     match applied(value) {
-                        Ok(()) => close(),
+                        Ok(()) => ended.accept(),
                         Err(error) => window.set_error(error.into()),
                     }
                 }
@@ -148,10 +150,13 @@ pub fn open_definition(
         }
     });
     window.on_closed(|| {});
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (its string match editor, modal in the reference, holds it)
+    ended.modal_child({
+        let strings = strings.clone();
+        move || strings.has_open()
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show()?;
     *slot.borrow_mut() = Some(window.clone_strong());
     Ok(window)

@@ -31,34 +31,47 @@ export component ClientApiKeysWindow inherits Window {
     callback answered(bool);
     callback apply-clicked();
     callback cancel-clicked();
-    VerticalBox { padding: 12px; spacing: 8px;
-        Text { text: "Manage your Client API's different access key permissions here."; color: Theme.text; }
-        Text { text: root.status; color: Theme.text; wrap: word-wrap; }
-        ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
-            row-clicked(i,c,s) => { if root.question == "" && !root.editing { root.row-clicked(i,c,s); } }
-            row-activated(i) => { if root.question == "" && !root.editing { root.row-clicked(i,false,false); root.edit-clicked(); } }
-            sort(i,a) => { if root.question == "" && !root.editing { root.sort(i,a); } }
-            delete-pressed => { if root.question == "" && !root.editing { root.delete-clicked(); } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalBox {
-            Btn { text: "add manually"; enabled: root.question == "" && !root.editing; clicked => { root.add-clicked(); } }
-            Btn { text: "add from api request"; enabled: root.question == "" && !root.editing; clicked => { root.add-from-api-clicked(); } }
-            Btn { text: "edit"; enabled: root.can-edit && root.question == "" && !root.editing; clicked => { root.edit-clicked(); } }
-            Btn { text: "duplicate"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.duplicate-clicked(); } }
-            Btn { text: "delete"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.delete-clicked(); } }
-            Rectangle { horizontal-stretch: 1; }
-            Btn { text: "open client api base url"; clicked => { root.open-base-url(); } }
-            Btn { text: "copy api access key"; enabled: root.can-edit; clicked => { root.copy-key(); } }
-        }
-        Text { text: "Changes are saved when you apply."; color: Theme.muted; wrap: word-wrap; }
-        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        if root.question != "": VerticalBox {
-            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-            HorizontalBox { Btn { text: "yes"; clicked => { root.answered(true); } } Btn { text: "no"; clicked => { root.answered(false); } } }
-        }
-        HorizontalBox { Rectangle { horizontal-stretch: 1; }
-            Btn { text: "apply"; enabled: root.question == "" && !root.editing; clicked => { root.apply-clicked(); } }
-            Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
+        VerticalBox { padding: 12px; spacing: 8px;
+            Text { text: "Manage your Client API's different access key permissions here."; color: Theme.text; }
+            Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+            ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
+                row-clicked(i,c,s) => { if root.question == "" && !root.editing { root.row-clicked(i,c,s); } }
+                row-activated(i) => { if root.question == "" && !root.editing { root.row-clicked(i,false,false); root.edit-clicked(); } }
+                sort(i,a) => { if root.question == "" && !root.editing { root.sort(i,a); } }
+                delete-pressed => { if root.question == "" && !root.editing { root.delete-clicked(); } }
+            }
+            HorizontalBox {
+                Btn { text: "add manually"; enabled: root.question == "" && !root.editing; clicked => { root.add-clicked(); } }
+                Btn { text: "add from api request"; enabled: root.question == "" && !root.editing; clicked => { root.add-from-api-clicked(); } }
+                Btn { text: "edit"; enabled: root.can-edit && root.question == "" && !root.editing; clicked => { root.edit-clicked(); } }
+                Btn { text: "duplicate"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.duplicate-clicked(); } }
+                Btn { text: "delete"; enabled: root.can-delete && root.question == "" && !root.editing; clicked => { root.delete-clicked(); } }
+                Rectangle { horizontal-stretch: 1; }
+                Btn { text: "open client api base url"; clicked => { root.open-base-url(); } }
+                Btn { text: "copy api access key"; enabled: root.can-edit; clicked => { root.copy-key(); } }
+            }
+            Text { text: "Changes are saved when you apply."; color: Theme.muted; wrap: word-wrap; }
+            Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            if root.question != "": VerticalBox {
+                Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+                HorizontalBox { Btn { text: "yes"; clicked => { root.answered(true); } } Btn { text: "no"; clicked => { root.answered(false); } } }
+            }
+            HorizontalBox { Rectangle { horizontal-stretch: 1; }
+                Btn { text: "apply"; enabled: root.question == "" && !root.editing; clicked => { root.apply-clicked(); } }
+                Btn { text: "cancel"; clicked => { root.cancel-clicked(); } }
+            }
         }
     }
 }

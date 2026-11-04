@@ -136,6 +136,9 @@ pub(crate) fn bind(
             let Ok(window) = crate::app_title::new::<crate::FrameLocationWindow>() else {
                 return;
             };
+            // (a `DialogEdit` on `quick_entry_dialog`: placed by it, and kept
+            // by it when applied)
+            let ended = crate::dialog::Dialog::keyed(&window, "quick_entry_dialog");
             let frame = normalised(row.frame);
             let extra = match row.name.as_str() {
                 "manage_tags_dialog" => {
@@ -193,7 +196,7 @@ pub(crate) fn bind(
                 let editor = editor.clone();
                 let active = active.clone();
                 let child_active = child_active.clone();
-                let close = close.clone();
+                let ended = ended.clone();
                 move || {
                     if !active.get() || !child_active.get() {
                         return;
@@ -225,17 +228,17 @@ pub(crate) fn bind(
                     editor
                         .borrow_mut()
                         .set_frame_locations(table.borrow().values());
-                    close();
+                    ended.accept();
                 }
             });
             window.on_cancel({
-                let close = close.clone();
-                move || close()
+                let ended = ended.clone();
+                move || {
+                    ended.cancel();
+                }
             });
-            window.window().on_close_requested(move || {
-                close();
-                slint::CloseRequestResponse::HideWindow
-            });
+            // (whatever ends it, through the dialog helper)
+            ended.on_closed(move || close());
             *child.borrow_mut() = Some(window.clone_strong());
             let _ = window.show();
             show();

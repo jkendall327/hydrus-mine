@@ -2824,9 +2824,21 @@ opened from a dialog or as a folder's copy, edit import options with its
 external program entry, the metadata migration routers, router and
 source/destination editors, database locations with its max size and run
 time editors, a rating's "edit value", edit rules with a rule's and a
-comparator's editors, and the predicate editor (dialogs: kept when
-applied; the request wait's, a dialog's log's and database locations'
-close is their OK, as a `DialogNullipotent`'s), and help > about, tag display sync, detailed file
+comparator's editors, the predicate editor, a string processor's
+processing step, the simple downloader's formula editor and manage
+granularity (dialogs: kept when applied; the request wait's, a dialog's
+log's, database locations' and manage granularity's close is their OK, as
+a `DialogNullipotent`'s); by frame keys of their own, as the reference's
+are: the string processor, a string match, the string converter and its
+conversion editor, a formula and its rule editor, a parser's editor, a
+login script and its credential definition editor
+(`deeply_nested_dialog`), the parser picker and the advanced delete files
+dialog (`quick_select_dialog`) and the frame location editor
+(`quick_entry_dialog`), each kept by its own frame when applied; manage
+ratings and the Client API keys (an old `ClientGUIDialogs.Dialog` the
+reference doesn't size, and a panel of review services there), which end
+through it keeping no frame; review services, a frame with its own
+`review_services`, kept as it closes; and help > about, tag display sync, detailed file
 metadata, migrate tags, the auto-resolution review, the login test
 result, file maintenance, bandwidth, network jobs, the vacuum review,
 review files to import, "what is this object?", review session cookies
@@ -2838,11 +2850,15 @@ extends: a dialog ended by a real Escape, its cancel and its apply (a
 `DialogNullipotent` replaying the recording's own cases: its close button
 its OK, its window's close and Escape keeping nothing), a frame resized
 and then ended by its close button, its window's close and a real Escape.
-Three are not swept there: a log opened from a page keeps its own frame
+Four are not swept there: a log opened from a page keeps its own frame
 (`frame_geometry.rs`); "set time to run" is swept only for Escape and its
 cancel, since its apply starts a real rebalance
-(`database_locations_menu.rs` drives that); and "manage granularity",
-which isn't on the helper yet. There too, a
+(`database_locations_menu.rs` drives that); manage granularity, whose
+job runs on a real database (`database_locations_menu.rs`); and review
+services, whose frame `frame_geometry.rs` proves. The other frame keys'
+dialogs replay `regular_dialog.json`'s `DialogEdit` cases on their own
+keys (the recording has `regular_dialog`'s; the reference's `DialogEdit`
+keeps whichever key it was given the same way). There too, a
 question or inline editor within a dialog takes Escape first and a modal
 child (the reference's) holds it, the dialog staying open (in a frame: the
 questions of migrate tags, the vacuum review, bandwidth, file maintenance
@@ -2856,8 +2872,12 @@ retirement stops it inside the writer's transaction); the reference's
 `AsyncQtJob` would finish it. The login test result is swept from where
 the login script editor opens it (`open_result`), since reaching it from
 the menus needs a live login site; the menu path is proved in
-`login_workflows.rs`. "manage granularity" waits for its close button (the
-reference's `DialogNullipotent` keeps its frame by it). The rest don't keep it yet;
+`login_workflows.rs`. The ordinary dialogs not yet on the helper are the
+date-time editor, the bandwidth rules editor, the downloaders' import and
+export, a popup's modal dialog and a subscription's "edit additional
+tags" (by `regular_dialog`), and export files, file history and review
+your fate (frames with keys of their own, which they open by and keep as
+they did); they don't keep `regular_dialog` yet, and
 it matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape,
 which the helper owns, cancels these dialogs and closes the frames. Every
@@ -2888,20 +2908,26 @@ list then holds); the gallery url generators never ask, as there. A
 session's cookies, which hydrus-rs edits as a draft until applied, ask
 before a cancel, Escape or the window's close discards changes; the
 reference's frame edits the cookie jar at once, so has nothing to ask
-about. The API request wait is cancelled when the Client API keys window
-it was opened from closes (that window isn't on the helper yet); in the
-reference the wait is modal over it, so it can't be closed under the
-wait. A dialog's own messages and questions (the reference's
+about. The API request wait holds the Client API keys window it was opened
+from, as the reference's modal wait does. A dialog's own messages and questions (the reference's
 `ShowWarning`, `ShowInformation` and `GetYesNo` over it: database
 locations' warnings and its "remove" and "clear thumbnails" questions,
-the rules editors' import and export messages) open as message or
-question windows it waits on, as on the reference's modal ones; other
-dialogs' are still opened apart from them. Manage ratings isn't on the
-helper yet, so it can be applied with its "edit value" editor open (the
-reference's editor is modal over it). No migrated dialog yet has a panel check that refuses an apply
+the rules editors' import and export messages, a string processor's and
+a formula's import messages) open as message or question windows it
+waits on, as on the reference's modal ones; other dialogs' are still
+opened apart from them. Manage ratings' "edit value" editor holds it, as
+the reference's modal one: its ratings, copy, paste, apply and cancel do
+nothing until that closes. A dialog ended by its own buttons while it
+holds a window it opened (its own messages and questions, manage ratings'
+"edit value", the folders' logs and editors) ends that window with it, so
+nothing it held outlives it: a dialog on the helper asking nothing (as Qt
+takes a modal child with its parent, its own questions and held windows
+with it), any other window by its own close. A menu open in
+a window (a favourites menu, a log's or a subscription's menu) takes
+Escape first and closes, and once it is dismissed the keys come back to
+the window, so Escape then reaches the dialog. No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
-vetoed apply does). Nor are the
-reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.
+vetoed apply does).
 The windows that end through the helper are fitted to the screens once
 shown (`GetSafePosition` on their wanted place, then the top-left slide),
 since winit knows the screens only then: for an instant one may show at its

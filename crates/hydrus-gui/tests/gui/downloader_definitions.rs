@@ -382,6 +382,22 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
         );
 
         if wm_close {
+            // (its conversion editor, modal in the reference, holds it: the
+            // converter's own close waits until that is closed)
+            converter
+                .window()
+                .dispatch_event(WindowEvent::CloseRequested);
+            assert!(converter.window().is_visible(), "held by its conversion");
+            let conversion = slots
+                .strings
+                .conversion
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .clone_strong();
+            conversion
+                .window()
+                .dispatch_event(WindowEvent::CloseRequested);
             converter
                 .window()
                 .dispatch_event(WindowEvent::CloseRequested);
@@ -469,12 +485,28 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
     rule.window().dispatch_event(WindowEvent::CloseRequested);
     assert!(slots.rule.borrow().is_some());
     assert_eq!(rule.get_preview(), preview);
+    // (its converter, modal in the reference, holds it against its window's
+    // close, as the conversion holds the converter; the parameter editor's
+    // and the processor's own buttons are disabled while their children are
+    // open, so a user closes them innermost first, by their windows' close)
     processor
         .window()
         .dispatch_event(WindowEvent::CloseRequested);
+    assert!(processor.window().is_visible(), "held by its converter");
+    let conversion = slots
+        .strings
+        .conversion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    for window in [conversion.window(), converter.window(), processor.window()] {
+        window.dispatch_event(WindowEvent::CloseRequested);
+        assert!(!window.is_visible());
+    }
     assert!(
         !slots.strings.has_open(),
-        "processor close cancels its entire subtree"
+        "closed innermost first, the whole subtree is gone"
     );
     assert!(!rule.get_child_open());
     assert!(

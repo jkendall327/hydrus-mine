@@ -21,6 +21,8 @@ pub(crate) struct Slot {
     window: Option<GranularityWindow>,
     question: Option<crate::ChoiceButtonsWindow>,
     timer: Option<slint::Timer>,
+    /// How it ends (the dialog helper's), while open.
+    dialog: Option<crate::dialog::Dialog<GranularityWindow>>,
 }
 
 pub(crate) type Slots = Rc<RefCell<Slot>>;
@@ -78,6 +80,9 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, changed: &Rc<dyn Fn()>) {
     let Ok(window) = crate::app_title::new::<crate::GranularityWindow>() else {
         return;
     };
+    // (a `DialogNullipotent`: its close button is its OK, keeping
+    // `regular_dialog`; Escape and its window's close keep nothing)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(model::TITLE.into());
     window.set_warning(model::WARNING.into());
     window.set_intro(model::INTRO.into());
@@ -85,22 +90,46 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, changed: &Rc<dyn Fn()>) {
     show(&window, store);
     window.on_action({
         let (store, slots, changed) = (store.clone(), slots.clone(), changed.clone());
-        move |action| act(&store, &slots, &changed, action.as_str())
+        let ended = ended.clone();
+        move |action| {
+            if action == "close" {
+                ended.accept();
+            } else {
+                act(&store, &slots, &changed, action.as_str());
+            }
+        }
     });
-    window.window().on_close_requested({
+    // (its questions are modal over it)
+    ended.modal_child({
         let slots = slots.clone();
         move || {
-            let mut slot = slots.borrow_mut();
-            slot.window = None;
-            if let Some(q) = slot.question.take() {
+            slots
+                .borrow()
+                .question
+                .as_ref()
+                .is_some_and(|q| q.window().is_visible())
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let slots = slots.clone();
+        move || {
+            let question = {
+                let mut slot = slots.borrow_mut();
+                slot.window = None;
+                slot.dialog = None;
+                slot.question.take()
+            };
+            if let Some(q) = question {
                 let _ = q.hide();
             }
-            slint::CloseRequestResponse::HideWindow
         }
     });
     if window.show().is_ok() {
         OPENED.with(|w| *w.borrow_mut() = window.as_weak());
-        slots.borrow_mut().window = Some(window);
+        let mut slot = slots.borrow_mut();
+        slot.window = Some(window);
+        slot.dialog = Some(ended);
     }
 }
 
@@ -310,7 +339,12 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
                     window.set_busy(false);
                     show(window, &store);
                 }
-                crate::debug_actions::message(title, &text);
+                // (its own message, while it is open)
+                let dialog = slots.borrow().dialog.clone();
+                match dialog {
+                    Some(dialog) => dialog.message(title, &text),
+                    None => crate::debug_actions::message(title, &text),
+                }
                 changed();
             }
         },
@@ -329,6 +363,11 @@ pub(crate) fn is_open(slots: &Slots) -> bool {
 
 /// Close it with its owner, as its own close does.
 pub(crate) fn close(slots: &Slots) {
+    let dialog = slots.borrow().dialog.clone();
+    if let Some(dialog) = dialog {
+        dialog.cancel();
+        return;
+    }
     let (window, question) = {
         let mut slot = slots.borrow_mut();
         (slot.window.take(), slot.question.take())

@@ -53,102 +53,115 @@ export component FormulaWindow inherits Window {
     callback closed(bool);
     callback fetch(); callback cancel-fetch();
     callback exchange(int); callback member-exchange(bool); callback edit-child(bool); callback example-chosen(); callback add-example(); callback remove-example();
-    VerticalLayout {
-        padding: 10px; spacing: 6px;
-        HorizontalLayout {
-            spacing: 10px;
-            VerticalLayout {
-                horizontal-stretch: 1; spacing: 6px;
-                Text { text: "edit"; font-weight: 700; color: Theme.text; }
-                if root.supported: ComboBox { model: ["html", "json", "nested", "zipper", "context variable", "static"]; current-index <=> root.kind; enabled: root.allow-type-change && !root.deleting && !root.child-open; selected => { root.type-chosen(); } }
-                Text { text: "name/description:"; color: Theme.text; }
-                LineEdit { text <=> root.name; enabled: root.supported && !root.deleting && !root.child-open; edited => { root.changed(); } }
-                if root.kind < 2 || root.kind == 3: ListTable { vertical-stretch: 1; columns: [{title: root.kind == 3 ? "component formulae" : "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
-                if root.kind < 2 || root.kind == 3: HorizontalLayout {
-                    spacing: 4px;
-                    Btn { text: "add"; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.add(); } }
-                    Btn { text: "edit"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.edit(); } }
-                    Btn { text: "delete"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.delete(); } }
-                    Btn { text: "↑"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(false); } }
-                    Btn { text: "↓"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(true); } }
-                }
-                if root.kind < 2: Text { text: "content to fetch:"; color: Theme.text; }
-                if root.kind < 2: ComboBox { model: root.contents; current-index <=> root.content; enabled: root.supported && !root.deleting && !root.child-open; selected => { root.changed(); } }
-                if root.kind == 0: HorizontalLayout {
-                    Text { text: "attribute to fetch:"; color: Theme.text; vertical-alignment: center; }
-                    LineEdit { text <=> root.attribute; enabled: root.content == 0 && !root.deleting && !root.child-open; edited => { root.changed(); } }
-                }
-                if root.kind == 2: VerticalLayout {
-                    Text { text: "Whatever is parsed by the first formula is sent to the second."; wrap: word-wrap; color: Theme.text; }
-                    Text { text: "first formula:"; color: Theme.text; }
-                    Text { text: root.main-label; wrap: word-wrap; color: Theme.text; }
-                    Btn { text: "edit first formula"; enabled: !root.child-open; clicked => { root.edit-child(false); } }
-                    Text { text: "second formula:"; color: Theme.text; }
-                    Text { text: root.sub-label; wrap: word-wrap; color: Theme.text; }
-                    Btn { text: "edit second formula"; enabled: !root.child-open; clicked => { root.edit-child(true); } }
-                }
-                if root.kind == 3: VerticalLayout {
-                    HorizontalLayout {
-                        Btn { text: "import components"; enabled: !root.child-open && !root.deleting; clicked => { root.member-exchange(true); } }
-                        Btn { text: "export selected"; enabled: root.selected && !root.child-open && !root.deleting; clicked => { root.member-exchange(false); } }
-                    }
-                    Text { text: "substitution phrase (\\1, \\2, …):"; color: Theme.text; }
-                    CappedLineEdit { text <=> root.phrase; enabled: !root.child-open && !root.deleting; edited => { root.changed(); } }
-                }
-                if root.kind == 4: HorizontalLayout {
-                    Text { text: "variable name:"; color: Theme.text; vertical-alignment: center; }
-                    LineEdit { horizontal-stretch: 1; text <=> root.variable; enabled: !root.child-open; edited => { root.changed(); } }
-                }
-                if root.kind == 5: VerticalLayout {
-                    Text { text: "static text:"; color: Theme.text; }
-                    CappedLineEdit { text <=> root.static-text; enabled: !root.child-open; edited => { root.changed(); } }
-                    HorizontalLayout {
-                        Text { text: "number to output:"; color: Theme.text; vertical-alignment: center; }
-                        SpinBox { value <=> root.output-count; minimum: 1; maximum: 65535; enabled: !root.child-open; edited => { root.changed(); } }
-                    }
-                }
-                // the formula panel's "export" (0 to clipboard, 1 to png) and
-                // "import" (2 from clipboard, 3 from png)
-                HorizontalLayout {
-                    spacing: 4px;
-                    SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to png"]; available: !root.child-open && !root.deleting; selected(mode) => { root.exchange(mode); } }
-                    SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from png"]; available: !root.child-open && !root.deleting; selected(mode) => { root.exchange(mode + 2); } }
-                }
-                Text { text: root.newline-note; wrap: word-wrap; color: Theme.text; }
-                Btn { text: root.processing; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.edit-processing(); } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
-            VerticalLayout {
-                horizontal-stretch: 1; spacing: 6px;
-                Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
-                HorizontalLayout {
-                    CappedLineEdit { text <=> root.fetch-url; placeholder-text: "URL to fetch"; enabled: !root.child-open; }
-                    Btn { text: "fetch from URL"; enabled: !root.child-open; clicked => { root.fetch(); } }
-                    Btn { text: "cancel fetch"; enabled: root.fetching; clicked => { root.cancel-fetch(); } }
-                }
-                if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
-                HorizontalLayout {
-                    ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
-                    Btn { text: "add example"; enabled: !root.child-open; clicked => { root.add-example(); } }
-                    Btn { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.remove-example(); } }
-                }
-                HorizontalLayout {
-                    Btn { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
-                    Btn { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
-                }
-                Text { text: root.raw-description; color: Theme.text; wrap: word-wrap; }
-                TextEdit { vertical-stretch: 1; text: root.raw-preview; read-only: true; }
-                Text { text: "parsing context (one key=value per line)"; color: Theme.text; }
-                TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; edited(t) => { root.context = t; root.changed(); } }
-                Btn { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.test(); } }
-                Text { text: root.status; wrap: word-wrap; color: Theme.text; }
-                ListTable { vertical-stretch: 1; columns: [{title: "parsed strings", width: 430px, stretch: true}]; rows: root.results; }
-            }
+            reject
         }
-        if root.deleting: Asking { title: "Are you sure?"; message: root.question; choices: ["yes", "no"]; chosen(i) => { root.chosen(i); } cancelled => { root.cancelled(); } }
-        Text { text: root.veto; wrap: word-wrap; color: Theme.text; }
-        HorizontalLayout { alignment: end; spacing: 6px;
-            Btn { text: "apply"; enabled: !root.deleting && !root.child-open; clicked => { root.apply(); } }
-            Btn { text: "cancel"; clicked => { root.cancel(); } }
+        VerticalLayout {
+            padding: 10px; spacing: 6px;
+            HorizontalLayout {
+                spacing: 10px;
+                VerticalLayout {
+                    horizontal-stretch: 1; spacing: 6px;
+                    Text { text: "edit"; font-weight: 700; color: Theme.text; }
+                    if root.supported: ComboBox { model: ["html", "json", "nested", "zipper", "context variable", "static"]; current-index <=> root.kind; enabled: root.allow-type-change && !root.deleting && !root.child-open; selected => { root.type-chosen(); } }
+                    Text { text: "name/description:"; color: Theme.text; }
+                    LineEdit { text <=> root.name; enabled: root.supported && !root.deleting && !root.child-open; edited => { root.changed(); } }
+                    if root.kind < 2 || root.kind == 3: ListTable { vertical-stretch: 1; columns: [{title: root.kind == 3 ? "component formulae" : "parsing rules", width: 430px, stretch: true}]; rows: root.rules; row-clicked(r,c,s) => { if !root.deleting && !root.child-open { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.deleting && !root.child-open { root.row-activated(r); } } }
+                    if root.kind < 2 || root.kind == 3: HorizontalLayout {
+                        spacing: 4px;
+                        Btn { text: "add"; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.add(); } }
+                        Btn { text: "edit"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.edit(); } }
+                        Btn { text: "delete"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.delete(); } }
+                        Btn { text: "↑"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(false); } }
+                        Btn { text: "↓"; enabled: root.selected && !root.deleting && !root.child-open; clicked => { root.shift(true); } }
+                    }
+                    if root.kind < 2: Text { text: "content to fetch:"; color: Theme.text; }
+                    if root.kind < 2: ComboBox { model: root.contents; current-index <=> root.content; enabled: root.supported && !root.deleting && !root.child-open; selected => { root.changed(); } }
+                    if root.kind == 0: HorizontalLayout {
+                        Text { text: "attribute to fetch:"; color: Theme.text; vertical-alignment: center; }
+                        LineEdit { text <=> root.attribute; enabled: root.content == 0 && !root.deleting && !root.child-open; edited => { root.changed(); } }
+                    }
+                    if root.kind == 2: VerticalLayout {
+                        Text { text: "Whatever is parsed by the first formula is sent to the second."; wrap: word-wrap; color: Theme.text; }
+                        Text { text: "first formula:"; color: Theme.text; }
+                        Text { text: root.main-label; wrap: word-wrap; color: Theme.text; }
+                        Btn { text: "edit first formula"; enabled: !root.child-open; clicked => { root.edit-child(false); } }
+                        Text { text: "second formula:"; color: Theme.text; }
+                        Text { text: root.sub-label; wrap: word-wrap; color: Theme.text; }
+                        Btn { text: "edit second formula"; enabled: !root.child-open; clicked => { root.edit-child(true); } }
+                    }
+                    if root.kind == 3: VerticalLayout {
+                        HorizontalLayout {
+                            Btn { text: "import components"; enabled: !root.child-open && !root.deleting; clicked => { root.member-exchange(true); } }
+                            Btn { text: "export selected"; enabled: root.selected && !root.child-open && !root.deleting; clicked => { root.member-exchange(false); } }
+                        }
+                        Text { text: "substitution phrase (\\1, \\2, …):"; color: Theme.text; }
+                        CappedLineEdit { text <=> root.phrase; enabled: !root.child-open && !root.deleting; edited => { root.changed(); } }
+                    }
+                    if root.kind == 4: HorizontalLayout {
+                        Text { text: "variable name:"; color: Theme.text; vertical-alignment: center; }
+                        LineEdit { horizontal-stretch: 1; text <=> root.variable; enabled: !root.child-open; edited => { root.changed(); } }
+                    }
+                    if root.kind == 5: VerticalLayout {
+                        Text { text: "static text:"; color: Theme.text; }
+                        CappedLineEdit { text <=> root.static-text; enabled: !root.child-open; edited => { root.changed(); } }
+                        HorizontalLayout {
+                            Text { text: "number to output:"; color: Theme.text; vertical-alignment: center; }
+                            SpinBox { value <=> root.output-count; minimum: 1; maximum: 65535; enabled: !root.child-open; edited => { root.changed(); } }
+                        }
+                    }
+                    // the formula panel's "export" (0 to clipboard, 1 to png) and
+                    // "import" (2 from clipboard, 3 from png)
+                    HorizontalLayout {
+                        spacing: 4px;
+                        SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to png"]; available: !root.child-open && !root.deleting; selected(mode) => { root.exchange(mode); } }
+                        SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from png"]; available: !root.child-open && !root.deleting; selected(mode) => { root.exchange(mode + 2); } }
+                    }
+                    Text { text: root.newline-note; wrap: word-wrap; color: Theme.text; }
+                    Btn { text: root.processing; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.edit-processing(); } }
+                }
+                VerticalLayout {
+                    horizontal-stretch: 1; spacing: 6px;
+                    Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
+                    HorizontalLayout {
+                        CappedLineEdit { text <=> root.fetch-url; placeholder-text: "URL to fetch"; enabled: !root.child-open; }
+                        Btn { text: "fetch from URL"; enabled: !root.child-open; clicked => { root.fetch(); } }
+                        Btn { text: "cancel fetch"; enabled: root.fetching; clicked => { root.cancel-fetch(); } }
+                    }
+                    if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
+                    HorizontalLayout {
+                        ComboBox { model: root.examples; current-index <=> root.example; enabled: !root.child-open; selected => { root.example-chosen(); } }
+                        Btn { text: "add example"; enabled: !root.child-open; clicked => { root.add-example(); } }
+                        Btn { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.remove-example(); } }
+                    }
+                    HorizontalLayout {
+                        Btn { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
+                        Btn { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
+                    }
+                    Text { text: root.raw-description; color: Theme.text; wrap: word-wrap; }
+                    TextEdit { vertical-stretch: 1; text: root.raw-preview; read-only: true; }
+                    Text { text: "parsing context (one key=value per line)"; color: Theme.text; }
+                    TextEdit { height: 65px; text <=> root.context; enabled: !root.child-open; edited(t) => { root.context = t; root.changed(); } }
+                    Btn { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.test(); } }
+                    Text { text: root.status; wrap: word-wrap; color: Theme.text; }
+                    ListTable { vertical-stretch: 1; columns: [{title: "parsed strings", width: 430px, stretch: true}]; rows: root.results; }
+                }
+            }
+            if root.deleting: Asking { title: "Are you sure?"; message: root.question; choices: ["yes", "no"]; chosen(i) => { root.chosen(i); } cancelled => { root.cancelled(); } }
+            Text { text: root.veto; wrap: word-wrap; color: Theme.text; }
+            HorizontalLayout { alignment: end; spacing: 6px;
+                Btn { text: "apply"; enabled: !root.deleting && !root.child-open; clicked => { root.apply(); } }
+                Btn { text: "cancel"; clicked => { root.cancel(); } }
+            }
         }
     }
 }
@@ -178,41 +191,54 @@ export component FormulaRuleWindow inherits Window {
     callback changed(); callback edit-match(); callback attribute-put(); callback attribute-remove(int);
     callback apply(); callback cancel(); callback closed();
     in property <bool> child-open;
-    VerticalLayout {
-        padding: 10px; spacing: 6px;
-        Text { text: root.description; wrap: word-wrap; color: Theme.text; }
-        ComboBox { enabled: !root.child-open; model: root.types; current-index <=> root.rule-type; selected => { root.changed(); } }
-        if root.html: HorizontalLayout {
-            Text { text: "tag name (blank = any):"; color: Theme.text; vertical-alignment: center; }
-            LineEdit { enabled: !root.child-open; horizontal-stretch: 1; text <=> root.tag; edited => { root.changed(); } }
-        }
-        if root.html && root.rule-type != 1: VerticalLayout {
-            Text { text: "tag attributes (activate a row to remove)"; color: Theme.text; }
-            ListTable { height: 110px; columns: [{title: "name=value", width: 580px, stretch: true}]; rows: root.attributes; row-activated(r) => { if !root.child-open { root.attribute-remove(r); } } }
-            HorizontalLayout {
-                LineEdit { enabled: !root.child-open; placeholder-text: "name"; text <=> root.attr-key; }
-                LineEdit { enabled: !root.child-open; placeholder-text: "value"; text <=> root.attr-value; }
-                Btn { enabled: !root.child-open; text: "set attribute"; clicked => { root.attribute-put(); } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
+            reject
         }
-        if (root.html && root.rule-type != 1) || (!root.html && (root.rule-type == 2 || root.rule-type == 5)): HorizontalLayout {
-            if root.html: CheckBox { enabled: !root.child-open; text: "fetch indexed tag (otherwise get all)"; checked <=> root.index-on; toggled => { root.changed(); } }
-            Text { text: "index:"; color: Theme.text; vertical-alignment: center; }
-            SpinBox { value <=> root.index; minimum: -65536; maximum: 65535; enabled: (!root.html || root.index-on) && !root.child-open; edited => { root.changed(); } }
-        }
-        if (root.html && root.rule-type == 1) || (!root.html && root.rule-type == 4): HorizontalLayout {
-            Text { text: "depth/steps to ascend:"; color: Theme.text; vertical-alignment: center; }
-            SpinBox { enabled: !root.child-open; value <=> root.depth; minimum: 1; maximum: root.html ? 255 : 64; edited => { root.changed(); } }
-        }
-        if root.html: CheckBox { enabled: !root.child-open; text: "should test tag string"; checked <=> root.match-on; toggled => { root.changed(); } }
-        if root.html || root.rule-type == 0 || root.rule-type == 3: Btn {
-            text: root.match-label; enabled: (!root.html || root.match-on) && !root.child-open; clicked => { root.edit-match(); }
-        }
-        Rectangle { vertical-stretch: 1; }
-        Text { text: root.veto; color: Theme.text; }
-        HorizontalLayout { alignment: end; spacing: 6px;
-            Btn { text: "apply"; enabled: !root.child-open; clicked => { root.apply(); } }
-            Btn { text: "cancel"; clicked => { root.cancel(); } }
+        VerticalLayout {
+            padding: 10px; spacing: 6px;
+            Text { text: root.description; wrap: word-wrap; color: Theme.text; }
+            ComboBox { enabled: !root.child-open; model: root.types; current-index <=> root.rule-type; selected => { root.changed(); } }
+            if root.html: HorizontalLayout {
+                Text { text: "tag name (blank = any):"; color: Theme.text; vertical-alignment: center; }
+                LineEdit { enabled: !root.child-open; horizontal-stretch: 1; text <=> root.tag; edited => { root.changed(); } }
+            }
+            if root.html && root.rule-type != 1: VerticalLayout {
+                Text { text: "tag attributes (activate a row to remove)"; color: Theme.text; }
+                ListTable { height: 110px; columns: [{title: "name=value", width: 580px, stretch: true}]; rows: root.attributes; row-activated(r) => { if !root.child-open { root.attribute-remove(r); } } }
+                HorizontalLayout {
+                    LineEdit { enabled: !root.child-open; placeholder-text: "name"; text <=> root.attr-key; }
+                    LineEdit { enabled: !root.child-open; placeholder-text: "value"; text <=> root.attr-value; }
+                    Btn { enabled: !root.child-open; text: "set attribute"; clicked => { root.attribute-put(); } }
+                }
+            }
+            if (root.html && root.rule-type != 1) || (!root.html && (root.rule-type == 2 || root.rule-type == 5)): HorizontalLayout {
+                if root.html: CheckBox { enabled: !root.child-open; text: "fetch indexed tag (otherwise get all)"; checked <=> root.index-on; toggled => { root.changed(); } }
+                Text { text: "index:"; color: Theme.text; vertical-alignment: center; }
+                SpinBox { value <=> root.index; minimum: -65536; maximum: 65535; enabled: (!root.html || root.index-on) && !root.child-open; edited => { root.changed(); } }
+            }
+            if (root.html && root.rule-type == 1) || (!root.html && root.rule-type == 4): HorizontalLayout {
+                Text { text: "depth/steps to ascend:"; color: Theme.text; vertical-alignment: center; }
+                SpinBox { enabled: !root.child-open; value <=> root.depth; minimum: 1; maximum: root.html ? 255 : 64; edited => { root.changed(); } }
+            }
+            if root.html: CheckBox { enabled: !root.child-open; text: "should test tag string"; checked <=> root.match-on; toggled => { root.changed(); } }
+            if root.html || root.rule-type == 0 || root.rule-type == 3: Btn {
+                text: root.match-label; enabled: (!root.html || root.match-on) && !root.child-open; clicked => { root.edit-match(); }
+            }
+            Rectangle { vertical-stretch: 1; }
+            Text { text: root.veto; color: Theme.text; }
+            HorizontalLayout { alignment: end; spacing: 6px;
+                Btn { text: "apply"; enabled: !root.child-open; clicked => { root.apply(); } }
+                Btn { text: "cancel"; clicked => { root.cancel(); } }
+            }
         }
     }
 }

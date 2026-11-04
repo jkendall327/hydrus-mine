@@ -480,6 +480,9 @@ fn open_editor(
     slots.formula.strings.set_store(store);
     test.prepare_examples();
     let w = crate::app_title::new::<crate::ParserEditWindow>()?;
+    // (the "edit parser", "edit content parser" and "edit sub page parser"
+    // `DialogEdit`s on `deeply_nested_dialog`)
+    let ended = crate::dialog::Dialog::keyed(&w, "deeply_nested_dialog");
     let page = matches!(value, Value::Page(_));
     w.set_page(page);
     w.set_document(test.text.as_str().into());
@@ -987,12 +990,12 @@ fn open_editor(
         }
     });
     w.on_force_close({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || ended.cancel_confirmed()
     });
     w.on_answered({
         let weak = w.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         let slots = slots.clone();
         let fetch = fetch.clone();
@@ -1030,19 +1033,19 @@ fn open_editor(
                 return;
             }
             if yes {
-                close();
+                ended.cancel_confirmed();
             } else if let Some(w) = weak.upgrade() {
                 w.set_question(SharedString::new());
             }
         }
     });
-    w.on_action({ let weak = w.as_weak(); let state = state.clone(); let slots = slots.clone(); let store = store.clone(); let refresh = refresh.clone(); let blocked = blocked.clone(); let active = active.clone(); let close = close.clone(); let fetch = fetch.clone(); move |action| {
+    w.on_action({ let weak = w.as_weak(); let state = state.clone(); let slots = slots.clone(); let store = store.clone(); let refresh = refresh.clone(); let blocked = blocked.clone(); let active = active.clone(); let ended = ended.clone(); let fetch = fetch.clone(); move |action| {
         if blocked() && !(action == "cancel" && fetch.busy() && active.get()) { return; } let Some(w) = weak.upgrade() else { return; };
         if !w.get_question().is_empty() { return; }
         let result = (|| -> Result<(),String> {
             match action.as_str() {
-                "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(Box::new(ContentEditor::new(&e.value(),e.test.clone()))), v @ Value::Page(_) => v.clone() }; applied(value)?; close(); }
-                "cancel" => { fetch.stop();let changed = { let e = state.borrow(); match (&e.value,&e.original) { (Value::Page(p),Value::Page(o)) => p != o, (Value::Content(e),Value::Content(o)) => e.value()!=o.value(), _ => false } }; if changed { w.set_question(if page { "It looks like you have made changes to the parser--are you sure you want to cancel?" } else { model::CONTENT_CANCEL }.into()); } else { close(); } }
+                "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(Box::new(ContentEditor::new(&e.value(),e.test.clone()))), v @ Value::Page(_) => v.clone() }; applied(value)?; ended.accept(); }
+                "cancel" => { fetch.stop(); ended.cancel(); }
                 "import" | "export" => {
                     use hydrus_gui_model::downloader_interchange::{Definition,Native};
                     let native=match &state.borrow().value{Value::Page(p)=>Native::Page((**p).clone()),Value::Content(c)=>Native::Content(c.value())};
@@ -1178,17 +1181,62 @@ fn open_editor(
         if let Err(error) = result { w.set_error(error.into()); }
         refresh();
     } });
-    w.window().on_close_requested({
+    // (changed: a cancel, Escape or the window's close asks before
+    // discarding it, as the reference's `UserIsOKToCancel`)
+    ended.refuse_cancel({
         let weak = w.as_weak();
-        let exchange = slots.exchange.clone();
+        let state = state.clone();
         move || {
-            exchange.cancel();
-            if let Some(w) = weak.upgrade() {
-                w.invoke_action("cancel".into());
+            let Some(w) = weak.upgrade() else {
+                return true;
+            };
+            let changed = {
+                let e = state.borrow();
+                match (&e.value, &e.original) {
+                    (Value::Page(p), Value::Page(o)) => p != o,
+                    (Value::Content(e), Value::Content(o)) => e.value() != o.value(),
+                    _ => false,
+                }
+            };
+            if !changed {
+                return true;
             }
-            slint::CloseRequestResponse::KeepWindowShown
+            if w.get_question().is_empty() {
+                w.set_question(
+                    if page {
+                        "It looks like you have made changes to the parser--are you sure you want to cancel?"
+                    } else {
+                        model::CONTENT_CANCEL
+                    }
+                    .into(),
+                );
+            }
+            false
         }
     });
+    // (a question up takes Escape and the window's close first: answered
+    // no, as its own modal question in the reference)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if w.get_question().is_empty() {
+                return false;
+            }
+            w.invoke_answered(false);
+            w.get_question().is_empty()
+        }
+    });
+    // (its formula, string, content parser, sub-editor and import/export
+    // windows are modal children)
+    ended.modal_child({
+        let slots = slots.clone();
+        move || child_open(&slots, page)
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     refresh();
     w.show()?;
     Ok(w)
@@ -1554,6 +1602,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                         let title = format!("select parser for {}", class.name);
                         drop(s);
                         let child = crate::app_title::new::<crate::ParserPickerWindow>().map_err(|e| e.to_string())?;
+                        // (`SelectFromList`'s `DialogEdit` on `quick_select_dialog`)
+                        let picked = crate::dialog::Dialog::keyed(&child, "quick_select_dialog");
                         child.set_window_title(title.into());
                         child.set_selected_index(i32::try_from(selected).unwrap_or(0));
                         let choices = Rc::new(choices);
@@ -1575,21 +1625,20 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                         child.on_answered({
                             let state = state.clone(); let active = active.clone();
                             let weak = child.as_weak(); let parent = w.as_weak();
-                            let slot = slots.picker.clone(); let refresh = refresh.clone();
+                            let picker_active = picker_active.clone(); let picked = picked.clone();
                             move |yes| {
-                                if !picker_active.replace(false) { return; }
-                                if let Some(child) = weak.upgrade() {
-                                    if yes && active.get() && let Some((_, Some(parser))) = usize::try_from(child.get_selected_index()).ok().and_then(|i| choices.get(i))
-                                        && let Err(error) = state.borrow_mut().draft.link(&key, Some(parser)) && let Some(parent) = parent.upgrade() { parent.set_error(error.into()); }
-                                    let _ = child.hide();
-                                }
-                                slot.borrow_mut().take(); refresh();
+                                if !picker_active.get() { return; }
+                                if !yes { picked.cancel(); return; }
+                                if let Some(child) = weak.upgrade() && active.get() && let Some((_, Some(parser))) = usize::try_from(child.get_selected_index()).ok().and_then(|i| choices.get(i))
+                                    && let Err(error) = state.borrow_mut().draft.link(&key, Some(parser)) && let Some(parent) = parent.upgrade() { parent.set_error(error.into()); }
+                                picked.accept();
                             }
                         });
-                        child.window().on_close_requested({ let weak = child.as_weak(); move || {
-                            if let Some(child) = weak.upgrade() { child.invoke_answered(false); }
-                            slint::CloseRequestResponse::KeepWindowShown
-                        } });
+                        // (whatever ends it, through the dialog helper)
+                        picked.on_closed({
+                            let slot = slots.picker.clone(); let refresh = refresh.clone();
+                            move || { picker_active.set(false); slot.borrow_mut().take(); refresh(); }
+                        });
                         update(); child.show().map_err(|e| e.to_string())?;
                         *slots.picker.borrow_mut() = Some(child);
                     }

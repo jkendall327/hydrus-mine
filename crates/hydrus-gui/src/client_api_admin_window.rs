@@ -424,6 +424,10 @@ pub fn open(
     }
     let window =
         crate::app_title::new::<crate::ClientApiKeysWindow>().map_err(|e| e.to_string())?;
+    // (the reference's is a panel within review services, sized and placed
+    // with it: here a window of its own, ending as a dialog does, keeping no
+    // frame)
+    let ended = crate::dialog::Dialog::plain(&window);
     let editor = Rc::new(RefCell::new(
         Editor::new(&store).map_err(|e| e.to_string())?,
     ));
@@ -592,6 +596,7 @@ pub fn open(
     // edit what it asked for
     window.on_add_from_api_clicked({
         let open_edit = open_edit.clone();
+        let ended = ended.clone();
         let weak = window.as_weak();
         let store = store.clone();
         let slots = slots.clone();
@@ -672,6 +677,7 @@ pub fn open(
                     let waited = waited.clone();
                     let open_edit = open_edit.clone();
                     let slot = Rc::downgrade(&slots.request);
+                    let owner = ended.clone();
                     move || {
                         renew_registration(&store);
                         let Ok(registration) = store.read(
@@ -694,7 +700,8 @@ pub fn open(
                         if slot.upgrade().is_none() {
                             return;
                         }
-                        crate::debug_actions::message("Information", "Got request!");
+                        // (`ShowInformation` over the keys window)
+                        owner.message("Information", "Got request!");
                         open_edit(
                             true,
                             Some(AccessPermissions {
@@ -814,7 +821,7 @@ pub fn open(
     window.on_apply_clicked({
         let weak = window.as_weak();
         let editor = editor.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         move || {
             if active.get()
@@ -824,20 +831,36 @@ pub fn open(
                     return;
                 }
                 match editor.borrow().apply(&store) {
-                    Ok(()) => close(),
+                    Ok(()) => ended.accept(),
                     Err(e) => w.set_error(e.to_string().into()),
                 }
             }
         }
     });
     window.on_cancel_clicked({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (a question up takes Escape and the window's close first)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if !w.get_question().is_empty() => {
+                w.invoke_answered(false);
+                w.get_question().is_empty()
+            }
+            _ => false,
+        }
     });
+    // (its permissions editor and the request wait are modal children)
+    ended.modal_child({
+        let weak = window.as_weak();
+        move || weak.upgrade().is_some_and(|w| w.get_editing())
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show().map_err(|e| e.to_string())?;
     LAST.with(|s| *s.borrow_mut() = Some(window.as_weak()));
     *slots.keys.borrow_mut() = Some(window.clone_strong());

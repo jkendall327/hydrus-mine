@@ -98,6 +98,15 @@ export component MenuPanes inherits Rectangle {
         width: 0;
         height: 0;
         init => { self.focus(); }
+        // (Escape closes the menu first, as Qt's, before it reaches the
+        // window or its dialog)
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.dismiss();
+                return accept;
+            }
+            reject
+        }
     }
     // (not over the bar, whose titles still take the pointer)
     TouchArea {

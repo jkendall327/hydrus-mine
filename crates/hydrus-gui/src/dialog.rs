@@ -62,8 +62,11 @@ escapes!(
     BandwidthWindow,
     CheckerOptionsWindow,
     ChoiceButtonsWindow,
+    ClientApiKeysWindow,
     ComparatorWindow,
+    ConversionWindow,
     DatabaseLocationsWindow,
+    DeleteFilesWindow,
     DownloaderDefinitionEditWindow,
     DownloaderDefinitionsWindow,
     DownloaderDisplayWindow,
@@ -84,18 +87,25 @@ escapes!(
     FilenameTaggingWindow,
     FoldersWindow,
     ForceFiletypeWindow,
+    FormulaRuleWindow,
+    FormulaWindow,
+    FrameLocationWindow,
+    GranularityWindow,
     ImportFolderWindow,
     ImportOptionsOverwriteWindow,
     ImportOptionsWindow,
     IncrementalTaggingWindow,
     LocationMaxSizeWindow,
     LocationsWindow,
+    LoginCredentialDefinitionWindow,
     LoginCredentialsWindow,
     LoginDomainsWindow,
+    LoginScriptWindow,
     LoginScriptsWindow,
     LoginStepWindow,
     LoginTestResultWindow,
     ManageNotesWindow,
+    ManageRatingsWindow,
     ManageTagsWindow,
     ManageTimesWindow,
     ManageUrlsWindow,
@@ -104,7 +114,9 @@ escapes!(
     NetworkDataWindow,
     NetworkJobsWindow,
     OpenFileCallsWindow,
+    ParserEditWindow,
     ParserListWindow,
+    ParserPickerWindow,
     PngExportWindow,
     PngsExportWindow,
     PredicateEditorWindow,
@@ -112,12 +124,16 @@ escapes!(
     ReviewImportsWindow,
     SearchOrWindow,
     ServicesEditorWindow,
+    ServicesReviewWindow,
     ShortcutCommandWindow,
     ShortcutSetWindow,
     SidecarNodeWindow,
     SidecarRouterWindow,
     SidecarRoutersWindow,
     SimpleFormulaeWindow,
+    StringConverterWindow,
+    StringProcessorWindow,
+    StringStepWindow,
     SubscriptionsWindow,
     TagBannerWindow,
     TagDisplayWindow,
@@ -129,7 +145,18 @@ escapes!(
     WhatIsThisWindow,
 );
 
+/// A dialog on the helper, by its window: whether it is still about, and
+/// how it is ended as its owner goes ([`Dialog::cancel_confirmed`]).
+struct Helped {
+    window: *const slint::Window,
+    alive: Box<dyn Fn() -> bool>,
+    end: Rc<dyn Fn()>,
+}
+
 thread_local! {
+    /// Every dialog on the helper, so a window held on is ended as a dialog
+    /// when it is one ([`Dialog::hold`]).
+    static HELPED: RefCell<Vec<Helped>> = const { RefCell::new(Vec::new()) };
     /// The message or question a dialog last opened of its own (for tests).
     static LAST_OWN: RefCell<Option<slint::Weak<crate::ChoiceButtonsWindow>>> =
         const { RefCell::new(None) };
@@ -172,10 +199,16 @@ struct Inner<C: ComponentHandle + 'static> {
     /// A frame with a frame key of its own, kept as it closes.
     save_on_close: Cell<bool>,
     /// The windows it opened modally and holds on (see [`Dialog::hold`]),
-    /// each while it is shown.
-    holds: RefCell<Vec<Box<dyn Fn() -> bool>>>,
+    /// each while it is shown: whether it is, and how it is closed.
+    holds: RefCell<Vec<Held>>,
     /// Its own messages and questions, closed with it.
     own: RefCell<Vec<slint::Weak<crate::ChoiceButtonsWindow>>>,
+}
+
+/// A window held on: whether it is shown, and its close.
+struct Held {
+    open: Box<dyn Fn() -> bool>,
+    close: Box<dyn Fn()>,
 }
 
 /// An ordinary dialog or frame, until it is ended. Clones are the same one.
@@ -218,6 +251,23 @@ impl<C: Escapes + 'static> Dialog<C> {
         let dialog = Self::make(component, name, Kind::Dialog, Some(store.clone()));
         crate::windows::place_frame(component, store, name);
         dialog
+    }
+
+    /// [`Dialog::named`] in the main window's store (the reference's
+    /// `deeply_nested_dialog`, `quick_select_dialog`, `quick_entry_dialog`
+    /// dialogs); without one (no main window), kept nowhere.
+    pub(crate) fn keyed(component: &C, name: &'static str) -> Self {
+        match crate::windows::store() {
+            Some(store) => Self::named(component, &store, name),
+            None => Self::make(component, name, Kind::Dialog, None),
+        }
+    }
+
+    /// A dialog the reference doesn't size or place (an old
+    /// `ClientGUIDialogs.Dialog`, a panel hydrus-rs opens as a window of
+    /// its own): it ends as the ordinary dialogs do, keeping no frame.
+    pub(crate) fn plain(component: &C) -> Self {
+        Self::make(component, "regular_dialog", Kind::Dialog, None)
     }
 
     /// A frame the reference opens by a frame key of its own (the viewer's
@@ -294,6 +344,21 @@ impl<C: Escapes + 'static> Dialog<C> {
                 own: RefCell::default(),
             }),
         };
+        // (known by its window, for an owner that holds it)
+        HELPED.with(|helped| {
+            let mut helped = helped.borrow_mut();
+            helped.retain(|h| (h.alive)());
+            let (alive, end) = (Rc::downgrade(&dialog.inner), Rc::downgrade(&dialog.inner));
+            helped.push(Helped {
+                window: component.window(),
+                alive: Box::new(move || alive.upgrade().is_some_and(|inner| inner.open.get())),
+                end: Rc::new(move || {
+                    if let Some(inner) = end.upgrade() {
+                        Self { inner }.cancel_confirmed();
+                    }
+                }),
+            });
+        });
         // (the window holds it for as long as the window lives; it holds
         // the window only weakly)
         component.window().on_close_requested({
@@ -365,12 +430,50 @@ impl<C: Escapes + 'static> Dialog<C> {
     }
 
     /// Hold on `child`, a window it opened modally, for as long as that is
-    /// shown.
+    /// shown. Ended by its own buttons while `child` is still shown, it
+    /// ends `child` with it, so nothing it held outlives it: a dialog on
+    /// the helper is ended asking nothing, as Qt takes a modal child with
+    /// its parent (its own questions and held windows with it); any other
+    /// window is closed as its own close would, or hidden if it refuses.
     pub(crate) fn hold<W: ComponentHandle + 'static>(&self, child: &W) {
-        let child = child.as_weak();
-        self.inner.holds.borrow_mut().push(Box::new(move || {
-            child.upgrade().is_some_and(|w| w.window().is_visible())
-        }));
+        let at: *const slint::Window = child.window();
+        let helped = HELPED.with(|helped| {
+            helped
+                .borrow()
+                .iter()
+                .find(|h| std::ptr::eq(h.window, at) && (h.alive)())
+                .map(|h| h.end.clone())
+        });
+        let shown = child.as_weak();
+        let open: Box<dyn Fn() -> bool> =
+            Box::new(move || shown.upgrade().is_some_and(|w| w.window().is_visible()));
+        if let Some(end) = helped {
+            self.inner.holds.borrow_mut().push(Held {
+                open,
+                close: Box::new(move || end()),
+            });
+            return;
+        }
+        let closed = child.as_weak();
+        self.inner.holds.borrow_mut().push(Held {
+            open,
+            close: Box::new(move || {
+                let Some(w) = closed.upgrade() else {
+                    return;
+                };
+                // (a question up within it takes its first close, as
+                // Escape does; one that still refuses is hidden all the
+                // same, its owner gone)
+                for _ in 0..3 {
+                    if !w.window().is_visible() {
+                        return;
+                    }
+                    w.window()
+                        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+                }
+                let _ = w.hide();
+            }),
+        });
     }
 
     /// A message of its own (`ShowWarning`, `ShowInformation`): an "ok"
@@ -437,7 +540,7 @@ impl<C: Escapes + 'static> Dialog<C> {
 
     fn held(&self) -> bool {
         // (a held window once closed is let go)
-        self.inner.holds.borrow_mut().retain(|open| open());
+        self.inner.holds.borrow_mut().retain(|held| (held.open)());
         !self.inner.holds.borrow().is_empty()
             || self.inner.modal_child.borrow().iter().any(|open| open())
     }
@@ -520,6 +623,11 @@ impl<C: Escapes + 'static> Dialog<C> {
                 window.invoke_cancelled();
             }
         }
+        // (and so does every other window it held)
+        let held = std::mem::take(&mut *self.inner.holds.borrow_mut());
+        for held in held {
+            (held.close)();
+        }
         if let Some(timer) = self.inner.autosave.borrow_mut().take() {
             timer.stop();
         }
@@ -574,5 +682,70 @@ mod tests {
         assert!(!window.window().is_visible() && !dialog.is_open());
         assert!(dialog.cancel(), "already closed");
         assert_eq!(closed.get(), 1, "its closing ran once");
+    }
+
+    /// A dialog ended by its own buttons while it holds a child closes the
+    /// child with it (the child's own close: cancelled, if it is a dialog
+    /// on the helper), even one that refuses its close, so no child it
+    /// held outlives it.
+    #[test]
+    fn ending_a_dialog_closes_the_windows_it_holds() {
+        let _windows = crate::headless::init();
+        let parent = crate::AboutWindow::new().unwrap();
+        parent.show().unwrap();
+        let dialog = Dialog::new(&parent);
+        let child = crate::AboutWindow::new().unwrap();
+        child.show().unwrap();
+        let child_dialog = Dialog::new(&child);
+        let child_closed = Rc::new(Cell::new(false));
+        child_dialog.on_closed({
+            let child_closed = child_closed.clone();
+            move || child_closed.set(true)
+        });
+        // (a child with changes: its cancel asks, as `UserIsOKToCancel`)
+        let stubborn = crate::AboutWindow::new().unwrap();
+        stubborn.show().unwrap();
+        let stubborn_dialog = Dialog::new(&stubborn);
+        let stubborn_closed = Rc::new(Cell::new(false));
+        stubborn_dialog.on_closed({
+            let stubborn_closed = stubborn_closed.clone();
+            move || stubborn_closed.set(true)
+        });
+        stubborn_dialog.refuse_cancel({
+            let asker = Rc::downgrade(&stubborn_dialog.inner);
+            move || {
+                if let Some(inner) = asker.upgrade() {
+                    Dialog { inner }.ask("Sure you are ok to cancel?", || {});
+                }
+                false
+            }
+        });
+        // (and a window not on the helper)
+        let plain = crate::AboutWindow::new().unwrap();
+        plain.show().unwrap();
+        dialog.hold(&child);
+        dialog.hold(&stubborn);
+        dialog.hold(&plain);
+        // (held: its own close waits)
+        parent
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(parent.window().is_visible() && dialog.is_open());
+        // the child with changes asks
+        stubborn
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        let question = last_own_question().expect("it asks");
+        assert!(stubborn.window().is_visible());
+        dialog.accept();
+        assert!(!parent.window().is_visible());
+        assert!(!child.window().is_visible(), "the child closes with it");
+        assert!(child_closed.get() && !child_dialog.is_open(), "cancelled");
+        assert!(
+            !stubborn.window().is_visible() && !stubborn_dialog.is_open() && stubborn_closed.get(),
+            "the child with changes is ended, asking nothing more"
+        );
+        assert!(!question.window().is_visible(), "and its question with it");
+        assert!(!plain.window().is_visible(), "a plain window is closed");
     }
 }

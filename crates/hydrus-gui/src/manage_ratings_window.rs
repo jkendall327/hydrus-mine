@@ -119,6 +119,9 @@ pub(crate) fn open(
         .collect();
     let window =
         crate::app_title::new::<crate::ManageRatingsWindow>().map_err(|e| e.to_string())?;
+    // (the reference's `DialogManageRatings`, an old `ClientGUIDialogs.Dialog`
+    // it doesn't size or place: ending as a dialog does, keeping no frame)
+    let ended = crate::dialog::Dialog::plain(&window);
     window.set_window_title(title(files.len()).into());
     let sizes = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::RatingContextSizes>)
@@ -153,10 +156,20 @@ pub(crate) fn open(
             slot.borrow_mut().take();
         })
     };
+    // ("edit value" open: modal over it in the reference, so nothing in it
+    // can be used until that closes)
+    let busy: Rc<dyn Fn() -> bool> = Rc::new({
+        let weak = window.as_weak();
+        move || weak.upgrade().is_none_or(|w| w.get_editing())
+    });
     window.on_rating_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
+        let busy = busy.clone();
         move |row, left, proportion| {
+            if busy() {
+                return;
+            }
             let Ok(row) = usize::try_from(row) else {
                 return;
             };
@@ -173,10 +186,16 @@ pub(crate) fn open(
     // an inc/dec control's middle click: "edit value", its count typed
     let editing = editing.clone();
     window.on_rating_middle({
+        let owner = ended.clone();
         let state = state.clone();
         let refresh = refresh.clone();
         let editing = editing.clone();
+        let busy = busy.clone();
+        let parent = window.as_weak();
         move |row| {
+            if busy() {
+                return;
+            }
             let Ok(row) = usize::try_from(row) else {
                 return;
             };
@@ -206,10 +225,26 @@ pub(crate) fn open(
                     }
                 }
             });
-            edit.on_cancel(move || {
-                ended.cancel();
+            edit.on_cancel({
+                let ended = ended.clone();
+                move || {
+                    ended.cancel();
+                }
+            });
+            ended.on_closed({
+                let parent = parent.clone();
+                move || {
+                    if let Some(parent) = parent.upgrade() {
+                        parent.set_editing(false);
+                    }
+                }
             });
             if edit.show().is_ok() {
+                if let Some(parent) = parent.upgrade() {
+                    parent.set_editing(true);
+                }
+                // ("edit value" is modal over it)
+                owner.hold(&edit);
                 *editing.borrow_mut() = Some(edit);
             }
         }
@@ -217,7 +252,11 @@ pub(crate) fn open(
     window.on_copy({
         let state = state.clone();
         let refresh = refresh.clone();
+        let busy = busy.clone();
         move || {
+            if busy() {
+                return;
+            }
             let (text, notice) = state.borrow().editor.copy();
             crate::copy_to_clipboard(&text);
             state.borrow_mut().notice = notice;
@@ -227,7 +266,11 @@ pub(crate) fn open(
     window.on_paste({
         let state = state.clone();
         let refresh = refresh.clone();
+        let busy = busy.clone();
         move || {
+            if busy() {
+                return;
+            }
             let pasted = crate::from_clipboard();
             let mut state = state.borrow_mut();
             match pasted {
@@ -257,8 +300,12 @@ pub(crate) fn open(
     window.on_apply({
         let state = state.clone();
         let store = store.clone();
-        let close = close.clone();
+        let ended = ended.clone();
+        let busy = busy.clone();
         move || {
+            if busy() {
+                return;
+            }
             let updates = state.borrow().editor.updates();
             if !updates.is_empty() {
                 let files = files.clone();
@@ -276,17 +323,30 @@ pub(crate) fn open(
                     Err(e) => eprintln!("could not write the ratings: {e}"),
                 }
             }
-            close();
+            ended.accept();
         }
     });
-    window.on_cancel(move || close());
-    window.window().on_close_requested({
-        let slot = slot.clone();
+    window.on_cancel({
+        let ended = ended.clone();
         move || {
-            slot.borrow_mut().take();
-            slint::CloseRequestResponse::HideWindow
+            if !busy() {
+                ended.cancel();
+            }
         }
     });
+    // (its problem message takes Escape and the window's close first)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     show(&window, &state.borrow());
     window.show().map_err(|e| e.to_string())?;
     Ok(window)

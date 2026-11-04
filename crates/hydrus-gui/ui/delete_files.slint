@@ -36,6 +36,8 @@ component DeleteRadioButton inherits FocusScope {
     TouchArea {enabled:root.enabled;clicked=>{root.focus();root.toggled();}}
 }
 export component DeleteFilesWindow inherits Window {
+    // (Escape goes to the dialog helper: cancelled)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -62,7 +64,7 @@ export component DeleteFilesWindow inherits Window {
     forward-focus: keyboard;
     keyboard := FocusScope {
         capture-key-pressed(event)=>{
-            if event.text == Key.Escape {root.cancel();return accept;}
+            if event.text == Key.Escape {root.escape();return accept;}
             return reject;
         }
         key-pressed(event)=>{
