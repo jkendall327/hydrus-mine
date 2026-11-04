@@ -44,8 +44,15 @@ export component SearchOrWindow inherits Window {
     callback apply();
     callback cancel();
     callback closed();
-    FocusScope {
+    // (the keys the window's to start with, so Escape reaches them)
+    forward-focus: keys;
+    keys := FocusScope {
         capture-key-pressed(event) => {
+            if event.text == Key.Escape { if !root.escape-input() { root.escape(); } return accept; }
+            reject
+        }
+        // (and when the keys themselves have the keyboard, nothing within)
+        key-pressed(event) => {
             if event.text == Key.Escape { if !root.escape-input() { root.escape(); } return accept; }
             reject
         }

@@ -574,22 +574,20 @@ pub fn open(
             ended.cancel();
         }
     });
-    // (Escape: the note settings box closed first; nothing while the tag
-    // filter, a modal child in the reference, is open)
+    // (the tag filter is a modal child in the reference; Escape closes the
+    // note settings box first)
+    ended.modal_child({
+        let filter_slot = filter_slot.clone();
+        move || filter_slot.borrow().is_some()
+    });
     ended.escape_first({
         let weak = window.as_weak();
-        let filter_slot = filter_slot.clone();
-        move || {
-            if filter_slot.borrow().is_some() {
-                return true;
+        move || match weak.upgrade() {
+            Some(window) if window.get_note_settings_open() => {
+                window.invoke_note_settings_done(false);
+                true
             }
-            match weak.upgrade() {
-                Some(window) if window.get_note_settings_open() => {
-                    window.invoke_note_settings_done(false);
-                    true
-                }
-                _ => false,
-            }
+            _ => false,
         }
     });
     // (whatever ends it, through the dialog helper)

@@ -2823,9 +2823,12 @@ and closes); so do manage notes, URLs and times. Manage tags with changes
 staged asks before a cancel, Escape or its window's close discards them, as
 the reference's `UserIsOKToCancel`, on its own overlay rather than a
 separate yes/no dialog (which takes the place of a question already up).
-While manage times' date-time editor is open, Escape doesn't cancel the
-dialog under it (the reference's editor is modal; its cancel button still
-closes both). No migrated dialog yet has a panel check that refuses an apply
+While a dialog's modal child (the reference's) is open, neither Escape nor
+the dialog's own window close ends it (manage times under its date-time
+editor, merge options under its tag filter, the OR editor under a nested
+one, simple formulae under an export, and the rest in `dialog_sweep.rs`); its
+own cancel button still ends it and the child together, which Qt's
+modality would not let the user press. No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
 vetoed apply does). Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.

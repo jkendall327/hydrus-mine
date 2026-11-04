@@ -541,7 +541,17 @@ pub fn open(
             ended.cancel();
         }
     });
-    // (Escape: the "add defaults" questions cancelled first)
+    // (its formula editor, export to png(s) and import/export are modal
+    // children in the reference; Escape cancels "add defaults" first)
+    ended.modal_child({
+        let slots = slots.clone();
+        move || {
+            slots.formula.formula.borrow().is_some()
+                || slots.png.has_open()
+                || slots.pngs.has_open()
+                || slots.exchange.has_open()
+        }
+    });
     ended.escape_first({
         let weak = w.as_weak();
         move || match weak.upgrade() {

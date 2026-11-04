@@ -210,9 +210,13 @@ fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches()
         .as_ref()
         .unwrap()
         .clone_strong();
+    // (its predicate editor is a modal child: the window's own close waits
+    // on it, as Qt's modality has it; its cancel ends both)
     cancel
         .window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(cancel.window().is_visible() && old_child.window().is_visible());
+    cancel.invoke_cancel();
     assert!(!old_child.window().is_visible());
     assert!(bound.favourites.predicate_editor.borrow().is_none());
     manager.invoke_add();

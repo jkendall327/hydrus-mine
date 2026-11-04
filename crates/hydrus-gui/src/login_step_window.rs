@@ -807,12 +807,15 @@ pub fn open(
             }
         }
     });
-    // (Escape: "Remove all selected?" answered no first; nothing while a
-    // child, modal in the reference, is open)
+    // (its children are modal in the reference; Escape answers "Remove all
+    // selected?" no first)
+    ended.modal_child({
+        let weak = window.as_weak();
+        move || weak.upgrade().is_some_and(|window| window.get_child_open())
+    });
     ended.escape_first({
         let weak = window.as_weak();
         move || match weak.upgrade() {
-            Some(window) if window.get_child_open() => true,
             Some(window) if window.get_deleting() => {
                 window.invoke_action("back".into());
                 true

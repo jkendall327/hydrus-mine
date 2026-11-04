@@ -827,9 +827,8 @@ pub fn open(
             ended.cancel();
         }
     });
-    // (Escape: nothing while a service's editor, modal in the reference,
-    // is open)
-    ended.escape_first({
+    // (a service's editor is a modal child in the reference)
+    ended.modal_child({
         let slots = slots.clone();
         move || slots.edit.borrow().is_some()
     });

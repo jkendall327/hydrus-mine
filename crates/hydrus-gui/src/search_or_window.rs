@@ -609,6 +609,12 @@ fn open_with(
             ended.cancel();
         }
     });
+    // (its nested OR and system predicate editors are modal children in
+    // the reference)
+    ended.modal_child({
+        let state = state.clone();
+        move || state.blocked()
+    });
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();

@@ -728,6 +728,18 @@ fn escape_closes_a_dialogs_own_question_or_waits_on_its_child_first() {
             merge.window().is_visible() && filter.window().is_visible(),
             "merge: waits on its filter"
         );
+        // (nor does the window's own close end it under its child)
+        merge
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(merge.window().is_visible(), "merge: its close waits too");
+        // (and once the child has gone, Escape reaches it again)
+        filter.invoke_cancel();
+        escape(merge.window());
+        assert!(
+            !merge.window().is_visible(),
+            "merge: Escape again cancels it"
+        );
     })
     .join()
     .unwrap();
@@ -750,6 +762,10 @@ fn escape_closes_a_dialogs_own_question_or_waits_on_its_child_first() {
     escape(step.window());
     assert!(!step.get_deleting(), "login step: the question answered no");
     assert!(step.window().is_visible(), "login step: still open");
+    step.invoke_action("edit-content".into());
+    assert!(step.get_child_open(), "login step: a content parser opens");
+    escape(step.window());
+    assert!(step.window().is_visible(), "login step: waits on its child");
 
     // services: an edit child open under manage services; the counter's
     // "edit value" question in a service's editor
@@ -781,6 +797,16 @@ fn escape_closes_a_dialogs_own_question_or_waits_on_its_child_first() {
         "edit service: the question answered no"
     );
     assert!(edit.window().is_visible(), "edit service: still open");
+    escape(edit.window());
+    assert!(
+        !edit.window().is_visible(),
+        "edit service: Escape again cancels it"
+    );
+    escape(manage.window());
+    assert!(
+        !manage.window().is_visible(),
+        "manage services: once its child is gone"
+    );
 
     // simple downloader formulae: "add defaults"
     (bound.open_page)(&hydrus_gui::page_chooser::NewPage::SimpleDownloader);
@@ -795,6 +821,21 @@ fn escape_closes_a_dialogs_own_question_or_waits_on_its_child_first() {
         "formulae: the question cancelled"
     );
     assert!(formulae.window().is_visible(), "formulae: still open");
+    formulae.invoke_row_clicked(0, false, false);
+    formulae.invoke_exchange(1);
+    let png = hydrus_gui::png_export_window::last().expect("export to png opens");
+    escape(formulae.window());
+    assert!(
+        formulae.window().is_visible() && png.window().is_visible(),
+        "formulae: waits on its export"
+    );
+    escape(png.window());
+    assert!(!png.window().is_visible(), "the export: Escape cancels it");
+    escape(formulae.window());
+    assert!(
+        !formulae.window().is_visible(),
+        "formulae: Escape again cancels it"
+    );
 
     // favourites (on a search page): the list waits on its editor; the
     // editor's locations question answered no, and its predicate child
@@ -831,6 +872,45 @@ fn escape_closes_a_dialogs_own_question_or_waits_on_its_child_first() {
         edit.window().is_visible() && predicate.window().is_visible(),
         "favourite: waits on its predicate"
     );
+    predicate.invoke_cancel();
+    edit.invoke_or_action(3);
+    let or = take(&bound.favourites.search_or, "its OR editor");
+    escape(edit.window());
+    assert!(
+        edit.window().is_visible() && or.window().is_visible(),
+        "favourite: waits on its OR editor"
+    );
+    or.invoke_cancel();
+    escape(edit.window());
+    assert!(
+        !edit.window().is_visible(),
+        "favourite: Escape again cancels it"
+    );
+    escape(favourites.window());
+    assert!(
+        !favourites.window().is_visible(),
+        "favourites: once its editor is gone"
+    );
+
+    // the OR editor: a nested OR editor is its modal child
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    ui.invoke_search_edited("parent draft".into());
+    ui.invoke_search_or_action(3);
+    let or = take(&bound.search_or, "the OR editor");
+    // (laid out, as a shown native window is: its search input is made then)
+    widgets::lay_out(or.window(), 600.0, 400.0);
+    or.invoke_or_action(3);
+    let nested_slot = bound.search_or.child().expect("a nested OR editor");
+    let nested = take(&nested_slot, "a nested OR editor");
+    escape(or.window());
+    assert!(
+        or.window().is_visible() && nested.window().is_visible(),
+        "OR: waits on its nested editor"
+    );
+    nested.invoke_cancel();
+    escape(or.window());
+    assert!(!or.window().is_visible(), "OR: Escape again cancels it");
 }
 
 /// Tag siblings and parents open with the window's own keys focused (so

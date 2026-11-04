@@ -325,9 +325,8 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
             ended.cancel();
         }
     });
-    // (Escape: nothing while a favourite's editor, modal in the reference,
-    // is open)
-    ended.escape_first({
+    // (a favourite's editor is a modal child in the reference)
+    ended.modal_child({
         let edit = slots.edit.clone();
         move || edit.borrow().is_some()
     });
@@ -1407,22 +1406,21 @@ fn open_edit(
             ended.cancel();
         }
     });
-    // (Escape: the locations question answered no first; nothing while its
-    // predicate editor, modal in the reference, is open)
+    // (its predicate and OR editors are modal children in the reference;
+    // Escape answers the locations question no first)
+    ended.modal_child({
+        let child = child.clone();
+        let or_slot = or_slot.clone();
+        move || child.borrow().is_some() || or_slot.borrow().is_some()
+    });
     ended.escape_first({
         let weak = window.as_weak();
-        let child = child.clone();
-        move || {
-            if child.borrow().is_some() {
-                return true;
+        move || match weak.upgrade() {
+            Some(window) if window.get_selecting_locations() => {
+                window.invoke_locations_answered(false);
+                true
             }
-            match weak.upgrade() {
-                Some(window) if window.get_selecting_locations() => {
-                    window.invoke_locations_answered(false);
-                    true
-                }
-                _ => false,
-            }
+            _ => false,
         }
     });
     // (whatever ends it, through the dialog helper)
