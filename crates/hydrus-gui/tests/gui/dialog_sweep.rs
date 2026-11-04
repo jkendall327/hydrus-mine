@@ -3016,10 +3016,16 @@ fn a_dialogs_own_questions_and_messages_hold_it_as_the_references_modal_ones() {
     // (its "paste" menu, a popup: once closed, Escape reaches the dialog)
     widgets::lay_out(editor.window(), 900.0, 620.0);
     widgets::click(editor.window(), "paste");
-    assert!(widgets::popup_open(editor.window()), "import options: its paste menu");
+    assert!(
+        widgets::popup_open(editor.window()),
+        "import options: its paste menu"
+    );
     widgets::close_popups(editor.window());
     escape(editor.window());
-    assert!(!editor.window().is_visible(), "import options: Escape after its menu");
+    assert!(
+        !editor.window().is_visible(),
+        "import options: Escape after its menu"
+    );
 
     // the predicate editor (system:hash): its notice holds it, its
     // question takes Escape and the close first
