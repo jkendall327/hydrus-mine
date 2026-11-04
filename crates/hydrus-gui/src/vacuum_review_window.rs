@@ -280,6 +280,7 @@ fn open_using_with_admission(
     let rows = rows()?;
     let window =
         crate::app_title::new::<crate::VacuumReviewWindow>().map_err(|error| error.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_info(model::INFO.into());
     let state = Rc::new(Confirmation {
         window: window.as_weak(),
@@ -348,15 +349,15 @@ fn open_using_with_admission(
         }
     });
     window.on_close_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.close();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let state = state.clone();
         move || state.close()
-    });
-    window.window().on_close_requested({
-        let state = state.clone();
-        move || {
-            state.close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     state
         .timer

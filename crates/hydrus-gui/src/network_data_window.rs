@@ -692,6 +692,7 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         return Ok(w);
     }
     let window = crate::app_title::new::<crate::BandwidthWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_columns(columns(&[
         ("network context", 250.0),
         ("type", 105.0),
@@ -891,20 +892,23 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
         }
     });
     window.on_close_clicked({
-        let state = Rc::downgrade(&state);
+        let ended = ended.clone();
         move || {
-            if let Some(s) = state.upgrade() {
-                s.close();
-            }
+            ended.close();
         }
     });
-    window.window().on_close_requested({
+    // (a context's rules editor is a modal child in the reference)
+    ended.modal_child({
+        let state = Rc::downgrade(&state);
+        move || state.upgrade().is_some_and(|s| s.edit.borrow().is_some())
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let state = Rc::downgrade(&state);
         move || {
             if let Some(s) = state.upgrade() {
                 s.close();
             }
-            slint::CloseRequestResponse::KeepWindowShown
         }
     });
     state
@@ -1329,6 +1333,7 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         return Ok(w);
     }
     let window = crate::app_title::new::<crate::NetworkJobsWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_columns(columns(&[
         ("position", 150.0),
         ("url", 350.0),
@@ -1479,20 +1484,18 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         }
     });
     window.on_close_clicked({
-        let state = Rc::downgrade(&state);
+        let ended = ended.clone();
         move || {
-            if let Some(s) = state.upgrade() {
-                s.close();
-            }
+            ended.close();
         }
     });
-    window.window().on_close_requested({
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let state = Rc::downgrade(&state);
         move || {
             if let Some(s) = state.upgrade() {
                 s.close();
             }
-            slint::CloseRequestResponse::KeepWindowShown
         }
     });
     state

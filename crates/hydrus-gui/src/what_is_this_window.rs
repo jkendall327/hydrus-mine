@@ -141,6 +141,9 @@ fn import_paths(window: &WhatIsThisWindow, paths: &[PathBuf]) {
 /// If the window cannot be made.
 pub fn open() -> Result<WhatIsThisWindow, slint::PlatformError> {
     let window = crate::app_title::new::<WhatIsThisWindow>()?;
+    // (an ordinary frame: its window's close and Escape close it, and it
+    // keeps its size and place as it moves)
+    let _frame = crate::dialog::Dialog::frame(&window);
     let notice = Rc::new(slint::Timer::default());
     window.on_paste({
         let weak = window.as_weak();

@@ -23,31 +23,44 @@ export component TagSyncReviewWindow inherits Window {
     callback service-chosen(int);
     callback refresh-clicked();
     callback close-clicked();
-    VerticalLayout {
-        padding: 12px;
-        spacing: 8px;
-        Text { text: root.message; wrap: word-wrap; color: Theme.text; }
-        Text { text: root.status; wrap: word-wrap; color: root.status-valid ? Theme.valid : Theme.warning; }
-        TagServicePanels {
-            names: root.service-names;
-            index: root.service-index;
-            use-listbook: root.use-listbook;
-            chosen(i) => { root.service-chosen(i); }
-            VerticalLayout {
-                padding: 8px;
-                spacing: 6px;
-                alignment: start;
-                Text { text: root.summary; color: Theme.text; }
-                Text { text: root.progress; color: Theme.text; }
-                HorizontalLayout {
-                    alignment: end;
-                    Btn { text: "refresh"; clicked => { root.refresh-clicked(); } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 12px;
+            spacing: 8px;
+            Text { text: root.message; wrap: word-wrap; color: Theme.text; }
+            Text { text: root.status; wrap: word-wrap; color: root.status-valid ? Theme.valid : Theme.warning; }
+            TagServicePanels {
+                names: root.service-names;
+                index: root.service-index;
+                use-listbook: root.use-listbook;
+                chosen(i) => { root.service-chosen(i); }
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 6px;
+                    alignment: start;
+                    Text { text: root.summary; color: Theme.text; }
+                    Text { text: root.progress; color: Theme.text; }
+                    HorizontalLayout {
+                        alignment: end;
+                        Btn { text: "refresh"; clicked => { root.refresh-clicked(); } }
+                    }
                 }
             }
-        }
-        HorizontalLayout {
-            alignment: end;
-            Btn { text: "close"; clicked => { root.close-clicked(); } }
+            HorizontalLayout {
+                alignment: end;
+                Btn { text: "close"; clicked => { root.close-clicked(); } }
+            }
         }
     }
 }

@@ -18,19 +18,32 @@ export component LoginTestResultWindow inherits Window {
     in property <bool> copied;
     callback action(string);
     callback closed();
-    VerticalLayout { padding: 12px; spacing: 6px;
-        Text { text: "name: " + root.name; color: Theme.text; }
-        HorizontalLayout { Text { text: "url: "; color: Theme.text; vertical-alignment: center; } LineEdit { text: root.url; read-only: true; horizontal-stretch: 1; } }
-        Text { text: "body (if set):"; color: Theme.text; }
-        TextEdit { text: root.body; read-only: true; vertical-stretch: 1; }
-        Text { text: "data:"; color: Theme.text; }
-        TextEdit { text: root.data; read-only: true; vertical-stretch: 2; }
-        HorizontalLayout { alignment: end; Btn { text: root.copied ? "Copied!" : "copy data"; clicked => { root.action("copy"); } } }
-        Text { text: "new temp vars:"; color: Theme.text; }
-        TextEdit { text: root.variables; read-only: true; vertical-stretch: 1; }
-        Text { text: "new cookies:"; color: Theme.text; }
-        TextEdit { text: root.cookies; read-only: true; vertical-stretch: 1; }
-        Text { text: "result: " + root.result; color: Theme.text; wrap: word-wrap; }
-        HorizontalLayout { alignment: end; Btn { text: "close"; clicked => { root.action("close"); } } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout { padding: 12px; spacing: 6px;
+            Text { text: "name: " + root.name; color: Theme.text; }
+            HorizontalLayout { Text { text: "url: "; color: Theme.text; vertical-alignment: center; } LineEdit { text: root.url; read-only: true; horizontal-stretch: 1; } }
+            Text { text: "body (if set):"; color: Theme.text; }
+            TextEdit { text: root.body; read-only: true; vertical-stretch: 1; }
+            Text { text: "data:"; color: Theme.text; }
+            TextEdit { text: root.data; read-only: true; vertical-stretch: 2; }
+            HorizontalLayout { alignment: end; Btn { text: root.copied ? "Copied!" : "copy data"; clicked => { root.action("copy"); } } }
+            Text { text: "new temp vars:"; color: Theme.text; }
+            TextEdit { text: root.variables; read-only: true; vertical-stretch: 1; }
+            Text { text: "new cookies:"; color: Theme.text; }
+            TextEdit { text: root.cookies; read-only: true; vertical-stretch: 1; }
+            Text { text: "result: " + root.result; color: Theme.text; wrap: word-wrap; }
+            HorizontalLayout { alignment: end; Btn { text: "close"; clicked => { root.action("close"); } } }
+        }
     }
 }

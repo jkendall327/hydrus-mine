@@ -108,6 +108,7 @@ pub(crate) fn open(store: &Arc<Store>) {
             return;
         }
     };
+    let ended = crate::dialog::Dialog::frame(&window);
     let active = Rc::new(Cell::new(true));
     let listbook = store
         .read(settings::get::<TagEditingSettings>)
@@ -185,13 +186,13 @@ pub(crate) fn open(store: &Arc<Store>) {
         }
     });
     window.on_close_clicked({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.close();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
-    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     if let Err(e) = window.show() {
         eprintln!("could not show the tag display sync: {e}");
         return;

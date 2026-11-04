@@ -125,6 +125,7 @@ pub fn open(
         Migration::new(store, key, files).map_err(|e| e.to_string())?,
     ));
     let window = crate::app_title::new::<crate::TagMigrationWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_services(strings(
         settings.borrow().services.iter().map(|s| s.name.clone()),
     ));
@@ -421,11 +422,14 @@ pub fn open(
             slot.borrow_mut().take();
         }
     };
-    window.on_close_clicked(close.clone());
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    window.on_close_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.close();
+        }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(close);
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     *slot.borrow_mut() = Some(window.clone_strong());
     window.show().map_err(|e| e.to_string())?;

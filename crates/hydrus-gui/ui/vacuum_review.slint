@@ -20,36 +20,50 @@ export component VacuumReviewWindow inherits Window {
     callback vacuum-clicked();
     callback answered(bool);
     callback close-clicked();
-    VerticalLayout {
-        padding: 12px;
-        spacing: 8px;
-        Text { text: root.info; wrap: word-wrap; color: Theme.text; }
-        ListTable {
-            columns: [
-                {title: "name", width: 120px, stretch: false},
-                {title: "size", width: 80px, stretch: false},
-                {title: "internal free space", width: 130px, stretch: false},
-                {title: "last vacuum", width: 140px, stretch: false},
-                {title: "can vacuum?", width: 280px, stretch: true},
-                {title: "vacuum time estimate", width: 200px, stretch: false}];
-            rows: root.rows;
-            row-clicked(i, ctrl, shift) => { root.clicked(i, ctrl, shift); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.question != "" { root.answered(false); return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout {
-            alignment: start;
-            Btn { text: "vacuum"; enabled: root.can-vacuum && root.question == ""; clicked => { root.vacuum-clicked(); } }
-        }
-        if root.question != "": VerticalLayout {
-            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+        VerticalLayout {
+            padding: 12px;
+            spacing: 8px;
+            Text { text: root.info; wrap: word-wrap; color: Theme.text; }
+            ListTable {
+                columns: [
+                    {title: "name", width: 120px, stretch: false},
+                    {title: "size", width: 80px, stretch: false},
+                    {title: "internal free space", width: 130px, stretch: false},
+                    {title: "last vacuum", width: 140px, stretch: false},
+                    {title: "can vacuum?", width: 280px, stretch: true},
+                    {title: "vacuum time estimate", width: 200px, stretch: false}];
+                rows: root.rows;
+                row-clicked(i, ctrl, shift) => { root.clicked(i, ctrl, shift); }
+            }
             HorizontalLayout {
                 alignment: start;
-                Btn { text: "do it"; clicked => { root.answered(true); } }
-                Btn { text: "forget it"; clicked => { root.answered(false); } }
+                Btn { text: "vacuum"; enabled: root.can-vacuum && root.question == ""; clicked => { root.vacuum-clicked(); } }
             }
-        }
-        HorizontalLayout {
-            alignment: end;
-            Btn { text: "close"; clicked => { root.close-clicked(); } }
+            if root.question != "": VerticalLayout {
+                Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+                HorizontalLayout {
+                    alignment: start;
+                    Btn { text: "do it"; clicked => { root.answered(true); } }
+                    Btn { text: "forget it"; clicked => { root.answered(false); } }
+                }
+            }
+            HorizontalLayout {
+                alignment: end;
+                Btn { text: "close"; clicked => { root.close-clicked(); } }
+            }
         }
     }
 }

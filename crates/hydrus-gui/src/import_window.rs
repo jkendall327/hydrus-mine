@@ -61,6 +61,7 @@ pub(crate) fn open(
 ) -> Result<ReviewImportsWindow, String> {
     let window =
         crate::app_title::new::<crate::ReviewImportsWindow>().map_err(|e| e.to_string())?;
+    let ended = crate::dialog::Dialog::frame(&window);
     let tools = hydrus_media::MediaTools::new()
         .with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&sidecars.store));
     let review = Rc::new(RefCell::new(Review::with_tools(tools)));
@@ -261,7 +262,7 @@ pub(crate) fn open(
     });
     window.on_import_now({
         let review = review.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let import_now = import_now.clone();
         let options = options.clone();
         move || {
@@ -280,7 +281,7 @@ pub(crate) fn open(
                     .collect();
                 (paths, review.delete_after_success)
             };
-            close();
+            ended.close();
             import_now(
                 paths,
                 hydrus_store::queues::PathTags::new(),
@@ -294,7 +295,7 @@ pub(crate) fn open(
     // whose "apply" imports with its tags
     window.on_add_tags({
         let review = review.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let tagging = tagging.clone();
         let sidecars = sidecars.clone();
         let import_now = import_now.clone();
@@ -320,12 +321,12 @@ pub(crate) fn open(
             };
             let names: Vec<String> = paths.iter().map(|p| p.0.clone()).collect();
             let done: crate::filename_tagging_window::Done = {
-                let close = close.clone();
+                let ended = ended.clone();
                 let import_now = import_now.clone();
                 let options = options.clone();
                 Rc::new(move |tags, routers| {
                     let options = options.borrow().clone();
-                    close();
+                    ended.close();
                     import_now(paths.clone(), tags, routers, delete, options);
                 })
             };
@@ -342,16 +343,20 @@ pub(crate) fn open(
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.close();
         }
     });
+    // (its import options editor and filename tagging are modal children
+    // in the reference)
+    ended.modal_child({
+        let options_slot = options_slot.clone();
+        let tagging = tagging.clone();
+        move || options_slot.borrow().is_some() || tagging.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(close);
     // (files dropped on the window join its list, as the reference's do)
     crate::drops::on_files_dropped(window.window(), {
         let review = review.clone();

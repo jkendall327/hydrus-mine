@@ -37,6 +37,7 @@ pub fn open_result(
 ) -> Result<LoginTestResultWindow, slint::PlatformError> {
     cancel_result(slot);
     let window = crate::app_title::new::<crate::LoginTestResultWindow>()?;
+    let ended = crate::dialog::Dialog::frame(&window);
     window.set_name(value.name.as_str().into());
     window.set_url(value.url.as_str().into());
     window.set_body(value.body.as_deref().unwrap_or_default().into());
@@ -66,7 +67,7 @@ pub fn open_result(
     });
     window.on_action({
         let weak = window.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         let data = value.data.clone();
         move |action| {
@@ -74,7 +75,9 @@ pub fn open_result(
                 return;
             }
             match action.as_str() {
-                "close" => close(),
+                "close" => {
+                    ended.close();
+                }
                 "copy" => {
                     crate::copy_to_clipboard(&data);
                     if let Some(window) = weak.upgrade() {
@@ -85,10 +88,8 @@ pub fn open_result(
             }
         }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
-    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show()?;
     *slot.borrow_mut() = Some(window.clone_strong());
     Ok(window)

@@ -191,112 +191,126 @@ export component AutoResolutionReviewWindow inherits Window {
     callback cancelled();
     callback close-window();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        Text {
-            text: root.rule-name;
-            horizontal-alignment: center;
-            wrap: word-wrap;
-            color: Theme.text;
-        }
-        HorizontalLayout {
-            spacing: 0px;
-            alignment: start;
-            for name[i] in root.tabs: Tab {
-                text: name;
-                current: i == root.tab;
-                clicked => { root.tab-chosen(i); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.asking { root.cancelled(); return accept; }
+                root.escape();
+                return accept;
             }
+            reject
         }
-        Text {
-            text: root.box-title;
-            font-weight: 700;
-            color: Theme.text;
-        }
-        HorizontalLayout {
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
             Text {
-                horizontal-stretch: 1;
-                text: root.label;
-                vertical-alignment: center;
+                text: root.rule-name;
+                horizontal-alignment: center;
                 wrap: word-wrap;
                 color: Theme.text;
             }
-            Btn {
-                text: "refresh";
-                enabled: !root.working && !root.asking;
-                clicked => { root.refresh(); }
+            HorizontalLayout {
+                spacing: 0px;
+                alignment: start;
+                for name[i] in root.tabs: Tab {
+                    text: name;
+                    current: i == root.tab;
+                    clicked => { root.tab-chosen(i); }
+                }
             }
-        }
-        HorizontalLayout {
-            spacing: 6px;
-            alignment: start;
             Text {
-                text: "only sample this many: ";
-                vertical-alignment: center;
+                text: root.box-title;
+                font-weight: 700;
                 color: Theme.text;
             }
-            SpinBox {
-                enabled: !root.fetch-all;
-                minimum: 1;
-                maximum: 100000000;
-                value <=> root.fetch-limit;
-                edited => { root.fetch-changed(); }
+            HorizontalLayout {
+                spacing: 6px;
+                Text {
+                    horizontal-stretch: 1;
+                    text: root.label;
+                    vertical-alignment: center;
+                    wrap: word-wrap;
+                    color: Theme.text;
+                }
+                Btn {
+                    text: "refresh";
+                    enabled: !root.working && !root.asking;
+                    clicked => { root.refresh(); }
+                }
             }
-            CheckBox {
-                text: "fetch all";
-                checked <=> root.fetch-all;
-                toggled => { root.fetch-changed(); }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: start;
+                Text {
+                    text: "only sample this many: ";
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                SpinBox {
+                    enabled: !root.fetch-all;
+                    minimum: 1;
+                    maximum: 100000000;
+                    value <=> root.fetch-limit;
+                    edited => { root.fetch-changed(); }
+                }
+                CheckBox {
+                    text: "fetch all";
+                    checked <=> root.fetch-all;
+                    toggled => { root.fetch-changed(); }
+                }
             }
-        }
-        PairList {
-            vertical-stretch: 1;
-            min-height: (root.asking ? 1 : 4) * 90px + 26px;
-            columns: root.columns;
-            rows: root.rows;
-            row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
-            row-activated(r) => { root.row-activated(r); }
-            menu-label: root.menu-label;
-            show-in-page => { root.show-in-page(); }
-        }
-        if root.tab == 0: HorizontalLayout {
-            spacing: 6px;
-            Btn {
-                horizontal-stretch: 1;
-                text: root.approve-text;
-                enabled: root.can-act && !root.working && !root.asking;
-                clicked => { root.approve(); }
+            PairList {
+                vertical-stretch: 1;
+                min-height: (root.asking ? 1 : 4) * 90px + 26px;
+                columns: root.columns;
+                rows: root.rows;
+                row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                row-activated(r) => { root.row-activated(r); }
+                menu-label: root.menu-label;
+                show-in-page => { root.show-in-page(); }
             }
-            Btn {
-                horizontal-stretch: 1;
-                text: root.deny-text;
-                enabled: root.can-act && !root.working && !root.asking;
-                clicked => { root.deny(); }
+            if root.tab == 0: HorizontalLayout {
+                spacing: 6px;
+                Btn {
+                    horizontal-stretch: 1;
+                    text: root.approve-text;
+                    enabled: root.can-act && !root.working && !root.asking;
+                    clicked => { root.approve(); }
+                }
+                Btn {
+                    horizontal-stretch: 1;
+                    text: root.deny-text;
+                    enabled: root.can-act && !root.working && !root.asking;
+                    clicked => { root.deny(); }
+                }
             }
-        }
-        if root.tab == 0: Btn {
-            text: "select all";
-            enabled: root.can-select-all && !root.working && !root.asking;
-            clicked => { root.select-all(); }
-        }
-        if root.tab != 0: Btn {
-            text: "undo";
-            enabled: root.can-undo && !root.asking;
-            clicked => { root.undo(); }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            chosen(index) => { root.chosen(index); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            Btn {
-                text: "close";
-                clicked => { root.close-window(); }
+            if root.tab == 0: Btn {
+                text: "select all";
+                enabled: root.can-select-all && !root.working && !root.asking;
+                clicked => { root.select-all(); }
+            }
+            if root.tab != 0: Btn {
+                text: "undo";
+                enabled: root.can-undo && !root.asking;
+                clicked => { root.undo(); }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
+            }
+            HorizontalLayout {
+                alignment: end;
+                Btn {
+                    text: "close";
+                    clicked => { root.close-window(); }
+                }
             }
         }
     }

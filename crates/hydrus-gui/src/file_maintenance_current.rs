@@ -358,6 +358,7 @@ impl Control {
         }
         let window =
             crate::app_title::new::<crate::FileMaintenanceWindow>().map_err(|e| e.to_string())?;
+        let ended = crate::dialog::Dialog::frame(&window);
         // A new Review frame starts without selection or stale count rows.
         // Keep this owner's column sort choice, but refetch actual counts.
         self.0.queue.borrow_mut().replace(BTreeMap::new());
@@ -504,13 +505,13 @@ impl Control {
             }
         });
         window.on_close_clicked({
-            let close = close.clone();
-            move || close()
+            let ended = ended.clone();
+            move || {
+                ended.close();
+            }
         });
-        window.window().on_close_requested(move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        });
+        // (whatever ends it, through the dialog helper)
+        ended.on_closed(move || close());
         *self.0.slot.borrow_mut() = Some(window.clone_strong());
         self.paint();
         if let Err(error) = window.show() {
