@@ -533,7 +533,7 @@ fn open_import_folders_ready(
             _ => false,
         }
     });
-    // (its import folder editor is a modal children)
+    // (its import folder editor is a modal child)
     ended.modal_child({
         let edit = slots.import_edit.clone();
         move || edit.borrow().is_some()
@@ -800,6 +800,7 @@ fn open_import_folder(
         let open_files = slots.open_files.clone();
         let state = state.clone();
         let weak = window.as_weak();
+        let ended = ended.clone();
         move || {
             let Some(owner) = weak.upgrade() else {
                 return;
@@ -859,6 +860,7 @@ fn open_import_folder(
                 closed,
             ) {
                 Ok(window) => {
+                    ended.hold(&window);
                     *log.borrow_mut() = Some(window);
                     owner.set_file_log_open(true);
                 }
@@ -872,6 +874,7 @@ fn open_import_folder(
         let state = state.clone();
         let store = store.clone();
         let sidecars = slots.sidecars.clone();
+        let ended = ended.clone();
         move || {
             let routers = state.borrow().folder.settings.routers.clone();
             let tools = hydrus_media::MediaTools::new()
@@ -901,7 +904,10 @@ fn open_import_folder(
                 &sidecars,
                 applied,
             ) {
-                Ok(w) => *sidecars.routers.borrow_mut() = Some(w),
+                Ok(w) => {
+                    ended.hold(&w);
+                    *sidecars.routers.borrow_mut() = Some(w);
+                }
                 Err(e) => eprintln!("could not open the sidecars: {e}"),
             }
         }
@@ -1049,6 +1055,7 @@ fn open_import_folder(
         let state = state.clone();
         let store = store.clone();
         let tagging_slot = slots.filename_tagging.clone();
+        let ended = ended.clone();
         move |key: String, options: hydrus_parse::folders::FilenameTagging| {
             if tagging_slot.borrow().is_some() {
                 return;
@@ -1086,7 +1093,10 @@ fn open_import_folder(
                 &tagging_slot,
                 done,
             ) {
-                Ok(dialog) => *tagging_slot.borrow_mut() = Some(dialog),
+                Ok(dialog) => {
+                    ended.hold(&dialog);
+                    *tagging_slot.borrow_mut() = Some(dialog);
+                }
                 Err(e) => eprintln!("could not open the filename tagging options: {e}"),
             }
         }
@@ -1169,6 +1179,7 @@ fn open_import_folder(
         let state = state.clone();
         let store = store.clone();
         let editor_slot = slots.import_options.clone();
+        let ended = ended.clone();
         move || {
             if editor_slot.borrow().is_some() {
                 return;
@@ -1193,7 +1204,10 @@ fn open_import_folder(
                 &editor_slot,
                 done,
             ) {
-                Ok(editor) => *editor_slot.borrow_mut() = Some(editor),
+                Ok(editor) => {
+                    ended.hold(&editor);
+                    *editor_slot.borrow_mut() = Some(editor);
+                }
                 Err(e) => eprintln!("could not open the import options: {e}"),
             }
         }
@@ -1275,16 +1289,8 @@ fn open_import_folder(
             _ => false,
         }
     });
-    // (its filename tagging, import options, file log and sidecars are modal children)
-    ended.modal_child({
-        let slots = slots.clone();
-        move || {
-            slots.filename_tagging.borrow().is_some()
-                || slots.import_options.borrow().is_some()
-                || slots.log.borrow().is_some()
-                || slots.sidecars.routers.borrow().is_some()
-        }
-    });
+    // (its filename tagging, import options, file log and sidecars are
+    // modal children: each held as it opens, `ended.hold`)
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();
@@ -1516,7 +1522,7 @@ fn open_export_folders_ready(
             _ => false,
         }
     });
-    // (its export folder editor is a modal children)
+    // (its export folder editor is a modal child)
     ended.modal_child({
         let edit = slots.export_edit.clone();
         move || edit.borrow().is_some()
@@ -1957,7 +1963,7 @@ fn open_export_folder(
             _ => false,
         }
     });
-    // (its sidecars editor is a modal children)
+    // (its sidecars editor is a modal child)
     ended.modal_child({
         let routers = sidecars.routers.clone();
         move || routers.borrow().is_some()

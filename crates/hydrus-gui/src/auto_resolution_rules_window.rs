@@ -571,6 +571,12 @@ fn open_comparator(
         let state = state.clone();
         let store = store.clone();
         let png = crate::png_export_window::Slots::default();
+        let ended = ended.clone();
+        // (its png export, a `DialogNullipotent`, is a modal child)
+        ended.modal_child({
+            let png = png.clone();
+            move || png.has_open()
+        });
         move |mode| {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -585,7 +591,7 @@ fn open_comparator(
                 show_comparator(&window, state);
                 messages
             };
-            crate::debug_actions::messages(messages);
+            ended.messages(messages);
         }
     });
     // (the sub-comparators' own editors, each giving back into this one)
@@ -1136,6 +1142,7 @@ fn open_rule(
         let state = state.clone();
         let store = store.clone();
         let slots = slots.clone();
+        let ended = ended.clone();
         move |mode| {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -1158,7 +1165,7 @@ fn open_rule(
                 show_rule(&window, state, false);
                 messages
             };
-            crate::debug_actions::messages(messages);
+            ended.messages(messages);
         }
     });
     // the preview: the rule as edited, or why it can't be had
@@ -1302,6 +1309,11 @@ fn open_rule(
         move || {
             ended.cancel();
         }
+    });
+    // (its png export, a `DialogNullipotent`, is a modal child)
+    ended.modal_child({
+        let png = slots.png.clone();
+        move || png.has_open()
     });
     // (its comparator, merge options, locations and duplicate filter windows are modal children)
     ended.modal_child({
@@ -1589,8 +1601,9 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
         let refresh = refresh.clone();
         let store = store.clone();
         let slots = slots.clone();
+        let ended = ended.clone();
         move |mode| {
-            exchange(&store, &slots, &state, mode);
+            exchange(&store, &slots, &state, mode, &ended);
             refresh();
         }
     });
@@ -1665,6 +1678,11 @@ pub(crate) fn open(store: &Arc<Store>, slots: &Slots, applied: Rc<dyn Fn()>) -> 
             _ => false,
         }
     });
+    // (its png export, a `DialogNullipotent`, is a modal child)
+    ended.modal_child({
+        let png = slots.png.clone();
+        move || png.has_open()
+    });
     // (its rule editor is a modal child)
     ended.modal_child({
         let rule = slots.rule.clone();
@@ -1730,10 +1748,14 @@ fn with_encode_context<R>(
 
 /// Say why an import could not be read, in the wording of the source: files
 /// (`_ImportJSONs`, `_ImportPNGs`) or the clipboard.
-fn import_failed(from_file: bool, error: &str) {
+fn import_failed(
+    ended: &crate::dialog::Dialog<AutoResolutionRulesWindow>,
+    from_file: bool,
+    error: &str,
+) {
     let (title, message) =
         hydrus_gui_model::auto_resolution_exchange::import_failure(from_file, error);
-    crate::debug_actions::message(title, &message);
+    ended.message(title, &message);
 }
 
 /// The png export of serialised text, described and titled as the
@@ -1752,7 +1774,13 @@ fn export_png(
 }
 
 /// The list's export (0-2), import (3-5) and duplicate (6) buttons.
-fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, mode: i32) {
+fn exchange(
+    store: &Arc<Store>,
+    slots: &Slots,
+    state: &Rc<RefCell<ListState>>,
+    mode: i32,
+    ended: &crate::dialog::Dialog<AutoResolutionRulesWindow>,
+) {
     use hydrus_gui_model::auto_resolution_exchange as ex;
     let selected: Vec<(Option<i64>, Rule)> = {
         let state = state.borrow();
@@ -1769,7 +1797,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
     let exported = || {
         let rules: Vec<(Option<i64>, &Rule)> = selected.iter().map(|(id, r)| (*id, r)).collect();
         with_encode_context(store, |ctx| ex::export_text(&rules, ctx)).map_err(|e| {
-            crate::debug_actions::message(ex::EXPORT_PROBLEM_TITLE, &e);
+            ended.message(ex::EXPORT_PROBLEM_TITLE, &e);
         })
     };
     let add = |rules: Vec<Rule>, say: bool| {
@@ -1782,7 +1810,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
         }
         drop(state);
         if say && n > 0 {
-            crate::debug_actions::message("Information", &ex::added(n));
+            ended.message("Information", &ex::added(n));
         }
     };
     let take = |import: ex::ListImport<Rule>| {
@@ -1797,16 +1825,16 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
             state.list.selection.select_many(&keys);
         }
         drop(state);
-        crate::debug_actions::messages(messages);
+        ended.messages(messages);
     };
     let load = |text: &str, from_file: bool| match ex::import_text(text, &scales(store)) {
         Ok(imported) => {
             if !imported.refused.is_empty() {
-                crate::debug_actions::message("Warning", &ex::refused_message(&imported.refused));
+                ended.message("Warning", &ex::refused_message(&imported.refused));
             }
             add(imported.rules, true);
         }
-        Err(e) => import_failed(from_file, &e),
+        Err(e) => import_failed(ended, from_file, &e),
     };
     match mode {
         0 if !selected.is_empty() => {
@@ -1819,14 +1847,14 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
                 && let Some(path) = crate::pick_exchange_export()
                 && let Err(e) = std::fs::write(&path, text)
             {
-                crate::debug_actions::message(ex::PROBLEM_TITLE, &e.to_string());
+                ended.message(ex::PROBLEM_TITLE, &e.to_string());
             }
         }
         2 if !selected.is_empty() => {
             if let Ok(text) = exported()
                 && let Err(e) = export_png(&slots.png, store, text)
             {
-                crate::debug_actions::message(ex::PROBLEM_TITLE, &e);
+                ended.message(ex::PROBLEM_TITLE, &e);
             }
         }
         3 => take(ex::rules_from_clipboard(
@@ -1838,7 +1866,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
                 match std::fs::read_to_string(&path) {
                     Ok(text) => load(&text, true),
                     Err(e) => {
-                        crate::debug_actions::message(ex::PROBLEM_TITLE, &e.to_string());
+                        ended.message(ex::PROBLEM_TITLE, &e.to_string());
                         break;
                     }
                 }
@@ -1847,7 +1875,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
         5 => match crate::png_export_window::import_text_with_title(ex::PNG_PICKER_TITLE) {
             Ok(Some(text)) => load(&text, true),
             Ok(None) => {}
-            Err(e) => import_failed(true, &e),
+            Err(e) => import_failed(ended, true, &e),
         },
         6 => take(ex::duplicated(
             &selected.into_iter().map(|(_, r)| r).collect::<Vec<_>>(),

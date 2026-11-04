@@ -68,6 +68,7 @@ pub use import_options_programs::{
 mod exchange_bitmap;
 pub use drops::deliver_dropped_files;
 mod dialog;
+pub use dialog::last_own_question as dialog_question;
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;

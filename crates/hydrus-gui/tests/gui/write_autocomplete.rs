@@ -310,9 +310,13 @@ fn import_whitelist_child_unlocks_on_cancel_and_closes_with_its_parent() {
     let child = windows.get(count + 1).unwrap();
     parent.invoke_apply();
     assert!(bound.folders.import_options.borrow().is_some());
+    // (its window's close waits on the child, as the reference's modality
+    // has it; its cancel button ends both)
     parent
         .window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(parent.window().is_visible() && child.window().is_visible());
+    parent.invoke_cancel();
     assert!(bound.folders.import_options.borrow().is_none());
     assert!(!child.window().is_visible());
 }

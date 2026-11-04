@@ -100,7 +100,12 @@ pub(crate) fn open(
                     // acquired manager, whose bindings now own the lease.
                     closed.set(true);
                     window.set_waiting(false);
-                    if let Err(error) = ready(window.clone_strong(), ended.clone(), edit) {
+                    let made = ready(window.clone_strong(), ended.clone(), edit);
+                    // (the waiting window, now the list, is fitted again)
+                    if made.is_ok() {
+                        ended.refit();
+                    }
+                    if let Err(error) = made {
                         window.invoke_cancel();
                         closed.set(false);
                         close();

@@ -78,12 +78,21 @@ impl Rig {
     fn pick(&self, path: &Path) {
         *self.next.borrow_mut() = vec![path.to_path_buf()];
     }
-    /// Answer the main window's question.
+    /// Answer the dialog's own question (`GetYesNo`, over the dialog).
     fn answer(&self, yes: bool) -> String {
-        let question = self.ui.get_question().to_string();
-        assert!(!question.is_empty(), "a question is asked");
-        self.ui.invoke_answer(yes);
+        let window = hydrus_gui::dialog_question().expect("a question is asked");
+        let question = window.get_message().to_string();
+        answer(&window, yes);
         question
+    }
+}
+
+/// Answer a yes/no question window: "yes", or "no".
+fn answer(window: &hydrus_gui::ChoiceButtonsWindow, yes: bool) {
+    if yes {
+        window.invoke_chosen(0);
+    } else {
+        window.invoke_cancelled();
     }
 }
 
@@ -207,17 +216,16 @@ fn replay_locations_panel(
                     }
                     None => diff(format!("no warning {:?}", wanted(1))),
                 },
-                "question" => {
-                    let question = rig.ui.get_question().to_string();
-                    if question.is_empty() {
-                        diff(format!("no question {:?}", wanted(1)));
-                    } else {
+                "question" => match hydrus_gui::dialog_question() {
+                    None => diff(format!("no question {:?}", wanted(1))),
+                    Some(window) => {
+                        let question = window.get_message().to_string();
                         if names.norm(&question) != wanted(1) {
                             diff(format!("question {question:?}, not {:?}", wanted(1)));
                         }
-                        rig.ui.invoke_answer(yesno.next().unwrap());
+                        answer(&window, yesno.next().unwrap());
                     }
-                }
+                },
                 "choice" => match runtime_question() {
                     Some(q) if q.window().is_visible() => {
                         if q.get_message() != wanted(1).as_str() {

@@ -129,6 +129,21 @@ escapes!(
     WhatIsThisWindow,
 );
 
+thread_local! {
+    /// The message or question a dialog last opened of its own (for tests).
+    static LAST_OWN: RefCell<Option<slint::Weak<crate::ChoiceButtonsWindow>>> =
+        const { RefCell::new(None) };
+}
+
+/// The message or question a dialog last opened of its own
+/// ([`Dialog::message`], [`Dialog::ask`]), while it is shown (for tests).
+#[doc(hidden)]
+pub fn last_own_question() -> Option<crate::ChoiceButtonsWindow> {
+    LAST_OWN
+        .with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|w| w.window().is_visible())
+}
+
 /// Whether it is a dialog (kept when applied) or a frame (kept as it moves).
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Kind {
@@ -149,7 +164,7 @@ struct Inner<C: ComponentHandle + 'static> {
     escape_first: RefCell<Vec<Box<dyn Fn() -> bool>>>,
     /// Whether a child the reference opens modally is open, which neither
     /// Escape nor the window's own close reach past.
-    modal_child: RefCell<Option<Box<dyn Fn() -> bool>>>,
+    modal_child: RefCell<Vec<Box<dyn Fn() -> bool>>>,
     /// A frame's keeping of its geometry as it moves.
     autosave: RefCell<Option<Rc<slint::Timer>>>,
     /// The store its frame is kept in.
@@ -237,6 +252,14 @@ impl<C: Escapes + 'static> Dialog<C> {
     }
 
     /// Fitted to the screens once shown (`windows::fit_after_show`).
+    /// Fitted to the screens again, once its contents have changed what it
+    /// wants (a waiting window grown into its list).
+    pub(crate) fn refit(&self) {
+        if let Some(component) = self.inner.window.upgrade() {
+            self.fit(&component);
+        }
+    }
+
     fn fit(&self, component: &C) {
         if let Some(store) = &self.inner.store {
             crate::windows::fit_after_show(component, store, self.inner.name);
@@ -329,16 +352,71 @@ impl<C: Escapes + 'static> Dialog<C> {
     /// Whether a child window the reference opens modally is open: while it
     /// is, Escape and the window's own close do nothing (its own buttons
     /// still end it, cancelling the child with it, as before).
+    /// (Several may be given; any one open holds it.)
     pub(crate) fn modal_child(&self, open: impl Fn() -> bool + 'static) {
-        *self.inner.modal_child.borrow_mut() = Some(Box::new(open));
+        self.inner.modal_child.borrow_mut().push(Box::new(open));
+    }
+
+    /// Hold on `child`, a window it opened modally, for as long as that is
+    /// shown.
+    pub(crate) fn hold<W: ComponentHandle + 'static>(&self, child: &W) {
+        let child = child.as_weak();
+        self.modal_child(move || child.upgrade().is_some_and(|w| w.window().is_visible()));
+    }
+
+    /// A message of its own (`ShowWarning`, `ShowInformation`): an "ok"
+    /// message window, which it waits on as the reference's modal message
+    /// box keeps it waiting.
+    pub(crate) fn message(&self, title: &str, text: &str) {
+        if let Some(window) = crate::debug_actions::open_message(title, text, Box::new(|| {})) {
+            self.hold_own(&window);
+        }
+    }
+
+    /// Hold on a message or question of its own, kept for the tests too.
+    fn hold_own(&self, window: &crate::ChoiceButtonsWindow) {
+        LAST_OWN.with(|last| *last.borrow_mut() = Some(window.as_weak()));
+        self.hold(window);
+    }
+
+    /// Messages (title, text) of its own, one after another, each shown
+    /// once the one before is dismissed, and each waited on.
+    pub(crate) fn messages(&self, messages: Vec<(String, String)>) {
+        let mut messages = messages.into_iter();
+        let Some((title, text)) = messages.next() else {
+            return;
+        };
+        let rest: Vec<_> = messages.collect();
+        let next = self.clone();
+        if let Some(window) =
+            crate::debug_actions::open_message(&title, &text, Box::new(move || next.messages(rest)))
+        {
+            self.hold_own(&window);
+        }
+    }
+
+    /// A yes/no question of its own (`GetYesNo`): `yes` runs on "yes"; it
+    /// waits on the question, as on the reference's modal one.
+    pub(crate) fn ask(&self, message: &str, yes: impl FnOnce() + 'static) {
+        let ask = crate::choice_buttons::Ask {
+            title: "Are you sure?",
+            message,
+            choices: vec!["yes".into()],
+            no_label: "no",
+        };
+        match crate::choice_buttons::open(&ask, move |answer| {
+            if answer == Some(0) {
+                yes();
+            }
+        }) {
+            Ok(Some(window)) => self.hold_own(&window),
+            Ok(None) => {}
+            Err(e) => eprintln!("could not ask: {e}"),
+        }
     }
 
     fn held(&self) -> bool {
-        self.inner
-            .modal_child
-            .borrow()
-            .as_ref()
-            .is_some_and(|open| open())
+        self.inner.modal_child.borrow().iter().any(|open| open())
     }
 
     /// Whether it has not been ended yet.
