@@ -276,6 +276,14 @@ fn open_data(
     window.set_description(description.into());
     window.set_browser(matches!(&data, Data::Sessions(_)));
     window.set_cookies(matches!(&data, Data::Cookies(_)));
+    // (manage http headers is an ordinary dialog, kept by `regular_dialog`
+    // when applied; the session reviews are ordinary frames, kept as they
+    // move)
+    let ended = if matches!(&data, Data::Headers(_)) {
+        crate::dialog::Dialog::new(&window)
+    } else {
+        crate::dialog::Dialog::frame(&window)
+    };
     let state = Rc::new(RefCell::new(State {
         store: store.clone(),
         data,
@@ -339,15 +347,21 @@ fn open_data(
         }
     });
     window.on_cancel_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (its value editor and cookie import are modal children)
+    ended.modal_child({
+        let weak = window.as_weak();
+        let import_child = import_child.clone();
+        move || weak.upgrade().is_some_and(|w| w.get_editing()) || import_child.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.on_row_clicked({
         let weak = window.as_weak();
@@ -663,6 +677,7 @@ fn open_data(
         let state = state.clone();
         let store = store.clone();
         let active = active.clone();
+        let ended = ended.clone();
         move || {
             if !active.get() {
                 return;
@@ -679,7 +694,7 @@ fn open_data(
                 Data::Sessions(_) => Ok(()),
             };
             match result {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(e) => w.set_error(e.to_string().into()),
             }
         }
@@ -852,6 +867,8 @@ fn edit_value(
 ) -> Result<(), String> {
     let window =
         crate::app_title::new::<crate::EditNetworkValueWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     let data = state.borrow().data.clone();
     let original_cookie = match &data {
         Data::Cookies(d) => Some(index.map_or_else(
@@ -975,15 +992,15 @@ fn edit_value(
         }
     });
     window.on_cancel_clicked({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.on_delta_clicked({
         let weak = window.as_weak();
@@ -1015,6 +1032,7 @@ fn edit_value(
         let weak = window.as_weak();
         let parent = parent.as_weak();
         let state = state.clone();
+        let ended = ended.clone();
         move || {
             if !active.get() || !parent_active.get() {
                 return;
@@ -1104,7 +1122,7 @@ fn edit_value(
                 Ok(())
             })();
             match result {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(e) => w.set_error(e.into()),
             }
         }

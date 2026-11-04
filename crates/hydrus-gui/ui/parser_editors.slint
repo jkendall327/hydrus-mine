@@ -34,43 +34,57 @@ export component ParserListWindow inherits Window {
     callback action(string);
     callback answered(bool);
     callback force-close();
-    VerticalLayout {
-        padding: 10px; spacing: 8px;
-        if root.links: HorizontalLayout {
-            spacing: 6px;
-            Btn { text: "parser links"; enabled: root.links-tab != 0; clicked => { root.links-tab = 0; } }
-            Btn { text: "api/redirect link review"; enabled: root.links-tab != 1; clicked => { root.links-tab = 1; } }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.question != "" { root.answered(false); return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        if root.links && root.links-tab == 1: ListTable {
-            columns: root.api-columns; rows: root.api-rows;
-            sort(c,a) => { root.api-sort(c,a); }
-        }
-        if !root.links || root.links-tab == 0: ListTable {
-            columns: root.columns; rows: root.rows;
-            row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
-            row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "pick-parser" : "edit"); } }
-            sort(c,a) => { if root.question == "" { root.sort(c,a); } }
-            delete-pressed => { if root.question == "" { root.action(root.links ? "clear" : "delete"); } }
-        }
-        if !root.links || root.links-tab == 0: HorizontalLayout {
-            spacing: 6px; alignment: start;
-            if !root.links: Btn { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add"); } }
-            if !root.links: Btn { text: "edit"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("edit"); } }
-            if !root.links: Btn { text: "duplicate"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("duplicate"); } }
-            if !root.links: Btn { text: "delete"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("delete"); } }
-            if !root.links: Btn { text: "import"; enabled: !root.child-open && root.question == ""; clicked => { root.action("import"); } }
-            if !root.links: Btn { text: "export"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("export"); } }
-            if root.links: Btn { text: "edit"; enabled: root.single-selected && !root.child-open && root.question == ""; clicked => { root.action("pick-parser"); } }
-            if root.links: Btn { text: "clear"; enabled: root.clearable && !root.child-open && root.question == ""; clicked => { root.action("clear"); } }
-            if root.links: Btn { text: "try to fill in gaps based on example urls"; enabled: root.gaps-exist && !root.child-open && root.question == ""; clicked => { root.action("auto-link"); } }
-        }
-        if root.links: Text { text: "API/redirect source classes use their target's parser. Associations apply to the live downloader."; color: Theme.text; wrap: word-wrap; }
-        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }
-        HorizontalLayout {
-            alignment: end; spacing: 6px;
-            Btn { text: "apply"; enabled: !root.child-open && root.question == ""; clicked => { root.action("apply"); } }
-            Btn { text: "cancel"; enabled: !root.child-open && root.question == ""; clicked => { root.action("cancel"); } }
+        VerticalLayout {
+            padding: 10px; spacing: 8px;
+            if root.links: HorizontalLayout {
+                spacing: 6px;
+                Btn { text: "parser links"; enabled: root.links-tab != 0; clicked => { root.links-tab = 0; } }
+                Btn { text: "api/redirect link review"; enabled: root.links-tab != 1; clicked => { root.links-tab = 1; } }
+            }
+            if root.links && root.links-tab == 1: ListTable {
+                columns: root.api-columns; rows: root.api-rows;
+                sort(c,a) => { root.api-sort(c,a); }
+            }
+            if !root.links || root.links-tab == 0: ListTable {
+                columns: root.columns; rows: root.rows;
+                row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
+                row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "pick-parser" : "edit"); } }
+                sort(c,a) => { if root.question == "" { root.sort(c,a); } }
+                delete-pressed => { if root.question == "" { root.action(root.links ? "clear" : "delete"); } }
+            }
+            if !root.links || root.links-tab == 0: HorizontalLayout {
+                spacing: 6px; alignment: start;
+                if !root.links: Btn { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add"); } }
+                if !root.links: Btn { text: "edit"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("edit"); } }
+                if !root.links: Btn { text: "duplicate"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("duplicate"); } }
+                if !root.links: Btn { text: "delete"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("delete"); } }
+                if !root.links: Btn { text: "import"; enabled: !root.child-open && root.question == ""; clicked => { root.action("import"); } }
+                if !root.links: Btn { text: "export"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("export"); } }
+                if root.links: Btn { text: "edit"; enabled: root.single-selected && !root.child-open && root.question == ""; clicked => { root.action("pick-parser"); } }
+                if root.links: Btn { text: "clear"; enabled: root.clearable && !root.child-open && root.question == ""; clicked => { root.action("clear"); } }
+                if root.links: Btn { text: "try to fill in gaps based on example urls"; enabled: root.gaps-exist && !root.child-open && root.question == ""; clicked => { root.action("auto-link"); } }
+            }
+            if root.links: Text { text: "API/redirect source classes use their target's parser. Associations apply to the live downloader."; color: Theme.text; wrap: word-wrap; }
+            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+            if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }
+            HorizontalLayout {
+                alignment: end; spacing: 6px;
+                Btn { text: "apply"; enabled: !root.child-open && root.question == ""; clicked => { root.action("apply"); } }
+                Btn { text: "cancel"; enabled: !root.child-open && root.question == ""; clicked => { root.action("cancel"); } }
+            }
         }
     }
 }

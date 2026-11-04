@@ -100,6 +100,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
     }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
     let w = crate::app_title::new::<crate::DownloaderDisplayWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&w);
     w.set_show_unmatched(draft.show_unmatched);
     let state = Rc::new(RefCell::new(State {
         draft,
@@ -220,20 +222,18 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
         }
     });
     w.on_cancel_clicked({
-        let close = close.clone();
-        move || close()
-    });
-    w.window().on_close_requested({
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
+            ended.cancel();
         }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     w.on_apply_clicked({
         let store = store.clone();
         let weak = w.as_weak();
         let s = state;
+        let ended = ended.clone();
         move || {
             if !active.get() {
                 return;
@@ -247,7 +247,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<DownloaderDisplayWindow
             }
             s.draft.show_unmatched = w.get_show_unmatched();
             match s.draft.save(&store) {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(e) => w.set_error(e.to_string().into()),
             }
         }

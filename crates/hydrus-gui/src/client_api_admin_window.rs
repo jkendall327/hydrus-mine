@@ -31,6 +31,8 @@ pub struct Slots {
 /// that looks for its request.
 pub struct Waiting {
     window: ApiRequestWindow,
+    /// How it ends (the dialog helper's).
+    ended: crate::dialog::Dialog<ApiRequestWindow>,
     _timer: slint::Timer,
 }
 impl std::fmt::Debug for Waiting {
@@ -180,6 +182,8 @@ fn edit(
     }
     let window =
         crate::app_title::new::<crate::EditApiPermissionsWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_access_key(hex::encode(&key.access_key).into());
     window.set_name(key.name.as_str().into());
     window.set_permits_everything(key.permits_everything);
@@ -355,7 +359,7 @@ fn edit(
     window.on_apply_clicked({
         let weak = window.as_weak();
         let key = key.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         move || {
             if !active.get() || !parent_active.get() {
@@ -369,19 +373,24 @@ fn edit(
             edited.name = w.get_name().to_string();
             edited.permits_everything = w.get_permits_everything();
             match done(edited) {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(e) => w.set_error(e.into()),
             }
         }
     });
     window.on_cancel_clicked({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (its tag filter editor is a modal child)
+    ended.modal_child({
+        let weak = window.as_weak();
+        move || weak.upgrade().is_some_and(|w| w.get_filtering())
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show().map_err(|e| e.to_string())?;
     LAST_EDIT.with(|s| *s.borrow_mut() = Some(window.as_weak()));
     *slots.edit.borrow_mut() = Some(window);
@@ -460,7 +469,8 @@ pub fn open(
             let waiting = slots.request.borrow_mut().take();
             if let Some(waiting) = waiting {
                 close_registration(&store);
-                let _ = waiting.window.hide();
+                // (closed with its owner: cancelled, through the helper)
+                waiting.ended.cancel();
             }
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
@@ -597,6 +607,9 @@ pub fn open(
             let Ok(waiting) = crate::app_title::new::<crate::ApiRequestWindow>() else {
                 return;
             };
+            // (a `DialogNullipotent`: its close button is its OK, keeping
+            // `regular_dialog`, as is a request arriving)
+            let waited = crate::dialog::Dialog::new(&waiting);
             let until = hydrus_core::time::TimestampMs::now().millis() + REGISTRATION_LEASE_MS;
             if let Err(e) = store.write(move |ctx| {
                 let mut registration: hydrus_store::api_permissions::Registration =
@@ -626,15 +639,13 @@ pub fn open(
                 }
             });
             waiting.on_cancel_clicked({
+                let waited = waited.clone();
+                move || waited.accept()
+            });
+            // (whatever ends it, through the dialog helper)
+            waited.on_closed({
                 let finish = finish.clone();
                 move || finish()
-            });
-            waiting.window().on_close_requested({
-                let finish = finish.clone();
-                move || {
-                    finish();
-                    slint::CloseRequestResponse::HideWindow
-                }
             });
             let timer = slint::Timer::default();
             timer.start(
@@ -642,7 +653,7 @@ pub fn open(
                 std::time::Duration::from_millis(500),
                 {
                     let store = store.clone();
-                    let finish = finish.clone();
+                    let waited = waited.clone();
                     let open_edit = open_edit.clone();
                     let slot = Rc::downgrade(&slots.request);
                     move || {
@@ -663,7 +674,7 @@ pub fn open(
                             return;
                         };
                         // (the reference stops listening on the first request)
-                        finish();
+                        waited.accept();
                         if slot.upgrade().is_none() {
                             return;
                         }
@@ -686,6 +697,7 @@ pub fn open(
                 w.set_editing(true);
                 *slots.request.borrow_mut() = Some(Waiting {
                     window: waiting,
+                    ended: waited,
                     _timer: timer,
                 });
             }

@@ -1136,6 +1136,8 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
     }
     let window =
         crate::app_title::new::<crate::LoginScriptsWindow>().map_err(|error| error.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     let editor = Rc::new(RefCell::new(ScriptsEditor::new(
         store
             .read(hydrus_store::logins::load)
@@ -1277,16 +1279,16 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
             }
         }
     });
-    window.on_action({ let weak = window.as_weak(); let editor = editor.clone(); let store = store.clone(); let active = active.clone(); let close = close.clone(); let edit = edit.clone(); let exchange = slots.exchange.clone(); move |action| {
+    window.on_action({ let weak = window.as_weak(); let editor = editor.clone(); let store = store.clone(); let active = active.clone(); let ended = ended.clone(); let edit = edit.clone(); let exchange = slots.exchange.clone(); move |action| {
         if !active.get() { return; } let Some(window) = weak.upgrade() else { return; };
-        if action == "cancel" { close(); return; }
+        if action == "cancel" { ended.cancel(); return; }
         if window.get_child_open() { return; }
         if window.get_deleting() && !matches!(action.as_str(), "confirm-delete" | "back") { return; }
         match action.as_str() {
             "add" => edit(None), "edit" => { let selected = editor.borrow().editing(); if let Some(index) = selected { edit(Some(index)); } }
             "delete" => window.set_deleting(true), "back" => window.set_deleting(false),
             "confirm-delete" => { editor.borrow_mut().delete(); window.set_deleting(false); show_scripts(&window, &editor.borrow()); }
-            "apply" => match editor.borrow().save(&store) { Ok(()) => close(), Err(error) => window.set_error(error.to_string().into()) },
+            "apply" => match editor.borrow().save(&store) { Ok(()) => ended.accept(), Err(error) => window.set_error(error.to_string().into()) },
             "import" | "export" => {
                 let importing = action == "import"; let scripts = editor.borrow().export();
                 let preview: crate::downloader_interchange_window::Preview<LoginScript> = Rc::new(|scripts| Ok(format!("{} login script(s) to add. Names and keys are made unique on acceptance.\n\n{}", scripts.len(), scripts.iter().map(|script| script.name.as_str()).collect::<Vec<_>>().join("\n"))));
@@ -1297,10 +1299,15 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
             _ => {}
         }
     } });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (its login script editor and the import/export window are modal
+    // children)
+    ended.modal_child({
+        let weak = window.as_weak();
+        let script = slots.script.clone();
+        move || weak.upgrade().is_some_and(|w| w.get_child_open()) || script.borrow().is_some()
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show().map_err(|error| error.to_string())?;
     *slots.scripts.borrow_mut() = Some(window.clone_strong());
     Ok(window)

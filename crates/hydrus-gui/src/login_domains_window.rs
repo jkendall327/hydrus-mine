@@ -155,6 +155,8 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::LoginDomainsWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     let editor = Rc::new(RefCell::new(DomainsEditor::new(
         store
             .read(hydrus_store::logins::load)
@@ -243,9 +245,9 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
             }
         }
     });
-    window.on_action({let weak=window.as_weak();let editor=editor.clone();let store=store.clone();let credentials=slots.credentials.clone();let active=active.clone();let close=close.clone();let pending=pending.clone();let attempts=attempts.clone();let resetting=resetting.clone();let run=slots.run.clone();let status=slots.status.clone();let entry=slots.entry.clone();let process=process.clone();move|action|{
+    window.on_action({let weak=window.as_weak();let editor=editor.clone();let store=store.clone();let credentials=slots.credentials.clone();let active=active.clone();let ended=ended.clone();let pending=pending.clone();let attempts=attempts.clone();let resetting=resetting.clone();let run=slots.run.clone();let status=slots.status.clone();let entry=slots.entry.clone();let process=process.clone();move|action|{
         if !active.get(){return;}let Some(window)=weak.upgrade()else{return;};
-        if action=="cancel"{close();return;}
+        if action=="cancel"{ended.cancel();return;}
         if action=="cancel-login"{
             if run.busy(){run.cancel();}
             else if let Some((epoch, id))=process.borrow().clone()
@@ -326,7 +328,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
                     window.set_error(error.to_string().into());
                 } else {
                     let inputs=std::mem::take(&mut *attempts.borrow_mut());
-                    close();
+                    ended.accept();
                     *status.borrow_mut()="starting login attempts".into();
                     start_next(&run,Rc::new(RefCell::new(inputs.into())),status.clone());
                 }
@@ -354,14 +356,22 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
         if !login.active||login.validity!=Validity::Invalid{continue;}let Some(script)=editor.draft.script(login)else{continue;};let result=script.check_credentials_for_entry(&login.credentials);let login=editor.draft.domains.get_mut(&domain).expect("selected domain");match result{Ok(())=>{login.validity=Validity::Untested;login.validity_error.clear();},Err(error)=>{login.validity_error=error;}}}
                 else if let Some(login)=editor.draft.domains.get_mut(&domain){if action=="flip-active"{login.active = !login.active;}else{login.no_work_until=0;login.delay_reason.clear();}}
             }show(&window,&editor,&store);},
-            "apply"=>match editor.borrow().save(&store){Ok(())=>close(),Err(error)=>window.set_error(error.to_string().into())},
+            "apply"=>match editor.borrow().save(&store){Ok(())=>ended.accept(),Err(error)=>window.set_error(error.to_string().into())},
             _=>{},
         }
     }});
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (its credentials editor and domain prompts are modal children)
+    ended.modal_child({
+        let weak = window.as_weak();
+        let entry = slots.entry.clone();
+        move || {
+            weak.upgrade().is_some_and(|w| w.get_child_open())
+                || entry.window.borrow().is_some()
+                || entry.credentials.borrow().is_some()
+        }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     window.show().map_err(|e| e.to_string())?;
     *slots.domains.borrow_mut() = Some(window.clone_strong());
     Ok(window)

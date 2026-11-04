@@ -167,6 +167,8 @@ pub fn open(
     }
     let window =
         crate::app_title::new::<crate::DownloaderDefinitionsWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(
         if classes {
             "edit url classes"
@@ -293,7 +295,7 @@ pub fn open(
         let draft_rc = draft.clone();
         let draft = draft.clone();
         let refresh = refresh.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let pending = pending_question.clone();
         let weak = window.as_weak();
         move |yes| {
@@ -303,7 +305,7 @@ pub fn open(
             let question = pending.borrow_mut().take();
             if yes {
                 match question {
-                    Some(Pending::Cancel) => close(),
+                    Some(Pending::Cancel) => ended.cancel_confirmed(),
                     Some(Pending::Delete(kind, items)) => {
                         let mut draft = draft.borrow_mut();
                         let shown_kind = draft.kind;
@@ -338,7 +340,7 @@ pub fn open(
     window.on_action({
         let draft = draft.clone();
         let refresh = refresh.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let weak = window.as_weak();
         let pending = pending_question.clone();
         let store = store.clone();
@@ -356,16 +358,12 @@ pub fn open(
             }
             match action.as_str() {
                 "apply" => match draft.borrow().save(&store) {
-                    Ok(()) => close(),
+                    Ok(()) => ended.accept(),
                     Err(e) => w.set_error(e.to_string().into()),
                 },
                 "cancel" => {
-                    if draft.borrow().changed() {
-                        *pending.borrow_mut() = Some(Pending::Cancel);
-                        w.set_question(definitions::CANCEL.into());
-                    } else {
-                        close();
-                    }
+                    // (asking first if anything changed, below)
+                    ended.cancel();
                 }
                 "delete" => {
                     if !draft.borrow().selection.is_empty() {
@@ -420,16 +418,58 @@ pub fn open(
             }
         }
     });
-    window.window().on_close_requested({
+    // (with changes, a cancel, Escape or its window's close asks first, as
+    // the reference's `UserIsOKToCancel`)
+    ended.refuse_cancel({
+        let draft = draft.clone();
+        let pending = pending_question.clone();
         let weak = window.as_weak();
+        move || {
+            if pending.borrow().is_some() {
+                return false;
+            }
+            if !draft.borrow().changed() {
+                return true;
+            }
+            *pending.borrow_mut() = Some(Pending::Cancel);
+            if let Some(w) = weak.upgrade() {
+                w.set_question(definitions::CANCEL.into());
+            }
+            false
+        }
+    });
+    // (a question up is answered no by Escape)
+    ended.escape_first({
+        let pending = pending_question.clone();
+        let weak = window.as_weak();
+        move || {
+            if pending.borrow().is_none() {
+                return false;
+            }
+            if let Some(w) = weak.upgrade() {
+                w.invoke_answered(false);
+            }
+            true
+        }
+    });
+    // (its definition editor and the import/export window are modal
+    // children)
+    ended.modal_child({
+        let slots = slots.clone();
         let exchange = exchange.clone();
         move || {
-            exchange.cancel();
-            if let Some(w) = weak.upgrade() {
-                w.invoke_action("cancel".into());
-            }
-            slint::CloseRequestResponse::KeepWindowShown
+            let edit_slot = if classes {
+                &slots.class_edit
+            } else {
+                &slots.gug_edit
+            };
+            edit_slot.borrow().is_some() || exchange.has_open()
         }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     refresh();
     window.show().map_err(|e| e.to_string())?;
@@ -803,6 +843,8 @@ fn open_editor(
 ) -> Result<DownloaderDefinitionEditWindow, String> {
     let window = crate::app_title::new::<crate::DownloaderDefinitionEditWindow>()
         .map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(
         match &editor.value {
             Value::Class(_) => "edit url class",
@@ -1159,7 +1201,7 @@ fn open_editor(
     let apply: Rc<dyn Fn(bool)> = Rc::new({
         let state = state.clone();
         let weak = window.as_weak();
-        let close = close.clone();
+        let ended = ended.clone();
         let blocked = blocked.clone();
         move |confirmed| {
             if blocked() {
@@ -1181,14 +1223,14 @@ fn open_editor(
                 return;
             }
             match done(e.value.clone()) {
-                Ok(()) => close(),
+                Ok(()) => ended.accept(),
                 Err(error) => w.set_error(error.into()),
             }
         }
     });
     window.on_action({
         let apply = apply.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let state = state.clone();
         let slots = slots.clone();
         move |action| {
@@ -1197,7 +1239,9 @@ fn open_editor(
             }
             match action.as_str() {
                 "apply" => apply(false),
-                "cancel" => close(),
+                "cancel" => {
+                    ended.cancel();
+                }
                 _ => (),
             }
         }
@@ -1219,17 +1263,26 @@ fn open_editor(
             }
         }
     });
-    window.window().on_close_requested({
-        let close = close.clone();
-        let state = state.clone();
-        let slots = slots.clone();
-        move || {
-            if editor_blocked(&state.borrow(), &slots) {
-                return slint::CloseRequestResponse::KeepWindowShown;
+    // (its string converter, processor and rule editors are modal children)
+    ended.modal_child({
+        let blocked = blocked.clone();
+        move || blocked()
+    });
+    // (a question up is answered no by Escape)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if !w.get_question().is_empty() => {
+                w.invoke_answered(false);
+                true
             }
-            close();
-            slint::CloseRequestResponse::HideWindow
+            _ => false,
         }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
     });
     refresh(true);
     window.show().map_err(|e| e.to_string())?;
