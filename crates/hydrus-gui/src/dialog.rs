@@ -171,6 +171,11 @@ struct Inner<C: ComponentHandle + 'static> {
     store: Option<std::sync::Arc<hydrus_store::Store>>,
     /// A frame with a frame key of its own, kept as it closes.
     save_on_close: Cell<bool>,
+    /// The windows it opened modally and holds on (see [`Dialog::hold`]),
+    /// each while it is shown.
+    holds: RefCell<Vec<Box<dyn Fn() -> bool>>>,
+    /// Its own messages and questions, closed with it.
+    own: RefCell<Vec<slint::Weak<crate::ChoiceButtonsWindow>>>,
 }
 
 /// An ordinary dialog or frame, until it is ended. Clones are the same one.
@@ -251,7 +256,6 @@ impl<C: Escapes + 'static> Dialog<C> {
         dialog
     }
 
-    /// Fitted to the screens once shown (`windows::fit_after_show`).
     /// Fitted to the screens again, once its contents have changed what it
     /// wants (a waiting window grown into its list).
     pub(crate) fn refit(&self) {
@@ -260,6 +264,7 @@ impl<C: Escapes + 'static> Dialog<C> {
         }
     }
 
+    /// Fitted to the screens once shown (`windows::fit_after_show`).
     fn fit(&self, component: &C) {
         if let Some(store) = &self.inner.store {
             crate::windows::fit_after_show(component, store, self.inner.name);
@@ -285,6 +290,8 @@ impl<C: Escapes + 'static> Dialog<C> {
                 autosave: RefCell::default(),
                 store,
                 save_on_close: Cell::new(false),
+                holds: RefCell::default(),
+                own: RefCell::default(),
             }),
         };
         // (the window holds it for as long as the window lives; it holds
@@ -361,7 +368,9 @@ impl<C: Escapes + 'static> Dialog<C> {
     /// shown.
     pub(crate) fn hold<W: ComponentHandle + 'static>(&self, child: &W) {
         let child = child.as_weak();
-        self.modal_child(move || child.upgrade().is_some_and(|w| w.window().is_visible()));
+        self.inner.holds.borrow_mut().push(Box::new(move || {
+            child.upgrade().is_some_and(|w| w.window().is_visible())
+        }));
     }
 
     /// A message of its own (`ShowWarning`, `ShowInformation`): an "ok"
@@ -376,12 +385,20 @@ impl<C: Escapes + 'static> Dialog<C> {
     /// Hold on a message or question of its own, kept for the tests too.
     fn hold_own(&self, window: &crate::ChoiceButtonsWindow) {
         LAST_OWN.with(|last| *last.borrow_mut() = Some(window.as_weak()));
+        let mut own = self.inner.own.borrow_mut();
+        own.retain(|w| w.upgrade().is_some_and(|w| w.window().is_visible()));
+        own.push(window.as_weak());
+        drop(own);
         self.hold(window);
     }
 
     /// Messages (title, text) of its own, one after another, each shown
     /// once the one before is dismissed, and each waited on.
     pub(crate) fn messages(&self, messages: Vec<(String, String)>) {
+        // (none once it has ended)
+        if !self.is_open() {
+            return;
+        }
         let mut messages = messages.into_iter();
         let Some((title, text)) = messages.next() else {
             return;
@@ -404,8 +421,11 @@ impl<C: Escapes + 'static> Dialog<C> {
             choices: vec!["yes".into()],
             no_label: "no",
         };
+        // ("yes" counts only while it is open: a question it closed with
+        // itself answers nothing)
+        let alive = Rc::downgrade(&self.inner);
         match crate::choice_buttons::open(&ask, move |answer| {
-            if answer == Some(0) {
+            if answer == Some(0) && alive.upgrade().is_some_and(|inner| inner.open.get()) {
                 yes();
             }
         }) {
@@ -416,7 +436,10 @@ impl<C: Escapes + 'static> Dialog<C> {
     }
 
     fn held(&self) -> bool {
-        self.inner.modal_child.borrow().iter().any(|open| open())
+        // (a held window once closed is let go)
+        self.inner.holds.borrow_mut().retain(|open| open());
+        !self.inner.holds.borrow().is_empty()
+            || self.inner.modal_child.borrow().iter().any(|open| open())
     }
 
     /// Whether it has not been ended yet.
@@ -489,6 +512,13 @@ impl<C: Escapes + 'static> Dialog<C> {
     fn end(&self) {
         if !self.inner.open.replace(false) {
             return;
+        }
+        // (its own messages and questions close with it, answering nothing)
+        let own = std::mem::take(&mut *self.inner.own.borrow_mut());
+        for window in own.iter().filter_map(slint::Weak::upgrade) {
+            if window.window().is_visible() {
+                window.invoke_cancelled();
+            }
         }
         if let Some(timer) = self.inner.autosave.borrow_mut().take() {
             timer.stop();

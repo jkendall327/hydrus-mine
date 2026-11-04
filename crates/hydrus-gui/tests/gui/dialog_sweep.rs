@@ -2881,8 +2881,25 @@ fn a_dialogs_own_questions_and_messages_hold_it_as_the_references_modal_ones() {
             window.window().is_visible() && question.window().is_visible(),
             "locations: waits on its question"
         );
-        question.invoke_escape();
-        assert!(!question.window().is_visible());
+        // (its own close button, its OK, closes the question with it,
+        // answering nothing: the location stays)
+        let locations = || {
+            store
+                .read(hydrus_store::storage_locations::review)
+                .unwrap()
+                .locations
+                .len()
+        };
+        let before = locations();
+        window.invoke_close_window();
+        assert!(
+            !window.window().is_visible() && !question.window().is_visible(),
+            "locations: its close ends its question too"
+        );
+        question.invoke_chosen(0);
+        assert_eq!(locations(), before, "locations: nothing removed after");
+        crate::database_menu_jobs::from_menu_path(&ui, &[], "locations\u{2026}");
+        let window = hydrus_gui::database_locations_window::opened().expect("locations again");
         // ("set time to run": Escape and cancel keep nothing, the locations
         // waiting on it)
         window.invoke_action("rebalance".into());

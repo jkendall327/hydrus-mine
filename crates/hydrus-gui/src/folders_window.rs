@@ -1712,6 +1712,7 @@ fn open_export_folder(
         let store = store.clone();
         let sidecars = sidecars.clone();
         let active = active.clone();
+        let ended = ended.clone();
         move || {
             if !active.get() || sidecars.routers.borrow().is_some() {
                 return;
@@ -1740,7 +1741,10 @@ fn open_export_folder(
                 &sidecars,
                 applied,
             ) {
-                Ok(w) => *sidecars.routers.borrow_mut() = Some(w),
+                Ok(w) => {
+                    ended.hold(&w);
+                    *sidecars.routers.borrow_mut() = Some(w);
+                }
                 Err(e) => eprintln!("could not open the sidecars: {e}"),
             }
         }
@@ -1963,11 +1967,7 @@ fn open_export_folder(
             _ => false,
         }
     });
-    // (its sidecars editor is a modal child)
-    ended.modal_child({
-        let routers = sidecars.routers.clone();
-        move || routers.borrow().is_some()
-    });
+    // (its sidecars editor is a modal child: held as it opens)
     // (whatever ends it, through the dialog helper)
     ended.on_closed({
         let close = close.clone();
