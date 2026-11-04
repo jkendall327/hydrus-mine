@@ -151,33 +151,46 @@ export component EditBandwidthRulesWindow inherits Window {
     callback delete-rule();
     callback apply-clicked();
     callback cancel-clicked();
-    VerticalBox {
-        Text { text: "bandwidth rules"; color: Theme.text; font-weight: 700; }
-        ListTable { columns: root.columns; rows: root.rows; vertical-stretch: 1;
-            row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
-            delete-pressed => { root.delete-rule(); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout {
-            spacing: 8px;
-            CheckBox { text: "requests (otherwise bytes)"; checked <=> root.requests; }
-            LineEdit { text <=> root.amount; placeholder-text: "maximum allowed"; horizontal-stretch: 1; }
-        }
-        HorizontalLayout {
-            spacing: 8px;
-            CheckBox { text: "monthly"; checked <=> root.monthly; }
-            Text { text: "every (seconds):"; color: Theme.text; vertical-alignment: center; }
-            LineEdit { text <=> root.seconds; enabled: !root.monthly; horizontal-stretch: 1; }
-        }
-        HorizontalLayout {
-            Btn { text: "add"; enabled: !root.busy; clicked => { root.add-rule(); } }
-            Btn { text: "replace selected"; enabled: !root.busy; clicked => { root.replace-rule(); } }
-            Btn { text: "delete selected"; enabled: !root.busy; clicked => { root.delete-rule(); } }
-        }
-        Text { text: root.error; wrap: word-wrap; color: Theme.text; }
-        HorizontalLayout {
-            Rectangle { horizontal-stretch: 1; }
-            Btn { text: "apply"; enabled: !root.busy; clicked => { root.apply-clicked(); } }
-            Btn { text: "cancel"; enabled: !root.busy; clicked => { root.cancel-clicked(); } }
+        VerticalBox {
+            Text { text: "bandwidth rules"; color: Theme.text; font-weight: 700; }
+            ListTable { columns: root.columns; rows: root.rows; vertical-stretch: 1;
+                row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
+                delete-pressed => { root.delete-rule(); }
+            }
+            HorizontalLayout {
+                spacing: 8px;
+                CheckBox { text: "requests (otherwise bytes)"; checked <=> root.requests; }
+                LineEdit { text <=> root.amount; placeholder-text: "maximum allowed"; horizontal-stretch: 1; }
+            }
+            HorizontalLayout {
+                spacing: 8px;
+                CheckBox { text: "monthly"; checked <=> root.monthly; }
+                Text { text: "every (seconds):"; color: Theme.text; vertical-alignment: center; }
+                LineEdit { text <=> root.seconds; enabled: !root.monthly; horizontal-stretch: 1; }
+            }
+            HorizontalLayout {
+                Btn { text: "add"; enabled: !root.busy; clicked => { root.add-rule(); } }
+                Btn { text: "replace selected"; enabled: !root.busy; clicked => { root.replace-rule(); } }
+                Btn { text: "delete selected"; enabled: !root.busy; clicked => { root.delete-rule(); } }
+            }
+            Text { text: root.error; wrap: word-wrap; color: Theme.text; }
+            HorizontalLayout {
+                Rectangle { horizontal-stretch: 1; }
+                Btn { text: "apply"; enabled: !root.busy; clicked => { root.apply-clicked(); } }
+                Btn { text: "cancel"; enabled: !root.busy; clicked => { root.cancel-clicked(); } }
+            }
         }
     }
 }

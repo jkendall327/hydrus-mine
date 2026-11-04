@@ -353,6 +353,7 @@ pub(crate) fn windows() -> Vec<(&'static str, Open, Accept)> {
     ]
 }
 
+// leaf: audit-options-geometry
 #[test]
 #[allow(clippy::cast_possible_truncation)]
 fn named_windows_open_by_their_frames_and_keep_them_as_the_reference_s_do() {
@@ -570,6 +571,7 @@ fn named_windows_open_by_their_frames_and_keep_them_as_the_reference_s_do() {
 /// dialogs' frame: grown by its gravity once laid out, as
 /// `frame_placement.json` has it (the main window's client area 900 by
 /// 700; the display isn't there to see headless).
+// leaf: audit-options-geometry
 #[test]
 #[allow(clippy::cast_possible_truncation)]
 fn other_windows_open_by_the_ordinary_dialogs_frame() {
@@ -807,6 +809,7 @@ fn the_frame_editor_decides_how_each_named_window_next_opens() {
     }
 }
 
+// leaf: audit-options-geometry
 #[test]
 fn the_choice_dialogs_open_by_the_quick_select_and_yes_no_frames_and_keep_them_when_a_choice_is_made()
  {

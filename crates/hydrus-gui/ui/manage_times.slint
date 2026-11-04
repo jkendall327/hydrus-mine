@@ -296,94 +296,107 @@ export component DateTimeEditorWindow inherits Window {
     callback apply();
     callback cancel();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        if root.label != "": Text {
-            text: root.label;
-            wrap: word-wrap;
-            color: Theme.text;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout {
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
+            if root.label != "": Text {
+                text: root.label;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Text {
+                    text: "date: ";
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                LineEdit {
+                    text <=> root.date;
+                    placeholder-text: "yyyy-MM-dd";
+                    edited => { root.edited(); }
+                }
+                Text {
+                    text: "time: ";
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                LineEdit {
+                    text <=> root.time;
+                    placeholder-text: "hh:mm:ss.zzz";
+                    edited => { root.edited(); }
+                }
+            }
+            if root.step-shown: HorizontalLayout {
+                spacing: 6px;
+                Text {
+                    text: "cascading step (milliseconds): ";
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                LineEdit {
+                    text <=> root.step;
+                    edited => { root.edited(); }
+                }
+            }
             Text {
-                text: "date: ";
-                vertical-alignment: center;
+                text: root.value;
+                wrap: word-wrap;
                 color: Theme.text;
             }
-            LineEdit {
-                text <=> root.date;
-                placeholder-text: "yyyy-MM-dd";
-                edited => { root.edited(); }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                if root.notice != "": Text {
+                    text: root.notice;
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                Btn {
+                    text: "copy";
+                    clicked => { root.copy(); }
+                }
+                Btn {
+                    text: "paste";
+                    clicked => { root.paste(); }
+                }
+                Btn {
+                    text: "now";
+                    clicked => { root.now(); }
+                }
             }
-            Text {
-                text: "time: ";
-                vertical-alignment: center;
-                color: Theme.text;
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: ["ok"];
+                wants-text: false;
+                chosen(index) => { root.dismissed(); }
+                cancelled => { root.dismissed(); }
             }
-            LineEdit {
-                text <=> root.time;
-                placeholder-text: "hh:mm:ss.zzz";
-                edited => { root.edited(); }
-            }
-        }
-        if root.step-shown: HorizontalLayout {
-            spacing: 6px;
-            Text {
-                text: "cascading step (milliseconds): ";
-                vertical-alignment: center;
-                color: Theme.text;
-            }
-            LineEdit {
-                text <=> root.step;
-                edited => { root.edited(); }
-            }
-        }
-        Text {
-            text: root.value;
-            wrap: word-wrap;
-            color: Theme.text;
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            if root.notice != "": Text {
-                text: root.notice;
-                vertical-alignment: center;
-                color: Theme.text;
-            }
-            Btn {
-                text: "copy";
-                clicked => { root.copy(); }
-            }
-            Btn {
-                text: "paste";
-                clicked => { root.paste(); }
-            }
-            Btn {
-                text: "now";
-                clicked => { root.now(); }
-            }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: ["ok"];
-            wants-text: false;
-            chosen(index) => { root.dismissed(); }
-            cancelled => { root.dismissed(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                enabled: !root.asking;
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    enabled: !root.asking;
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

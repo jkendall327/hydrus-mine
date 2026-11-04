@@ -50,80 +50,93 @@ export component DownloaderExchangeWindow inherits Window {
     // The import's "select objects from list".
     in property <bool> select-from-list-shown;
     in-out property <bool> select-from-list;
-    VerticalLayout {
-        padding: 12px; spacing: 8px;
-        Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
-        if root.export-list: VerticalLayout {
-            height: 220px; spacing: 4px;
-            ListTable {
-                vertical-stretch: 1;
-                columns: root.export-columns;
-                rows: root.export-rows;
-                row-clicked(row, ctrl, shift) => { root.export-row-clicked(row, ctrl, shift); }
-                delete-pressed => { root.action("delete"); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
-            HorizontalLayout {
+            reject
+        }
+        VerticalLayout {
+            padding: 12px; spacing: 8px;
+            Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
+            if root.export-list: VerticalLayout {
+                height: 220px; spacing: 4px;
+                ListTable {
+                    vertical-stretch: 1;
+                    columns: root.export-columns;
+                    rows: root.export-rows;
+                    row-clicked(row, ctrl, shift) => { root.export-row-clicked(row, ctrl, shift); }
+                    delete-pressed => { root.action("delete"); }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Btn { text: "add gug"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-gug"); } }
+                    Btn { text: "add url class"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-url-class"); } }
+                    Btn { text: "add parser"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-parser"); } }
+                    Btn { text: "add login script"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-login-script"); } }
+                    Btn { text: "add headers/bandwidth rules"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-domain"); } }
+                    Btn { text: "delete"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("delete"); } }
+                }
+            }
+            if root.importing && root.select-from-list-shown: CheckBox {
+                text: "select objects from list";
+                checked <=> root.select-from-list;
+            }
+            if root.domain-prompt: VerticalLayout {
                 spacing: 4px;
-                Btn { text: "add gug"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-gug"); } }
-                Btn { text: "add url class"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-url-class"); } }
-                Btn { text: "add parser"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-parser"); } }
-                Btn { text: "add login script"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-login-script"); } }
-                Btn { text: "add headers/bandwidth rules"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-domain"); } }
-                Btn { text: "delete"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("delete"); } }
+                Text { text: root.domain-prompt-text; color: Theme.text; }
+                HorizontalLayout {
+                    spacing: 8px;
+                    LineEdit { horizontal-stretch: 1; text <=> root.domain-text; accepted => { root.action("domain-ok"); } }
+                    Btn { text: "ok"; clicked => { root.action("domain-ok"); } }
+                    Btn { text: "cancel"; clicked => { root.action("domain-cancel"); } }
+                }
             }
-        }
-        if root.importing && root.select-from-list-shown: CheckBox {
-            text: "select objects from list";
-            checked <=> root.select-from-list;
-        }
-        if root.domain-prompt: VerticalLayout {
-            spacing: 4px;
-            Text { text: root.domain-prompt-text; color: Theme.text; }
+            TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
             HorizontalLayout {
-                spacing: 8px;
-                LineEdit { horizontal-stretch: 1; text <=> root.domain-text; accepted => { root.action("domain-ok"); } }
-                Btn { text: "ok"; clicked => { root.action("domain-ok"); } }
-                Btn { text: "cancel"; clicked => { root.action("domain-cancel"); } }
+                Btn { text: root.importing ? "paste" : "copy"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "paste" : "copy"); } }
+                if root.importing: Btn { text: "review text"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("review"); } }
             }
-        }
-        TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
-        HorizontalLayout {
-            Btn { text: root.importing ? "paste" : "copy"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "paste" : "copy"); } }
-            if root.importing: Btn { text: "review text"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("review"); } }
-        }
-        if root.json-enabled && root.importing: HorizontalLayout {
-            Btn { text: "from json files"; enabled: !root.ready; clicked => { root.action("import-jsons"); } }
-            Btn { text: "from png files"; enabled: !root.ready; clicked => { root.action("import-pngs"); } }
-        }
-        if root.router-import: Btn {
-            text: "from pngs"; enabled: root.active && !root.ready;
-            clicked => { root.action("import-pngs"); }
-        }
-        if !root.png-enabled || root.importing: HorizontalLayout {
-            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
-            if !root.router-import: Btn { text: "browse"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse"); } }
-            Btn { text: root.importing ? "open file" : "save PNG"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "open" : "save"); } }
-        }
-        if root.json-enabled && !root.importing: HorizontalLayout {
-            LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "JSON file path"; enabled: !root.png-child && root.overwrite-question == ""; }
-            Btn { text: "browse json"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse-json"); } }
-            Btn { text: "export to json file"; enabled: !root.export-empty && !root.png-child && root.overwrite-question == ""; clicked => { root.action("save-json"); } }
-        }
-        if root.overwrite-question != "": VerticalLayout {
-            Text { text: root.overwrite-question; wrap: word-wrap; color: Theme.text; }
+            if root.json-enabled && root.importing: HorizontalLayout {
+                Btn { text: "from json files"; enabled: !root.ready; clicked => { root.action("import-jsons"); } }
+                Btn { text: "from png files"; enabled: !root.ready; clicked => { root.action("import-pngs"); } }
+            }
+            if root.router-import: Btn {
+                text: "from pngs"; enabled: root.active && !root.ready;
+                clicked => { root.action("import-pngs"); }
+            }
+            if !root.png-enabled || root.importing: HorizontalLayout {
+                LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
+                if !root.router-import: Btn { text: "browse"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse"); } }
+                Btn { text: root.importing ? "open file" : "save PNG"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "open" : "save"); } }
+            }
+            if root.json-enabled && !root.importing: HorizontalLayout {
+                LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "JSON file path"; enabled: !root.png-child && root.overwrite-question == ""; }
+                Btn { text: "browse json"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse-json"); } }
+                Btn { text: "export to json file"; enabled: !root.export-empty && !root.png-child && root.overwrite-question == ""; clicked => { root.action("save-json"); } }
+            }
+            if root.overwrite-question != "": VerticalLayout {
+                Text { text: root.overwrite-question; wrap: word-wrap; color: Theme.text; }
+                HorizontalLayout {
+                    Btn { text: "yes"; clicked => { root.action("yes-json"); } }
+                    Btn { text: "no"; clicked => { root.action("no-json"); } }
+                }
+            }
+            if root.png-enabled && !root.importing: Btn { text: "export to png"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.export-png(); } }
+            if root.review != "": TextEdit { height: 140px; text: root.review; read-only: true; }
+            if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
             HorizontalLayout {
-                Btn { text: "yes"; clicked => { root.action("yes-json"); } }
-                Btn { text: "no"; clicked => { root.action("no-json"); } }
+                alignment: end; spacing: 8px;
+                if root.ready: Btn { text: "import"; clicked => { root.action("accept"); } }
+                if root.ready: Btn { text: "back"; clicked => { root.action("back"); } }
+                Btn { text: "cancel"; clicked => { root.action("cancel"); } }
             }
-        }
-        if root.png-enabled && !root.importing: Btn { text: "export to png"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.export-png(); } }
-        if root.review != "": TextEdit { height: 140px; text: root.review; read-only: true; }
-        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        HorizontalLayout {
-            alignment: end; spacing: 8px;
-            if root.ready: Btn { text: "import"; clicked => { root.action("accept"); } }
-            if root.ready: Btn { text: "back"; clicked => { root.action("back"); } }
-            Btn { text: "cancel"; clicked => { root.action("cancel"); } }
         }
     }
     if root.chooser-title != "" || root.question != "": Rectangle {

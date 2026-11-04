@@ -255,6 +255,9 @@ fn review_history(window: &BandwidthWindow) -> Result<Option<u64>, String> {
 }
 struct Edit {
     window: EditBandwidthRulesWindow,
+    /// How it ends (the reference's `DialogEdit`: kept by `regular_dialog`
+    /// once its rules are saved).
+    ended: crate::dialog::Dialog<EditBandwidthRulesWindow>,
 }
 struct Bandwidth {
     store: Arc<Store>,
@@ -475,7 +478,11 @@ impl Bandwidth {
                     match result {
                         Ok(()) => {
                             self.error.borrow_mut().clear();
-                            self.close_edit();
+                            let ended = self.edit.borrow().as_ref().map(|e| e.ended.clone());
+                            match ended {
+                                Some(ended) => ended.accept(),
+                                None => self.edit_closed(),
+                            }
                         }
                         Err(error) => {
                             self.error.borrow_mut().clone_from(&error);
@@ -489,10 +496,17 @@ impl Bandwidth {
             }
         }
     }
+    /// Its rules editor ended with its owner, asking nothing.
     fn close_edit(&self) {
-        if let Some(edit) = self.edit.borrow_mut().take() {
-            let _ = edit.window.hide();
+        let ended = self.edit.borrow().as_ref().map(|e| e.ended.clone());
+        match ended {
+            Some(ended) => ended.cancel_confirmed(),
+            None => self.edit_closed(),
         }
+    }
+    /// Its rules editor has closed, however it was ended.
+    fn edit_closed(&self) {
+        self.edit.borrow_mut().take();
         if self.direct.get() {
             // (the hidden owner of a rules editor opened on its own ends
             // with it)
@@ -514,6 +528,7 @@ impl Bandwidth {
         let Ok(window) = crate::app_title::new::<crate::EditBandwidthRulesWindow>() else {
             return;
         };
+        let ended = crate::dialog::Dialog::new(&window);
         window.set_window_title(
             format!("edit bandwidth rules for {}", context.to_human_string()).into(),
         );
@@ -655,28 +670,30 @@ impl Bandwidth {
                 }
             }
         });
-        let close = Rc::new({
+        // (not while its rules are being saved)
+        ended.refuse_cancel({
             let owner = Rc::downgrade(self);
-            move || {
-                if let Some(owner) = owner.upgrade()
-                    && !owner.window.get_busy()
-                {
-                    owner.close_edit();
-                }
-            }
+            move || owner.upgrade().is_none_or(|o| !o.window.get_busy())
         });
         window.on_cancel_clicked({
-            let close = close.clone();
-            move || close()
+            let ended = ended.clone();
+            move || {
+                ended.cancel();
+            }
         });
-        window.window().on_close_requested(move || {
-            close();
-            slint::CloseRequestResponse::KeepWindowShown
+        // (whatever ends it, through the dialog helper)
+        ended.on_closed({
+            let owner = Rc::downgrade(self);
+            move || {
+                if let Some(owner) = owner.upgrade() {
+                    owner.edit_closed();
+                }
+            }
         });
         show();
         LAST_RULES.with(|s| *s.borrow_mut() = Some(window.as_weak()));
         let _ = window.show();
-        *self.edit.borrow_mut() = Some(Edit { window });
+        *self.edit.borrow_mut() = Some(Edit { window, ended });
     }
     fn close(&self) {
         self.active.set(false);

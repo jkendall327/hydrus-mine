@@ -67,66 +67,85 @@ export component ExportFilesWindow inherits Window {
     callback answer(int);
     callback cancel();
     callback dismissed();
-    VerticalLayout {
-        padding: 12px;
-        spacing: 9px;
-        Text { text: "files to export"; color: Theme.text; font-weight: 700; }
-        HorizontalLayout {
-            vertical-stretch: 1;
-            spacing: 8px;
-            tags := ExportTags {
-                width: 280px;
-                enabled: !root.working && !root.asking;
-                rows: root.tags; selected: root.tag-selected;
-                sort-type: root.tag-sort-type; orders: root.tag-sort-orders; order: root.tag-sort-order; group: root.tag-sort-group;
-                clicked(row,ctrl,shift) => {root.tag-row-clicked(row,ctrl,shift);}
-                middle-clicked(row,ctrl,shift) => {root.tag-middle-clicked(row,ctrl,shift);}
-                context-menu(row,x,y) => {root.tag-context-menu(row,x,y);}
-                sort-chosen(part,index) => {root.tag-sort-chosen(part,index);}
-                sort-geometry(part,frame) => {root.tag-sort-geometry(part,frame);}
-                copy => {root.tag-copy();}
-                select-all => {root.tag-select-all();}
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    // (the tag menu takes the keys while open; once it closes, they come
+    // back, so Escape reaches the frame again)
+    property <bool> menu-open: root.tag-menu-panes.length > 0 || root.tag-menu-question != "";
+    changed menu-open => {
+        if !self.menu-open { escape-keys.focus(); }
+    }
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
-            ListTable {
-                horizontal-stretch: 1;
-                columns: [ {title: "#", width: 50px}, {title: "filetype", width: 135px}, {title: "path", width: 610px} ];
-                rows: root.rows;
-                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+            reject
+        }
+        VerticalLayout {
+            padding: 12px;
+            spacing: 9px;
+            Text { text: "files to export"; color: Theme.text; font-weight: 700; }
+            HorizontalLayout {
+                vertical-stretch: 1;
+                spacing: 8px;
+                tags := ExportTags {
+                    width: 280px;
+                    enabled: !root.working && !root.asking;
+                    rows: root.tags; selected: root.tag-selected;
+                    sort-type: root.tag-sort-type; orders: root.tag-sort-orders; order: root.tag-sort-order; group: root.tag-sort-group;
+                    clicked(row,ctrl,shift) => {root.tag-row-clicked(row,ctrl,shift);}
+                    middle-clicked(row,ctrl,shift) => {root.tag-middle-clicked(row,ctrl,shift);}
+                    context-menu(row,x,y) => {root.tag-context-menu(row,x,y);}
+                    sort-chosen(part,index) => {root.tag-sort-chosen(part,index);}
+                    sort-geometry(part,frame) => {root.tag-sort-geometry(part,frame);}
+                    copy => {root.tag-copy();}
+                    select-all => {root.tag-select-all();}
+                }
+                ListTable {
+                    horizontal-stretch: 1;
+                    columns: [ {title: "#", width: 50px}, {title: "filetype", width: 135px}, {title: "path", width: 610px} ];
+                    rows: root.rows;
+                    row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                }
             }
-        }
-        HorizontalLayout {
-            Btn { text: "remove selected"; enabled: !root.working && !root.asking; clicked => { root.remove(); } }
-            Rectangle { horizontal-stretch: 1; }
-        }
-        Text { text: "export path"; color: Theme.text; font-weight: 700; }
-        HorizontalLayout {
-            LineEdit { text <=> root.destination; enabled: !root.working && !root.asking; accepted => { root.update(); } }
-            Btn { text: "browse…"; enabled: !root.working && !root.asking; clicked => { root.browse(); } }
-            Btn { text: "open this location"; clicked => { root.open-location(); } }
-        }
-        Text { text: "filenames"; color: Theme.text; font-weight: 700; }
-        HorizontalLayout {
-            LineEdit { text <=> root.phrase; enabled: !root.working && !root.asking; accepted => { root.update(); } }
-            Btn { text: "update"; enabled: !root.working && !root.asking; clicked => { root.update(); } }
-            ExportPatternButton {
-                labels: root.pattern-shortcuts;
-                heading: root.pattern-heading;
-                available: !root.working && !root.asking;
-                selected(index) => { root.pattern-chosen(index); }
+            HorizontalLayout {
+                Btn { text: "remove selected"; enabled: !root.working && !root.asking; clicked => { root.remove(); } }
+                Rectangle { horizontal-stretch: 1; }
             }
-        }
-        Text { text: "{hash}   {file_id}   {#}   {tags}   {nn tags}   [namespace]   (tag)"; color: Theme.text; }
-        CheckBox { text: "trash files in hydrus client after export"; checked <=> root.trash; enabled: !root.working && !root.asking; toggled => { if root.trash { root.symlinks = false; } } }
-        CheckBox { text: "EXPERIMENTAL: export symlinks"; checked <=> root.symlinks; enabled: !root.working && !root.trash; }
-        Btn { text: root.sidecars; enabled: !root.working && !root.asking; clicked => { root.edit-sidecars(); } }
-        Text { text: root.status; color: Theme.text; wrap: word-wrap; }
-        if root.working: ProgressIndicator { progress: root.progress; }
-        HorizontalLayout {
-            Rectangle { horizontal-stretch: 1; }
-            Btn { text: "close"; enabled: !root.working && !root.asking; clicked => { root.dismissed(); } }
-            Btn { text: "cancel export"; enabled: root.working; clicked => { root.cancel(); } }
-            Btn { text: "export and close"; enabled: !root.working && !root.asking; clicked => { root.export(true); } }
-            Btn { text: "export"; enabled: !root.working && !root.asking; clicked => { root.export(false); } }
+            Text { text: "export path"; color: Theme.text; font-weight: 700; }
+            HorizontalLayout {
+                LineEdit { text <=> root.destination; enabled: !root.working && !root.asking; accepted => { root.update(); } }
+                Btn { text: "browse…"; enabled: !root.working && !root.asking; clicked => { root.browse(); } }
+                Btn { text: "open this location"; clicked => { root.open-location(); } }
+            }
+            Text { text: "filenames"; color: Theme.text; font-weight: 700; }
+            HorizontalLayout {
+                LineEdit { text <=> root.phrase; enabled: !root.working && !root.asking; accepted => { root.update(); } }
+                Btn { text: "update"; enabled: !root.working && !root.asking; clicked => { root.update(); } }
+                ExportPatternButton {
+                    labels: root.pattern-shortcuts;
+                    heading: root.pattern-heading;
+                    available: !root.working && !root.asking;
+                    selected(index) => { root.pattern-chosen(index); }
+                }
+            }
+            Text { text: "{hash}   {file_id}   {#}   {tags}   {nn tags}   [namespace]   (tag)"; color: Theme.text; }
+            CheckBox { text: "trash files in hydrus client after export"; checked <=> root.trash; enabled: !root.working && !root.asking; toggled => { if root.trash { root.symlinks = false; } } }
+            CheckBox { text: "EXPERIMENTAL: export symlinks"; checked <=> root.symlinks; enabled: !root.working && !root.trash; }
+            Btn { text: root.sidecars; enabled: !root.working && !root.asking; clicked => { root.edit-sidecars(); } }
+            Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+            if root.working: ProgressIndicator { progress: root.progress; }
+            HorizontalLayout {
+                Rectangle { horizontal-stretch: 1; }
+                Btn { text: "close"; enabled: !root.working && !root.asking; clicked => { root.dismissed(); } }
+                Btn { text: "cancel export"; enabled: root.working; clicked => { root.cancel(); } }
+                Btn { text: "export and close"; enabled: !root.working && !root.asking; clicked => { root.export(true); } }
+                Btn { text: "export"; enabled: !root.working && !root.asking; clicked => { root.export(false); } }
+            }
         }
     }
     if root.asking: Asking {

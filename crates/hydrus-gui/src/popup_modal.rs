@@ -38,6 +38,12 @@ struct State {
     /// The held jobs this has seen, so each is added once.
     known: HashSet<Key>,
     dialog: Option<PopupModalWindow>,
+    /// How the dialog ends (the reference's `DialogNullipotent`).
+    ended: Option<crate::dialog::Dialog<PopupModalWindow>>,
+    /// Whether the close asked for is its OK (its close button, or its job
+    /// done: kept by `regular_dialog`) rather than its cancel (Escape, its
+    /// window's close).
+    closing_ok: bool,
     question: Option<ChoiceButtonsWindow>,
     /// The other windows hidden while the dialog is up.
     hidden: crate::app_title::Hidden,
@@ -185,7 +191,12 @@ impl Controller {
                 },
                 facts,
             );
-            let effects = self.state.borrow_mut().modals.tick(&job_facts);
+            let effects = {
+                let mut state = self.state.borrow_mut();
+                // (a job done closes it as its OK, `okSignal`)
+                state.closing_ok = true;
+                state.modals.tick(&job_facts)
+            };
             self.run(effects);
         }
     }
@@ -253,6 +264,9 @@ impl Controller {
                         eprintln!("could not show the modal popup");
                         continue;
                     };
+                    // (the reference's `DialogNullipotent`: kept by
+                    // `regular_dialog` by its OK)
+                    let ended = crate::dialog::Dialog::new(&dialog);
                     dialog.set_window_title(title.into());
                     dialog.set_hide_close_button(hide_close_button);
                     let weak = Rc::downgrade(self);
@@ -260,8 +274,22 @@ impl Controller {
                         let weak = weak.clone();
                         move || {
                             if let Some(me) = weak.upgrade() {
+                                me.state.borrow_mut().closing_ok = true;
                                 me.close_requested();
                             }
+                        }
+                    });
+                    // (Escape and the window's close ask the job first,
+                    // `UserIsOKToCancel`: closed, or asked or warned about,
+                    // by what that says)
+                    ended.refuse_cancel({
+                        let weak = weak.clone();
+                        move || {
+                            if let Some(me) = weak.upgrade() {
+                                me.state.borrow_mut().closing_ok = false;
+                                me.close_requested();
+                            }
+                            false
                         }
                     });
                     dialog.on_pause_play({
@@ -278,15 +306,6 @@ impl Controller {
                             if let Some(me) = weak.upgrade() {
                                 me.change(key, Job::cancel);
                             }
-                        }
-                    });
-                    dialog.window().on_close_requested({
-                        let weak = weak.clone();
-                        move || {
-                            if let Some(me) = weak.upgrade() {
-                                me.close_requested();
-                            }
-                            slint::CloseRequestResponse::KeepWindowShown
                         }
                     });
                     if let Some(job) = self.job(&key) {
@@ -307,6 +326,7 @@ impl Controller {
                     }
                     let mut state = self.state.borrow_mut();
                     state.dialog = Some(dialog);
+                    state.ended = Some(ended);
                     std::mem::replace(&mut state.hidden, hidden).restore();
                 }
                 Effect::Release(key) => {
@@ -328,21 +348,44 @@ impl Controller {
                             me.answered(choice == Some(0));
                         }
                     }) {
-                        Ok(window) => self.state.borrow_mut().question = window,
+                        Ok(window) => {
+                            // (its own `GetYesNo`, which it waits on)
+                            let ended = self.state.borrow().ended.clone();
+                            if let (Some(ended), Some(window)) = (ended, &window) {
+                                ended.hold(window);
+                            }
+                            self.state.borrow_mut().question = window;
+                        }
                         Err(error) => eprintln!("could not ask: {error}"),
                     }
                 }
                 Effect::Warn => {
-                    crate::debug_actions::message_then(
-                        "Warning",
-                        model::CANNOT_CANCEL,
-                        Box::new(|| {}),
-                    );
+                    // (its own `ShowWarning`, which it waits on)
+                    let ended = self.state.borrow().ended.clone();
+                    match ended {
+                        Some(ended) => ended.message("Warning", model::CANNOT_CANCEL),
+                        None => {
+                            crate::debug_actions::message_then(
+                                "Warning",
+                                model::CANNOT_CANCEL,
+                                Box::new(|| {}),
+                            );
+                        }
+                    }
                 }
                 Effect::Close => {
-                    let dialog = self.state.borrow_mut().dialog.take();
-                    if let Some(dialog) = dialog {
-                        let _ = dialog.hide();
+                    let (dialog, ended, ok) = {
+                        let mut state = self.state.borrow_mut();
+                        (state.dialog.take(), state.ended.take(), state.closing_ok)
+                    };
+                    match ended {
+                        Some(ended) if ok => ended.accept(),
+                        Some(ended) => ended.cancel_confirmed(),
+                        None => {
+                            if let Some(dialog) = dialog {
+                                let _ = dialog.hide();
+                            }
+                        }
                     }
                 }
             }

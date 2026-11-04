@@ -27,7 +27,7 @@ fn load(store: &Store, file: HashId) -> MediaResult {
 }
 
 /// "manage > times" on the thumbnails selected.
-fn open(ui: &MainWindow, bound: &Bound, index: i32) -> ManageTimesWindow {
+pub(crate) fn open(ui: &MainWindow, bound: &Bound, index: i32) -> ManageTimesWindow {
     ui.invoke_thumbnail_menu_requested(index);
     let manage = ui.get_thumbnail_menu().manage;
     let id = (0..manage.row_count())
@@ -44,7 +44,7 @@ fn open(ui: &MainWindow, bound: &Bound, index: i32) -> ManageTimesWindow {
         .expect("the dialog opens")
 }
 
-fn editor(bound: &Bound) -> DateTimeEditorWindow {
+pub(crate) fn editor(bound: &Bound) -> DateTimeEditorWindow {
     bound
         .datetime_editor
         .borrow()

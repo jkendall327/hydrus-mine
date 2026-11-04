@@ -78,6 +78,9 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let window = crate::app_title::new::<crate::ExportFilesWindow>()?;
+    // (a frame with a frame key of its own, `export_files_frame`: placed by
+    // it, and kept by it as it closes)
+    let ended = crate::dialog::Dialog::named_frame(&window, store, "export_files_frame");
     let active = Rc::new(Cell::new(true));
     crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     window.set_pattern_shortcuts(ModelRc::new(VecModel::from(
@@ -371,7 +374,6 @@ pub fn open(
         }
     });
     let close = Rc::new({
-        let weak = window.as_weak();
         // (the progress timer's own callback holds this, so a strong timer
         // here would keep the timer, and all this captures, alive for good)
         let timer = Rc::downgrade(&slots.timer);
@@ -380,7 +382,6 @@ pub fn open(
         let state = state.clone();
         let active = active.clone();
         let tag_menu = tag_menu.clone();
-        let store = store.clone();
         move || {
             active.set(false);
             tag_menu.close();
@@ -389,23 +390,42 @@ pub fn open(
                 timer.stop();
             }
             sidecars.cancel();
-            if let Some(w) = weak.upgrade() {
-                crate::windows::save_named(w.window(), &store, "export_files_frame");
-                let _ = w.hide();
-            }
             window_slot.borrow_mut().take();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let close = close.clone();
+        move || close()
+    });
+    // (its question takes Escape and the window's close first, answered
+    // no; its sidecars editor, modal in the reference, holds it)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_asking() {
+                return false;
+            }
+            w.invoke_answer(1);
+            true
+        }
+    });
+    ended.modal_child({
+        let routers = slots.sidecars.routers.clone();
+        move || routers.borrow().is_some()
+    });
+    let close: Rc<dyn Fn()> = Rc::new({
+        let ended = ended.clone();
+        move || {
+            ended.close();
         }
     });
     window.on_dismissed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     window.on_update({
         let refresh = refresh.clone();
@@ -717,7 +737,6 @@ pub fn open(
                 }
             }
         });
-    crate::windows::place_frame(&window, store, "export_files_frame");
     window.show()?;
     *slots.window.borrow_mut() = Some(window.clone_strong());
     Ok(window)

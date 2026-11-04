@@ -108,6 +108,9 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
         return window.show().map_err(|e| e.to_string());
     }
     let window = crate::app_title::new::<crate::HowBonedWindow>().map_err(|e| e.to_string())?;
+    // (a frame with a frame key of its own, `mr_bones`: placed by it, and
+    // kept by it as it closes)
+    let ended = crate::dialog::Dialog::named_frame(&window, store, "mr_bones");
     let snapshot = store.snapshot();
     let roles = DomainRoles::new(&snapshot.services).map_err(|e| e.to_string())?;
     let domains: Vec<(ServiceKey, String)> = snapshot
@@ -277,22 +280,16 @@ pub fn open(store: &Arc<Store>, slot: &Slot) -> Result<(), String> {
             }
         }
     });
-    window.window().on_close_requested({
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let state = state.clone();
-        let weak = window.as_weak();
-        let store = store.clone();
         move || {
             state
                 .generation
                 .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
             state.poll.stop();
-            if let Some(window) = weak.upgrade() {
-                crate::windows::save_named(window.window(), &store, "mr_bones");
-            }
-            slint::CloseRequestResponse::HideWindow
         }
     });
-    crate::windows::place_frame(&window, store, "mr_bones");
     window.show().map_err(|e| e.to_string())?;
     refresh();
     OPENED.with(|w| *w.borrow_mut() = window.as_weak());

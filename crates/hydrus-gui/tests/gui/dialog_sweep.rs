@@ -1514,6 +1514,96 @@ fn cases() -> Vec<Named> {
                 }),
             )
         }),
+        // (batch 6: the last of the ordinary dialogs)
+        ("edit datetime", || {
+            let (dirs, store) = crate::options_window::store();
+            let (ui, bound) = client(&store);
+            ui.invoke_search_edited("system:everything".into());
+            ui.invoke_search_accepted();
+            ui.invoke_thumbnail_clicked(0, false, false);
+            let times = crate::manage_times::open(&ui, &bound, 0);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui);
+                    times.invoke_time_clicked(0);
+                    opened(
+                        crate::manage_times::editor(&bound),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
+        ("edit bandwidth rules", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            crate::common::main_menu::choose(
+                &ui,
+                &["network", "data"],
+                "review bandwidth usage and edit rules",
+            );
+            let review = hydrus_gui::network_data_window::last_bandwidth().expect("bandwidth");
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    let rules = (0..250)
+                        .find_map(|_| {
+                            if !review.get_busy() {
+                                review.invoke_default_clicked();
+                            }
+                            spin(std::time::Duration::from_millis(20));
+                            hydrus_gui::network_data_window::last_rules()
+                        })
+                        .expect("a rules editor");
+                    // (its apply saves the rules on the review's worker,
+                    // then closes it)
+                    opened(
+                        rules,
+                        |w| {
+                            w.invoke_apply_clicked();
+                            until("the rules are saved", || !w.window().is_visible());
+                        },
+                        |w| w.invoke_cancel_clicked(),
+                    )
+                }),
+            )
+        }),
+        ("export url classes", || {
+            menu_dialog(&["network", "downloaders"], "url classes\u{2026}", |b| {
+                let list = take(&b.downloader_definitions.classes, "url classes");
+                list.invoke_row_clicked(0, false, false);
+                list.invoke_action("export".into());
+                // (`DialogNullipotent`: its close button is its OK)
+                opened(
+                    take(&b.downloader_definitions.class_exchange.0, "the export"),
+                    |w| w.invoke_action("cancel".into()),
+                    |w| w.invoke_escape(),
+                )
+            })
+        }),
+        ("input tags", || {
+            let (dirs, store) = crate::subscriptions::store();
+            let (ui, bound) = client(&store);
+            ui.invoke_new_page();
+            ui.invoke_chooser_pressed(4);
+            ui.invoke_chooser_pressed(8);
+            let editor = crate::import_additional_tags::open_tags_page(&ui, &bound);
+            let mine = crate::import_additional_tags::my_tags_row(&editor);
+            (
+                store,
+                Box::new(move || {
+                    let _ = (&dirs, &ui, &bound);
+                    editor.invoke_edit_additional_tags(mine);
+                    opened(
+                        hydrus_gui::write_tag_window::last_opened().expect("input tags"),
+                        |w| w.invoke_apply(),
+                        |w| w.invoke_cancel(),
+                    )
+                }),
+            )
+        }),
     ]
 }
 
@@ -1758,7 +1848,7 @@ const KEYED: &[(&str, &str)] = &[
 /// The cases the reference doesn't size or place (an old
 /// `ClientGUIDialogs.Dialog`; a panel of review services): whatever ends
 /// them keeps nothing, as the recording's cancel.
-const PLAIN: &[&str] = &["manage ratings", "manage api keys"];
+const PLAIN: &[&str] = &["manage ratings", "manage api keys", "input tags"];
 
 fn key_of(name: &str) -> &'static str {
     KEYED
@@ -1791,6 +1881,7 @@ const NULLIPOTENT: &[&str] = &[
     "database locations",
     "a subscription query's file log",
     "a subscription query's search log",
+    "export url classes",
 ];
 
 /// The cases whose clients set up the headless platform themselves.
@@ -1805,6 +1896,7 @@ const INITS_ITSELF: &[&str] = &[
 
 /// Each window, opened afresh three times: Escape and cancel keep nothing,
 /// apply keeps the size it was given.
+// leaf: audit-options-geometry
 #[test]
 fn every_helper_dialog_keeps_its_frame_only_when_applied() {
     each_case(|name, (store, open)| {
@@ -2166,6 +2258,16 @@ fn menu_frame(
 /// Every `FrameThatTakesScrollablePanel` on the helper.
 fn frames() -> Vec<NamedFrame> {
     vec![
+        ("import url classes", || {
+            menu_frame(&["network", "downloaders"], "url classes\u{2026}", |b| {
+                take(&b.downloader_definitions.classes, "url classes")
+                    .invoke_action("import".into());
+                framed(
+                    take(&b.downloader_definitions.class_exchange.0, "the import"),
+                    |w| w.invoke_action("cancel".into()),
+                )
+            })
+        }),
         ("tag display sync", || {
             menu_frame(
                 &["tags", "sync"],
@@ -2356,6 +2458,7 @@ fn spin(time: std::time::Duration) {
 /// Each frame, as the recording's `FrameThatTakesScrollablePanel` cases: a
 /// moment after the user resizes it, its frame is kept; its close button,
 /// the window's close and a real Escape close it and keep nothing more.
+// leaf: audit-options-geometry
 #[test]
 fn every_helper_frame_keeps_its_frame_as_it_is_resized_and_nothing_as_it_closes() {
     let recorded = hydrus_testkit::fixture_json("regular_dialog.json");
@@ -3697,4 +3800,245 @@ fn a_dialogs_menu_takes_escape_first_and_gives_the_keys_back_once_closed() {
         &|| matcher.get_favourite_panes().row_count(),
         &|| {},
     );
+    // the input tags window's tag menu (a tag's context menu)
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let editor = crate::import_additional_tags::open_tags_page(&ui, &bound);
+    editor.invoke_edit_additional_tags(crate::import_additional_tags::my_tags_row(&editor));
+    let tags = hydrus_gui::write_tag_window::last_opened().expect("input tags");
+    tags.invoke_edited("menu tag".into());
+    tags.invoke_entered();
+    check(
+        "input tags",
+        tags.window(),
+        &|| tags.invoke_context_menu(0, 20.0, 20.0),
+        &|| tags.get_tag_menu_panes().row_count(),
+        &|| {},
+    );
+}
+
+/// Each frame the options' frame locations list offers, and the tests that
+/// drive the windows opening by it against the reference's recordings:
+/// `audit-options-geometry`'s scope, frame by frame.
+const FRAME_COVERAGE: &[(&str, &str)] = &[
+    (
+        "main_gui",
+        "shell_geometry.rs (save_geometry.json, frame_state.json)",
+    ),
+    (
+        "media_viewer",
+        "viewer_window.rs (viewer_close_geometry.json), options_gui_frames.rs",
+    ),
+    (
+        "manage_options_dialog",
+        "frame_locations.rs (options_geometry_lifecycle.json)",
+    ),
+    (
+        "regular_dialog",
+        "dialog_sweep.rs: every helper dialog and frame (regular_dialog.json); frame_geometry.rs: other windows",
+    ),
+    (
+        "deeply_nested_dialog",
+        "dialog_sweep.rs: KEYED cases (regular_dialog.json's DialogEdit cases on their key)",
+    ),
+    ("quick_entry_dialog", "dialog_sweep.rs: KEYED cases"),
+    (
+        "quick_select_dialog",
+        "dialog_sweep.rs: KEYED cases; frame_geometry.rs: the choice dialogs",
+    ),
+    (
+        "quick_yesno_dialog",
+        "frame_geometry.rs: the choice dialogs",
+    ),
+    (
+        "review_services",
+        "frame_geometry.rs: named windows (frame_state.json)",
+    ),
+    ("mr_bones", "frame_geometry.rs: named windows"),
+    ("file_history_chart", "frame_geometry.rs: named windows"),
+    ("export_files_frame", "frame_geometry.rs: named windows"),
+    (
+        "manage_subscriptions_dialog",
+        "frame_geometry.rs: named windows",
+    ),
+    (
+        "edit_subscription_dialog",
+        "frame_geometry.rs: named windows",
+    ),
+    ("manage_tags_dialog", "frame_geometry.rs: named windows"),
+    ("manage_tags_frame", "frame_geometry.rs: named windows"),
+    ("manage_urls_dialog", "frame_geometry.rs: named windows"),
+    ("manage_times_dialog", "frame_geometry.rs: named windows"),
+    ("manage_notes_dialog", "frame_geometry.rs: named windows"),
+    ("file_import_status", "frame_geometry.rs: named windows"),
+    ("gallery_import_log", "frame_geometry.rs: named windows"),
+    (
+        "local_import_filename_tagging",
+        "frame_geometry.rs: named windows",
+    ),
+];
+
+/// The frame locations Options lists are exactly the frames this file's
+/// coverage table names, so a frame added to the list without a test that
+/// drives its windows against the recording fails here; and every other key
+/// the sweep replays on is one of them.
+// leaf: audit-options-geometry
+#[test]
+fn every_frame_the_options_list_offers_is_driven_against_the_recording() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::options_window::store();
+    let (ui, bound) = client(&store);
+    let options = options_page(&ui, &bound, "gui");
+    let rows = options.get_frame_rows();
+    let offered: std::collections::BTreeSet<String> = (0..rows.row_count())
+        .map(|i| {
+            rows.row_data(i)
+                .unwrap()
+                .cells
+                .row_data(0)
+                .unwrap()
+                .to_string()
+        })
+        .collect();
+    let covered: std::collections::BTreeSet<String> = FRAME_COVERAGE
+        .iter()
+        .map(|(key, _)| (*key).to_owned())
+        .collect();
+    assert_eq!(offered, covered, "every listed frame, and only those");
+    for (name, key) in KEYED {
+        assert!(covered.contains(*key), "{name}: {key}");
+    }
+    options.invoke_cancel();
+}
+
+/// A held job's modal dialog (`DialogNullipotent`, `PopupMessageDialogPanel`)
+/// ends through the helper, replaying `regular_dialog.json`'s nullipotent
+/// cases: its close button (once the job is cancelled, on yes) and its job
+/// finishing are its OK and keep `regular_dialog`; Escape (asking the same
+/// question, answered yes) keeps nothing. While it asks, the question holds
+/// it, and the dialog's own warning is its own.
+// leaf: audit-options-geometry
+#[test]
+fn a_modal_popups_dialog_keeps_its_frame_by_its_ok_only() {
+    use hydrus_store::popups::{self, Job};
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (_ui, bound) = client(&store);
+    let recorded = hydrus_testkit::fixture_json("regular_dialog.json");
+    let baseline = recorded_frame(&recorded["baseline"]);
+    let moved = pair(&recorded["moved"]["size"]).unwrap();
+    let case = |action: &str| {
+        recorded["lifecycle"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| c["kind"] == "nullipotent" && c["action"] == action)
+            .unwrap()
+            .clone()
+    };
+    let now = || hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let controller = bound.popup_modal.clone();
+    let publish = |cancellable: bool| {
+        let mut job = Job::new(!cancellable, cancellable, 0.0);
+        job.status_title = Some("a long job".into());
+        job.held_by_modal = true;
+        let key = job.key;
+        store
+            .write(move |ctx| popups::add(ctx.conn(), &job, now()))
+            .unwrap();
+        until("the dialog opens", || controller.dialog().is_some());
+        let dialog = controller.dialog().unwrap();
+        dialog
+            .window()
+            .set_size(slint::LogicalSize::new(moved.0 as f32, moved.1 as f32));
+        (key, dialog)
+    };
+    let kept = |how: &str, recorded: &Value, window: &slint::Window| {
+        let mut after = recorded_frame(&recorded["after"]);
+        if after != baseline {
+            after.last_position = Some(windows::state(window).position);
+        }
+        assert_eq!(frame(&store), after, "{how}");
+    };
+    for how in ["close button", "escape", "job done"] {
+        keep(&store, baseline.clone());
+        let (key, dialog) = publish(true);
+        match how {
+            "close button" => {
+                dialog.invoke_close_clicked();
+                let question = controller.question().expect("it asks");
+                // (the question holds it: Escape and its close wait)
+                escape(dialog.window());
+                assert!(dialog.window().is_visible(), "{how}: held by its question");
+                question.invoke_chosen(0);
+            }
+            "escape" => {
+                widgets::lay_out(dialog.window(), 400.0, 200.0);
+                escape(dialog.window());
+                controller.question().expect("it asks").invoke_chosen(0);
+            }
+            _ => {
+                store
+                    .write(move |ctx| {
+                        popups::update(ctx.conn(), &key, now(), Job::finish).map(|_| ())
+                    })
+                    .unwrap();
+            }
+        }
+        until("it closes", || !dialog.window().is_visible());
+        let recorded = case(if how == "escape" {
+            "window_close"
+        } else {
+            "close_button"
+        });
+        kept(how, &recorded, dialog.window());
+    }
+
+    // a job that can't be cancelled: Escape warns, in a message of its own
+    let (key, dialog) = publish(false);
+    widgets::lay_out(dialog.window(), 400.0, 200.0);
+    escape(dialog.window());
+    let warning = hydrus_gui::dialog_question().expect("it warns");
+    assert!(warning.window().is_visible());
+    escape(dialog.window());
+    assert!(dialog.window().is_visible(), "held by its warning");
+    warning.invoke_cancelled();
+    store
+        .write(move |ctx| popups::update(ctx.conn(), &key, now(), Job::finish).map(|_| ()))
+        .unwrap();
+    until("it closes itself when done", || {
+        !dialog.window().is_visible()
+    });
+}
+
+/// The last ordinary dialogs' sub-states (batch 6) take Escape first: a
+/// downloader import's notice, then the import itself.
+#[test]
+fn the_last_dialogs_take_escape_for_their_questions_and_children_first() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+
+    // import url classes: a bad paste's notice is answered by Escape first
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "url classes\u{2026}");
+    let list = take(&bound.downloader_definitions.classes, "url classes");
+    list.invoke_action("import".into());
+    let import = take(&bound.downloader_definitions.class_exchange.0, "the import");
+    import.set_text("not a package".into());
+    import.invoke_action("review".into());
+    widgets::lay_out(import.window(), 700.0, 500.0);
+    if !import.get_question().is_empty() {
+        escape(import.window());
+        assert!(import.get_question().is_empty(), "import: its notice first");
+        assert!(import.window().is_visible());
+    }
+    escape(import.window());
+    assert!(
+        !import.window().is_visible(),
+        "import: then Escape closes it"
+    );
+    list.invoke_action("cancel".into());
 }

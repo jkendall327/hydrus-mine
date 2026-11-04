@@ -252,6 +252,11 @@ fn detached_write_tag_child_commits_once_and_discards_closed_owner_answers() {
     w.invoke_edited("cancelled child tag".into());
     w.invoke_entered();
     assert!(w.invoke_paste(false));
+    // (the window's close answers its paste question no first, as Escape
+    // does; the next one closes it)
+    w.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(w.window().is_visible() && w.get_question().is_empty());
     w.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
     w.invoke_answered(true);

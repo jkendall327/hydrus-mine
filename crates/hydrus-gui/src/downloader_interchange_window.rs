@@ -485,6 +485,15 @@ fn open_objects<T: Clone + 'static>(
     }
     let w =
         crate::app_title::new::<crate::DownloaderExchangeWindow>().map_err(|e| e.to_string())?;
+    // (an import is the reference's "import downloaders" frame
+    // (`FrameThatTakesScrollablePanel`), kept by `regular_dialog` as it
+    // moves; an export its "export downloaders" `DialogNullipotent`, whose
+    // button is its OK, keeping `regular_dialog`)
+    let ended = if importing {
+        crate::dialog::Dialog::frame(&w)
+    } else {
+        crate::dialog::Dialog::new(&w)
+    };
     w.set_importing(importing);
     w.set_active(true);
     if codec.processing {
@@ -522,7 +531,6 @@ fn open_objects<T: Clone + 'static>(
             if let Some(w) = weak.upgrade() {
                 w.set_active(false);
                 w.set_png_child(false);
-                let _ = w.hide();
             }
             png.cancel();
             if let Some(slot) = slot.upgrade() {
@@ -536,7 +544,7 @@ fn open_objects<T: Clone + 'static>(
     w.on_action({
         let weak = w.as_weak();
         let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let codec = codec.clone();
         let review = review.clone();
         let pending = pending.clone();
@@ -564,7 +572,10 @@ fn open_objects<T: Clone + 'static>(
                     None => action.to_string(),
                 };
                 match action.as_str() {
-                    "cancel" => close(),
+                    "cancel" if importing => {
+                        ended.close();
+                    }
+                    "cancel" => ended.accept(),
                     "back" => {
                         pending.borrow_mut().take();
                         w.set_ready(false);
@@ -710,7 +721,7 @@ fn open_objects<T: Clone + 'static>(
                             .clone()
                             .ok_or_else(|| "Review a package before importing.".to_owned())?;
                         review_of(review.as_ref().as_ref())?.1(definitions)?;
-                        close();
+                        ended.close();
                     }
                     _ => (),
                 }
@@ -744,10 +755,36 @@ fn open_objects<T: Clone + 'static>(
             }
         });
     }
-    w.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (its overwrite question, gallery chooser and domain prompt take
+    // Escape and the window's close first, answered no; its png export, a
+    // `DialogNullipotent`, holds it)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            let action = if !w.get_overwrite_question().is_empty() {
+                "no-json"
+            } else if !w.get_question().is_empty() {
+                if w.get_question_asks() { "no" } else { "ok" }
+            } else if !w.get_chooser_title().is_empty() {
+                "chooser-cancel"
+            } else if w.get_domain_prompt() {
+                "domain-cancel"
+            } else {
+                return false;
+            };
+            w.invoke_action(action.into());
+            true
+        }
     });
+    ended.modal_child({
+        let png = slots.1.clone();
+        move || png.has_open()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     w.show().map_err(|e| e.to_string())?;
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)

@@ -2796,9 +2796,11 @@ maximised/fullscreen for the main window, media viewer and Options window. Exist
 and parent/centre positioning now reach those owners too (see "Options kept but
 not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
-`audit-options-geometry` is untagged until the ordinary dialogs all end
+`audit-options-geometry` is tagged now that the ordinary dialogs all end
 through the shared `Dialog` helper (`crates/hydrus-gui/src/dialog.rs`), as
-the owner decided (#154). What is proved: the main window, the media viewer, the
+the owner decided (#154); `FRAME_COVERAGE` in `tests/gui/dialog_sweep.rs`
+maps each frame the options' frame locations list offers to the tests that
+drive its windows against the recordings. What is proved: the main window, the media viewer, the
 Options window and the fourteen windows with frame keys of their own open by
 their frames and keep them as the reference's do (`shell_geometry.rs`,
 `options_gui_frames.rs`, `frame_geometry.rs`, replaying `frame_state.json`
@@ -2872,13 +2874,17 @@ retirement stops it inside the writer's transaction); the reference's
 `AsyncQtJob` would finish it. The login test result is swept from where
 the login script editor opens it (`open_result`), since reaching it from
 the menus needs a live login site; the menu path is proved in
-`login_workflows.rs`. The ordinary dialogs not yet on the helper are the
-date-time editor, the bandwidth rules editor, the downloaders' import and
-export, a popup's modal dialog and a subscription's "edit additional
-tags" (by `regular_dialog`), and export files, file history and review
-your fate (frames with keys of their own, which they open by and keep as
-they did); they don't keep `regular_dialog` yet, and
-it matters only once the frame is set to remember a size or place in
+`login_workflows.rs`. The last of them (batch 6) are on it too: the
+date-time editor and the bandwidth rules editor (dialogs; the rules
+editor's apply keeps its frame once its rules are saved), a downloader
+export (a `DialogNullipotent`: its button its OK) and import (a frame), a
+held job's modal dialog (a `DialogNullipotent`: its close button and its
+job finishing its OK, Escape its cancel, each asking the job first as
+`UserIsOKToCancel`), the input tags window (the reference's `DialogInputTags`,
+which keeps no frame), and export files, file history and review your fate
+(frames with keys of their own, kept as they close). hydrus-rs has no
+"edit additional tags" window for a subscription. Keeping `regular_dialog`
+matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape,
 which the helper owns, cancels these dialogs and closes the frames. Every
 window with a frame of its own that is a dialog (manage subscriptions, edit
