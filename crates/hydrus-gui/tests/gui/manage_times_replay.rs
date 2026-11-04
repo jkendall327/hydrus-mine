@@ -728,16 +728,19 @@ fn the_date_time_editor_replays_the_references_through_the_window() {
                 }
                 other => panic!("{other}"),
             }
+            // (its warnings are message windows of its own, one after another)
             let mut said = Vec::new();
-            while editor.get_asking() {
-                let title = editor.get_asking_title().to_string();
-                let message = editor.get_asking_message().to_string();
+            while let Some(message_window) =
+                hydrus_gui::dialog_question().filter(|w| w.window().is_visible())
+            {
+                let title = message_window.get_window_title().to_string();
+                let message = message_window.get_message().to_string();
                 said.push(if title == "Warning" {
                     json!({ "warning": message })
                 } else {
                     json!({ "critical": title, "message": message })
                 });
-                editor.invoke_dismissed();
+                message_window.invoke_cancelled();
             }
             let notice = editor.get_notice();
             if !notice.is_empty() {

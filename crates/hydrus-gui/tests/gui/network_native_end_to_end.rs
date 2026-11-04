@@ -151,8 +151,14 @@ impl Drop for Daemon {
 }
 
 fn refresh_until(jobs: &hydrus_gui::NetworkJobsWindow, mut condition: impl FnMut() -> bool) {
+    // (a refresh a moment apart, not one each spin: each queues a review on
+    // the window's worker, and a backlog of them outlasts the wait)
+    let mut last: Option<std::time::Instant> = None;
     until(|| {
-        jobs.invoke_refresh();
+        if last.is_none_or(|at| at.elapsed() > Duration::from_millis(200)) {
+            jobs.invoke_refresh();
+            last = Some(std::time::Instant::now());
+        }
         condition()
     });
 }

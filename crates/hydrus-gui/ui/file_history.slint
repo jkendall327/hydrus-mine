@@ -30,55 +30,68 @@ export component FileHistoryWindow inherits Window {
     callback date-edited(string,string);
     callback refit(bool);
     callback close-clicked();
-    VerticalLayout { padding: 10px; spacing: 8px;
-        HorizontalLayout { spacing: 10px;
-            VerticalLayout { width: 250px; spacing: 6px;
-                ComboBox { model: root.domains; current-index <=> root.domain-index; selected => { root.domain-chosen(self.current-index); } }
-                ScrollView { vertical-stretch: 1; VerticalLayout {
-                    for text[i] in root.predicates: HorizontalLayout {
-                        Text { text: text; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
-                        Btn { text: "×"; clicked => { root.remove(i); } }
-                    }
-                } }
-                LineEdit { placeholder-text: "tag or system predicate"; text <=> root.input; accepted => { root.enter(); } }
-                Btn { text: "add predicate"; clicked => { root.enter(); } }
-                Text { text: "Enter a tag or system predicate to filter the chart."; color: Theme.muted; wrap: word-wrap; }
-                HorizontalLayout {
-                    Btn { text: "cancel"; enabled: root.loading; clicked => { root.cancel-work(); } }
-                    Btn { text: "refresh"; clicked => { root.refresh(); } }
-                }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
-            VerticalLayout { spacing: 6px;
-                Text { text: root.status; color: Theme.text; wrap: word-wrap; }
-                HorizontalLayout {
-                    for label[i] in ["show all","show inbox","show archive","show deleted"]: CheckBox {
-                        text: label; checked: root.visible-series[i]; toggled => { root.toggle(i); }
+            reject
+        }
+        VerticalLayout { padding: 10px; spacing: 8px;
+            HorizontalLayout { spacing: 10px;
+                VerticalLayout { width: 250px; spacing: 6px;
+                    ComboBox { model: root.domains; current-index <=> root.domain-index; selected => { root.domain-chosen(self.current-index); } }
+                    ScrollView { vertical-stretch: 1; VerticalLayout {
+                        for text[i] in root.predicates: HorizontalLayout {
+                            Text { text: text; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
+                            Btn { text: "×"; clicked => { root.remove(i); } }
+                        }
+                    } }
+                    LineEdit { placeholder-text: "tag or system predicate"; text <=> root.input; accepted => { root.enter(); } }
+                    Btn { text: "add predicate"; clicked => { root.enter(); } }
+                    Text { text: "Enter a tag or system predicate to filter the chart."; color: Theme.muted; wrap: word-wrap; }
+                    HorizontalLayout {
+                        Btn { text: "cancel"; enabled: root.loading; clicked => { root.cancel-work(); } }
+                        Btn { text: "refresh"; clicked => { root.refresh(); } }
                     }
                 }
-                HorizontalLayout {
-                    Text { text: root.max-count; color: Theme.text; }
-                    plot := Rectangle { visible: root.chart-visible; background: Theme.panel; vertical-stretch: 1; horizontal-stretch: 1; clip: true;
-                        for path[i] in root.paths: Path {
-                            width: parent.width; height: parent.height;
-                            viewbox-width: 600; viewbox-height: 320;
-                            commands: path; fill: transparent;
-                            stroke: [#0099dd,#84b643,#ee9900,#8866bb][i]; stroke-width: 2px;
+                VerticalLayout { spacing: 6px;
+                    Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+                    HorizontalLayout {
+                        for label[i] in ["show all","show inbox","show archive","show deleted"]: CheckBox {
+                            text: label; checked: root.visible-series[i]; toggled => { root.toggle(i); }
                         }
                     }
-                }
-                HorizontalLayout { Text { text: root.start-date; color: Theme.text; } Text { text: root.end-date; color: Theme.text; horizontal-alignment: right; } }
-                HorizontalLayout {
-                    SpinBox { minimum: 0; maximum: 1000000000; value <=> root.min-count; edited => { root.count-edited(root.min-count,root.max-count); } }
-                    SpinBox { minimum: 0; maximum: 1000000000; value <=> root.max-count; edited => { root.count-edited(root.min-count,root.max-count); } }
-                    Btn { text: "refit y axis"; clicked => { root.refit(false); } }
-                }
-                HorizontalLayout {
-                    LineEdit { text <=> root.start-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
-                    LineEdit { text <=> root.end-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
-                    Btn { text: "refit x axis"; clicked => { root.refit(true); } }
+                    HorizontalLayout {
+                        Text { text: root.max-count; color: Theme.text; }
+                        plot := Rectangle { visible: root.chart-visible; background: Theme.panel; vertical-stretch: 1; horizontal-stretch: 1; clip: true;
+                            for path[i] in root.paths: Path {
+                                width: parent.width; height: parent.height;
+                                viewbox-width: 600; viewbox-height: 320;
+                                commands: path; fill: transparent;
+                                stroke: [#0099dd,#84b643,#ee9900,#8866bb][i]; stroke-width: 2px;
+                            }
+                        }
+                    }
+                    HorizontalLayout { Text { text: root.start-date; color: Theme.text; } Text { text: root.end-date; color: Theme.text; horizontal-alignment: right; } }
+                    HorizontalLayout {
+                        SpinBox { minimum: 0; maximum: 1000000000; value <=> root.min-count; edited => { root.count-edited(root.min-count,root.max-count); } }
+                        SpinBox { minimum: 0; maximum: 1000000000; value <=> root.max-count; edited => { root.count-edited(root.min-count,root.max-count); } }
+                        Btn { text: "refit y axis"; clicked => { root.refit(false); } }
+                    }
+                    HorizontalLayout {
+                        LineEdit { text <=> root.start-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
+                        LineEdit { text <=> root.end-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
+                        Btn { text: "refit x axis"; clicked => { root.refit(true); } }
+                    }
                 }
             }
+            Btn { text: "close"; clicked => { root.close-clicked(); } }
         }
-        Btn { text: "close"; clicked => { root.close-clicked(); } }
     }
 }

@@ -62,6 +62,9 @@ pub fn open_with_worker(
         predecessor.invoke_close_clicked();
     }
     let window = crate::app_title::new::<crate::FileHistoryWindow>().map_err(|e| e.to_string())?;
+    // (a frame with a frame key of its own, `file_history_chart`: placed by
+    // it, and kept by it as it closes)
+    let ended = crate::dialog::Dialog::named_frame(&window, store, "file_history_chart");
     let roles = DomainRoles::new(&store.snapshot().services).map_err(|e| e.to_string())?;
     let domains = store
         .snapshot()
@@ -99,20 +102,22 @@ pub fn open_with_worker(
     let close = Rc::new({
         let state = state.clone();
         let slot = slot.clone();
-        let weak = window.as_weak();
         let timer = timer.clone();
-        let store = store.clone();
         move || {
             if !state.active.replace(false) {
                 return;
             }
             state.worker.borrow_mut().take();
             timer.stop();
-            if let Some(window) = weak.upgrade() {
-                crate::windows::save_named(window.window(), &store, "file_history_chart");
-                let _ = window.hide();
-            }
             slot.borrow_mut().take();
+        }
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
+    let close: Rc<dyn Fn()> = Rc::new({
+        let ended = ended.clone();
+        move || {
+            ended.close();
         }
     });
     let valid = Rc::new({
@@ -368,15 +373,7 @@ pub fn open_with_worker(
             }
         }
     });
-    window.on_close_clicked({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
-    });
-    crate::windows::place_frame(&window, store, "file_history_chart");
+    window.on_close_clicked(move || close());
     window.show().map_err(|e| e.to_string())?;
     *slot.borrow_mut() = Some(window.clone_strong());
     paint(&window, &state);

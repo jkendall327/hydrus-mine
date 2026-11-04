@@ -12,7 +12,7 @@ fn fixture() -> serde_json::Value {
     hydrus_testkit::fixture_json("additional_tags_button.json")
 }
 
-fn my_tags_row(editor: &ImportOptionsWindow) -> i32 {
+pub(crate) fn my_tags_row(editor: &ImportOptionsWindow) -> i32 {
     i32::try_from(
         editor
             .get_tag_services()
@@ -32,7 +32,7 @@ fn button(editor: &ImportOptionsWindow, row: i32) -> String {
         .to_string()
 }
 
-fn open_tags_page(ui: &MainWindow, bound: &hydrus_gui::Bound) -> ImportOptionsWindow {
+pub(crate) fn open_tags_page(ui: &MainWindow, bound: &hydrus_gui::Bound) -> ImportOptionsWindow {
     ui.invoke_importer_import_options();
     let editor = bound
         .folders

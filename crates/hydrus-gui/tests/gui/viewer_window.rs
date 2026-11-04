@@ -106,6 +106,7 @@ fn the_viewer_opens_fullscreen_and_f_switches() {
 /// kept it in the reference; hydrus-rs keeps the size only on close, see
 /// DIFFERENCES.md.)
 // leaf: audit-options-gui-frame-locations-save-media-viewer-window-size-and-position-on-close
+// leaf: audit-options-geometry
 #[test]
 fn the_viewer_keeps_its_size_on_close_only_when_the_option_is_on() {
     let fixture = hydrus_testkit::fixture_json("viewer_close_geometry.json");

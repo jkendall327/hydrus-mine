@@ -268,10 +268,19 @@ export component WriteTagsWindow inherits Window {
     callback remove(int);
     callback apply();
     callback cancel();
+    // (Escape, once its menu and results have taken theirs, goes to the
+    // dialog helper)
+    callback escape();
+    // (the tag menu takes the keys while open; once it closes, the input
+    // has them again)
+    property <bool> menu-open: root.tag-menu-panes.length > 0 || root.tag-menu-question != "";
+    changed menu-open => {
+        if !self.menu-open { input.focus(); }
+    }
     forward-focus: input;
     FocusScope {
         capture-key-pressed(event) => {
-            if event.text == Key.Escape { if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); } return accept; }
+            if event.text == Key.Escape { if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.escape(); } return accept; }
             reject
         }
         VerticalLayout {

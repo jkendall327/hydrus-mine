@@ -361,12 +361,13 @@ pub(crate) fn open(
                 let Ok(dialog) = crate::app_title::new::<crate::DateTimeEditorWindow>() else {
                     return;
                 };
+                // (the reference's "edit datetime" `DialogEdit`, kept by
+                // `regular_dialog` when applied)
+                let ended = crate::dialog::Dialog::new(&dialog);
                 let (now_s, now_ms) = now();
                 let editor = Rc::new(RefCell::new(DateTimeEditor::new(value, now_ms, tz.clone())));
-                let told: Rc<RefCell<Vec<(String, String)>>> = Rc::default();
                 let draw = {
                     let editor = editor.clone();
-                    let told = told.clone();
                     let weak = dialog.as_weak();
                     let tz = tz.clone();
                     Rc::new(move |fields: bool| {
@@ -383,18 +384,14 @@ pub(crate) fn open(
                             dialog.set_step(editor.step_ms.to_string().into());
                         }
                         dialog.set_value(editor.value().text(now_s, &tz).into());
-                        let told = told.borrow();
-                        dialog.set_asking(!told.is_empty());
-                        if let Some((title, message)) = told.first() {
-                            dialog.set_asking_title(title.as_str().into());
-                            dialog.set_asking_message(message.as_str().into());
-                        }
                     })
                 };
+                // (its warnings are its own `ShowWarning`s, waited on)
                 let say = {
-                    let told = told.clone();
                     let weak = dialog.as_weak();
+                    let ended = ended.clone();
                     move |said: Vec<Said>| {
+                        let mut messages = Vec::new();
                         for s in said {
                             match s {
                                 Said::Notice(n) => {
@@ -402,10 +399,11 @@ pub(crate) fn open(
                                         dialog.set_notice(n.into());
                                     }
                                 }
-                                Said::Warning(w) => told.borrow_mut().push(("Warning".into(), w)),
-                                Said::Critical(t, m) => told.borrow_mut().push((t, m)),
+                                Said::Warning(w) => messages.push(("Warning".into(), w)),
+                                Said::Critical(t, m) => messages.push((t, m)),
                             }
                         }
+                        ended.messages(messages);
                     }
                 };
                 dialog.on_edited({
@@ -472,35 +470,21 @@ pub(crate) fn open(
                         draw(true);
                     }
                 });
-                dialog.on_dismissed({
-                    let told = told.clone();
-                    let draw = draw.clone();
-                    move || {
-                        let mut told = told.borrow_mut();
-                        if !told.is_empty() {
-                            told.remove(0);
-                        }
-                        drop(told);
-                        draw(false);
-                    }
-                });
                 let finish = {
                     let editing = editing.clone();
-                    let weak = dialog.as_weak();
                     let alive = alive.clone();
                     move || {
                         if !alive.replace(false) {
                             return;
                         }
-                        if let Some(dialog) = weak.upgrade() {
-                            let _ = dialog.hide();
-                        }
                         editing.borrow_mut().take();
                     }
                 };
+                // (whatever ends it, through the dialog helper)
+                ended.on_closed(finish);
                 dialog.on_apply({
                     let editor = editor.clone();
-                    let finish = finish.clone();
+                    let ended = ended.clone();
                     let alive = alive.clone();
                     let active = active.clone();
                     move || {
@@ -511,14 +495,12 @@ pub(crate) fn open(
                             let editor = editor.borrow();
                             (editor.value(), editor.has_changes())
                         };
-                        finish();
+                        ended.accept();
                         done(value, changed);
                     }
                 });
-                dialog.on_cancel(finish.clone());
-                dialog.window().on_close_requested(move || {
-                    finish();
-                    slint::CloseRequestResponse::HideWindow
+                dialog.on_cancel(move || {
+                    ended.cancel();
                 });
                 draw(true);
                 if let Err(e) = dialog.show() {

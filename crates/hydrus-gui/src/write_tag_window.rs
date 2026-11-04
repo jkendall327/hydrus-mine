@@ -98,6 +98,10 @@ fn open_internal(
         return Ok(existing.clone_strong());
     }
     let window = crate::app_title::new::<crate::WriteTagsWindow>()?;
+    // (the reference's `DialogInputTags`, an old `ClientGUIDialogs.Dialog`
+    // it doesn't size or place, or a list embedded in its panel: it ends as
+    // the ordinary dialogs do, keeping no frame)
+    let ended = crate::dialog::Dialog::plain(&window);
     window
         .global::<crate::TagTextHistory<'_>>()
         .on_record(crate::write_tag_history::record);
@@ -299,7 +303,6 @@ fn open_internal(
         let colour_updates = colour_updates.clone();
         let active = active.clone();
         let pending = pending.clone();
-        let weak = window.as_weak();
         let slot = slot.clone();
         let tag_menu = tag_menu.clone();
         move || {
@@ -310,9 +313,6 @@ fn open_internal(
             colour_updates.stop();
             tag_menu.close();
             pending.borrow_mut().take();
-            if let Some(w) = weak.upgrade() {
-                let _ = w.hide();
-            }
             slot.borrow_mut().take();
             closed();
         }
@@ -516,24 +516,39 @@ fn open_internal(
     window.on_apply({
         let model = model.clone();
         let editable = editable.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         move || {
             if !editable() {
                 return;
             }
             let model = model.borrow();
             applied(model.tags(), model.additions());
-            close();
+            ended.accept();
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (its paste question takes Escape and the window's close first,
+    // answered no)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if w.get_question().is_empty() {
+                return false;
+            }
+            w.invoke_answered(false);
+            true
+        }
     });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     refresh();
     window.show()?;
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));

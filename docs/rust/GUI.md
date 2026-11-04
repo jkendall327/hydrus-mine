@@ -5745,7 +5745,9 @@ rule, parser, login script and credential definition editors, by
 `deeply_nested_dialog`; the parser picker and advanced delete files, by
 `quick_select_dialog`; the frame location editor, by `quick_entry_dialog`)
 end the same way by their own frames, Escape cancelling them; review
-services keeps its own as it closes; manage notes and manage tags with changes
+services, export files, file history and review your fate keep their own as
+they close; a held job's modal dialog keeps `regular_dialog` by its close
+button or its job finishing, never by Escape; manage notes and manage tags with changes
 ask before Escape or cancel discards them, and a write that fails leaves the
 dialog open, saying why. In a tag input, Escape first clears the results'
 selection, then any typed text, before it reaches the dialog. Those windows are
