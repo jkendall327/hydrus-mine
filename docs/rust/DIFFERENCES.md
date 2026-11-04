@@ -2813,12 +2813,20 @@ summary, merge options, checker options, import options overwrite, OR
 predicate, favourite searches and favourite search, shortcut set and
 command, external command and call, media view options, tag filter,
 incremental tagging, open-externally calls, export to png(s), login step,
-edit service and manage services, tag siblings and parents, and simple
-downloader formulae editors (dialogs: kept when applied), and help > about,
-tag display sync, detailed file metadata, migrate tags, the auto-resolution
-review, the login test result, file maintenance, bandwidth, network jobs,
-the vacuum review, review files to import and "what is this object?"
-(frames: kept a moment after a move or resize). Each of these is driven as a
+edit service and manage services, tag siblings and parents, simple
+downloader formulae, manage tag display and search, manage downloader
+display, manage url classes and gallery url generators with their
+definition editors, manage parsers, regex favourites, manage logins with
+its credentials editor, manage login scripts, manage http headers with
+its value editor, edit api access permissions and the API request wait
+(dialogs: kept when applied; the request wait's close is its OK, as a
+`DialogNullipotent`'s), and help > about, tag display sync, detailed file
+metadata, migrate tags, the auto-resolution review, the login test
+result, file maintenance, bandwidth, network jobs, the vacuum review,
+review files to import, "what is this object?", review session cookies
+and a session's cookies (frames: kept a moment after a move or resize;
+a session's cookies keep hydrus-rs's own apply, which saves them and
+closes the frame, keeping nothing more). Each of these is driven as a
 user opens it in `tests/gui/dialog_sweep.rs`, which each later batch
 extends: a dialog ended by a real Escape, its cancel and its apply, a frame
 resized and then ended by its close button, its window's close and a real

@@ -5724,13 +5724,15 @@ except the choice dialogs with choices, which open by `quick_select_dialog`
 choice is made, never when cancelled; a message with no choices takes neither.
 The ordinary dialogs that end through the shared dialog helper (so far
 "choose distance", "edit multiple location", "force filetypes", manage
-services, tag siblings and parents, favourite searches, and the other
+services, tag siblings and parents, favourite searches, manage url
+classes, parsers, logins, login scripts and http headers, and the other
 editors listed in DIFFERENCES.md) keep `regular_dialog` as the
 reference's do: when applied, never when cancelled (cancel, Escape) or
 closed by their window; and the ordinary frames on it (help > about, tag
 display sync, detailed file metadata, migrate tags, the auto-resolution
 review, the login test result, file maintenance, bandwidth, network jobs,
-the vacuum review, review files to import and "what is this object?")
+the vacuum review, review files to import, "what is this object?" and
+the session cookie reviews)
 keep it a moment after each move or resize, nothing more as they close, and
 close on Escape (`tests/gui/regular_dialog.rs`, replaying
 `regular_dialog.json`). The dialogs with frames of their own (manage
