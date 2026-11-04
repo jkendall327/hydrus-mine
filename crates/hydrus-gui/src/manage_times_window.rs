@@ -311,17 +311,14 @@ pub(crate) fn open(
             }
         })
     };
-    let frame = crate::windows::DialogFrame::new(store, "manage_times_dialog");
-    let close = {
-        let frame = frame.clone();
+    // (placed by its own frame, and kept by it when applied)
+    let dialog = crate::dialog::Dialog::named(&window, store, "manage_times_dialog");
+    dialog.on_closed({
         let slot = slot.clone();
         let editing = editing.clone();
-        let weak = window.as_weak();
         let active = active.clone();
-        Rc::new(move || {
-            if !active.replace(false) {
-                return;
-            }
+        move || {
+            active.set(false);
             let child = editing.borrow().as_ref().map(ComponentHandle::clone_strong);
             if let Some(child) = child {
                 child.invoke_cancel();
@@ -329,13 +326,9 @@ pub(crate) fn open(
             if let Some(editing) = editing.borrow_mut().take() {
                 let _ = editing.hide();
             }
-            if let Some(window) = weak.upgrade() {
-                frame.closing(window.window());
-                let _ = window.hide();
-            }
             slot.borrow_mut().take();
-        })
-    };
+        }
+    });
     // a time edited in the date-time editor: `done` with its value and
     // whether it changed, if applied
     let edit: Edit = {
@@ -801,9 +794,9 @@ pub(crate) fn open(
     });
     let write = {
         let state = state.clone();
+        let refresh = refresh.clone();
         let store = store.clone();
-        let close = close.clone();
-        let frame = frame.clone();
+        let dialog = dialog.clone();
         let active = active.clone();
         let editing = editing.clone();
         let jobs = jobs.clone();
@@ -811,60 +804,69 @@ pub(crate) fn open(
             if !active.get() || editing.borrow().is_some() {
                 return;
             }
-            let (updates, modified) = {
-                let state = state.borrow();
-                (state.editor.updates(), state.editor.file_modified_update())
-            };
-            if !updates.is_empty() {
-                let ids: Vec<HashId> = results.iter().map(|r| r.hash_id).collect();
-                let written = store.write_content(move |w| {
-                    for update in &updates {
-                        let hashes: Vec<HashId> = update.files.iter().map(|&i| ids[i]).collect();
-                        let Some(time) = file_time(update) else {
-                            continue;
-                        };
-                        match (update.time.ms, &time) {
-                            (Some(ms), time) => w.set_file_time(&hashes, time, ms)?,
-                            (None, FileTime::DomainModified(domain)) => {
-                                w.clear_domain_modified_time(&hashes, domain)?;
-                            }
-                            (None, _) => {}
-                        }
-                    }
-                    Ok(())
-                });
-                if let Err(e) = written {
-                    eprintln!("could not write the times: {e}");
-                    return;
-                }
-                // (and the files' modified times on disk)
-                if let Some((files, ms, step)) = modified {
-                    let files = files
-                        .iter()
-                        .filter_map(|&i| {
-                            let result = results.get(i)?;
-                            let info = result.info.as_ref()?;
-                            Some(hydrus_store::metadata_jobs::File {
-                                id: result.hash_id,
-                                hash: result.hash,
-                                mime: info.mime,
-                                original_mime: info.original_mime.unwrap_or(info.mime),
-                            })
-                        })
-                        .collect();
-                    let request = hydrus_store::metadata_jobs::Request::Modified {
-                        files,
-                        milliseconds: ms,
-                        step,
+            // (`DialogManage`: written, then its frame kept; a write that
+            // fails leaves it open, saying so)
+            dialog.apply(
+                || {
+                    let (updates, modified) = {
+                        let state = state.borrow();
+                        (state.editor.updates(), state.editor.file_modified_update())
                     };
-                    if let Err(error) = jobs.start(store.clone(), request, applied.clone()) {
-                        eprintln!("{error}");
+                    if !updates.is_empty() {
+                        let ids: Vec<HashId> = results.iter().map(|r| r.hash_id).collect();
+                        let written = store.write_content(move |w| {
+                            for update in &updates {
+                                let hashes: Vec<HashId> =
+                                    update.files.iter().map(|&i| ids[i]).collect();
+                                let Some(time) = file_time(update) else {
+                                    continue;
+                                };
+                                match (update.time.ms, &time) {
+                                    (Some(ms), time) => w.set_file_time(&hashes, time, ms)?,
+                                    (None, FileTime::DomainModified(domain)) => {
+                                        w.clear_domain_modified_time(&hashes, domain)?;
+                                    }
+                                    (None, _) => {}
+                                }
+                            }
+                            Ok(())
+                        });
+                        if let Err(e) = written {
+                            state.borrow_mut().notice = format!("could not write the times: {e}");
+                            refresh();
+                            return false;
+                        }
+                        // (and the files' modified times on disk)
+                        if let Some((files, ms, step)) = modified {
+                            let files = files
+                                .iter()
+                                .filter_map(|&i| {
+                                    let result = results.get(i)?;
+                                    let info = result.info.as_ref()?;
+                                    Some(hydrus_store::metadata_jobs::File {
+                                        id: result.hash_id,
+                                        hash: result.hash,
+                                        mime: info.mime,
+                                        original_mime: info.original_mime.unwrap_or(info.mime),
+                                    })
+                                })
+                                .collect();
+                            let request = hydrus_store::metadata_jobs::Request::Modified {
+                                files,
+                                milliseconds: ms,
+                                step,
+                            };
+                            if let Err(error) = jobs.start(store.clone(), request, applied.clone())
+                            {
+                                eprintln!("{error}");
+                            }
+                        }
+                        applied();
                     }
-                }
-                applied();
-            }
-            frame.accept();
-            close();
+                    true
+                },
+                || {},
+            );
         })
     };
     window.on_apply({
@@ -948,19 +950,16 @@ pub(crate) fn open(
             tell(Vec::new());
         }
     });
-    window.on_cancel({
-        let close = close.clone();
-        move || close()
+    // (its date-time editor is modal in the reference: while it is open,
+    // Escape doesn't cancel the dialog under it)
+    dialog.refuse_escape({
+        let editing = editing.clone();
+        move || editing.borrow().is_none()
     });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
+    window.on_cancel(move || {
+        dialog.cancel();
     });
     show(&window, &state.borrow(), &tz);
-    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

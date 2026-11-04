@@ -1158,6 +1158,15 @@ pub struct ViewerCanvasSettings {
     pub seek_height: u32,
     pub seek_hidden_height: Option<u32>,
     pub seek_nub_width: u32,
+    /// The top hover's zoom locks: keep the zoom ("try to lock current
+    /// size"), or the zoom type, or the pan, going to another file
+    /// (`media_viewer_lock_current_zoom`, `..._zoom_type`, `..._pan`).
+    pub lock_size: bool,
+    pub lock_zoom_type: bool,
+    pub lock_pan: bool,
+    /// A zoom type chosen from the top hover's zoom menu becomes the
+    /// default (`media_viewer_set_default_viewer_zoom_type_from_menu`).
+    pub default_zoom_type_from_menu: bool,
 }
 impl Default for ViewerCanvasSettings {
     fn default() -> Self {
@@ -1168,6 +1177,10 @@ impl Default for ViewerCanvasSettings {
             seek_height: 20,
             seek_hidden_height: Some(5),
             seek_nub_width: 10,
+            lock_size: false,
+            lock_zoom_type: false,
+            lock_pan: false,
+            default_zoom_type_from_menu: false,
         }
     }
 }

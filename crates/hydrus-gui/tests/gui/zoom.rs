@@ -519,7 +519,14 @@ fn resizing_preserves_or_recenters_the_recorded_zoom_and_pan() {
             )
         };
         assert_eq!(zoom.rect(), recorded_rect("before"));
-        zoom.resize_with_policy((800, 600), 1.0, event["recenter"].as_bool().unwrap());
+        zoom.resize_with_policy(
+            (800, 600),
+            1.0,
+            hydrus_gui::zoom::ZoomPolicy {
+                recenter_on_resize: event["recenter"].as_bool().unwrap(),
+                ..Default::default()
+            },
+        );
         assert_eq!(zoom.rect(), recorded_rect("after"));
         assert_eq!(zoom.zoom(), event["after"]["zoom"].as_f64().unwrap());
     }

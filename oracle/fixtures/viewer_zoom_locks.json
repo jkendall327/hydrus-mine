@@ -1,0 +1,3022 @@
+{
+ "files": [
+  {
+   "hash": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+   "resolution": [
+    200,
+    150
+   ],
+   "mime": 2
+  },
+  {
+   "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "resolution": [
+    64,
+    48
+   ],
+   "mime": 1
+  },
+  {
+   "hash": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+   "resolution": [
+    200,
+    1000
+   ],
+   "mime": 1
+  },
+  {
+   "hash": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+   "resolution": [
+    64,
+    64
+   ],
+   "mime": 4
+  }
+ ],
+ "menu": [
+  {
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": true
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": false
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ],
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 0,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   }
+  },
+  {
+   "chose": "fill horizontally",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 3,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": true
+    },
+    {
+     "text": "fill vertically",
+     "checked": false
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "set default zoom type from this menu",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 3,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": true,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": true
+    },
+    {
+     "text": "fill vertically",
+     "checked": false
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": true
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "canvas fit",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 1,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": true,
+    "recenter_on_resize": true,
+    "default_zoom_type": 1
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": true
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": false
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": true
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "100% zoom",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 1.0,
+    "zoom_type": 2,
+    "zoom_text": "100%",
+    "position": [
+     400,
+     300
+    ],
+    "size": [
+     200,
+     150
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": true,
+    "recenter_on_resize": true,
+    "default_zoom_type": 2
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": true
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": false
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": true
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "default for filetype",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 0,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": true,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": true
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": false
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": true
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "set default zoom type from this menu",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 0,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": true
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": false
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "fill vertically",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "try to lock current size",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": true,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": true
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "lock current zoom type",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": true,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": true
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "try to lock current size",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": true,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": true
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "lock current pan",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": true,
+    "type": false,
+    "pan": true,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": true
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": true
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "try to lock current size",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": true,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": true
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "lock current pan",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "chose": "recenter media on window resize",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": false,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": false
+    }
+   ]
+  },
+  {
+   "chose": "recenter media on window resize",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   },
+   "menu": [
+    {
+     "text": "recenter media"
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "default for filetype",
+     "checked": false
+    },
+    {
+     "text": "100% zoom",
+     "checked": false
+    },
+    {
+     "text": "canvas fit",
+     "checked": false
+    },
+    {
+     "text": "fill horizontally",
+     "checked": false
+    },
+    {
+     "text": "fill vertically",
+     "checked": true
+    },
+    {
+     "text": "canvas fill",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "try to lock current size",
+     "checked": false
+    },
+    {
+     "text": "lock current zoom type",
+     "checked": false
+    },
+    {
+     "text": "lock current pan",
+     "checked": false
+    },
+    {
+     "separator": true
+    },
+    {
+     "text": "set default zoom type from this menu",
+     "checked": false
+    },
+    {
+     "text": "recenter media on window resize",
+     "checked": true
+    }
+   ]
+  },
+  {
+   "panned": true,
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     83,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   }
+  },
+  {
+   "chose": "recenter media",
+   "state": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 5.0,
+    "zoom_type": 4,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "options": {
+    "size": false,
+    "type": false,
+    "pan": false,
+    "from_menu": false,
+    "recenter_on_resize": true,
+    "default_zoom_type": 0
+   }
+  }
+ ],
+ "next": [
+  {
+   "locks": [],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "zoom": 15.625,
+    "zoom_type": 0,
+    "zoom_text": "1562.50%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "then": {
+    "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "zoom": 0.75,
+    "zoom_type": 0,
+    "zoom_text": "75%",
+    "position": [
+     425,
+     0
+    ],
+    "size": [
+     150,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   }
+  },
+  {
+   "locks": [
+    "size"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "zoom": 62.5,
+    "zoom_type": 3,
+    "zoom_text": "6250%",
+    "position": [
+     -1500,
+     -1125
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "then": {
+    "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1500,
+     -9625
+    ],
+    "size": [
+     4000,
+     20000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   }
+  },
+  {
+   "locks": [
+    "type"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "zoom": 15.625,
+    "zoom_type": 3,
+    "zoom_text": "1562.50%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "then": {
+    "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "zoom": 5.0,
+    "zoom_type": 3,
+    "zoom_text": "500%",
+    "position": [
+     0,
+     -2125
+    ],
+    "size": [
+     1000,
+     5000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   }
+  },
+  {
+   "locks": [
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "zoom": 15.625,
+    "zoom_type": 0,
+    "zoom_text": "1562.50%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "then": {
+    "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "zoom": 0.75,
+    "zoom_type": 0,
+    "zoom_text": "75%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     150,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   }
+  },
+  {
+   "locks": [
+    "size",
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "zoom": 62.5,
+    "zoom_type": 3,
+    "zoom_text": "6250%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "then": {
+    "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     20000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   }
+  },
+  {
+   "locks": [
+    "type",
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "zoom": 15.625,
+    "zoom_type": 3,
+    "zoom_text": "1562.50%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     1000,
+     750
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "then": {
+    "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "zoom": 5.0,
+    "zoom_type": 3,
+    "zoom_text": "500%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     1000,
+     5000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   }
+  }
+ ],
+ "resize": [
+  {
+   "recenter_on_resize": true,
+   "locks": [],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 4.0,
+    "zoom_type": 0,
+    "zoom_text": "400%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": true,
+   "locks": [
+    "size"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1600,
+     -1200
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": true,
+   "locks": [
+    "type"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 4.0,
+    "zoom_type": 3,
+    "zoom_text": "400%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": true,
+   "locks": [
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 4.0,
+    "zoom_type": 0,
+    "zoom_text": "400%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": true,
+   "locks": [
+    "size",
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1600,
+     -1200
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": true,
+   "locks": [
+    "type",
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 4.0,
+    "zoom_type": 3,
+    "zoom_text": "400%",
+    "position": [
+     0,
+     0
+    ],
+    "size": [
+     800,
+     600
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": false,
+   "locks": [],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": false,
+   "locks": [
+    "size"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": false,
+   "locks": [
+    "type"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": false,
+   "locks": [
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": false,
+   "locks": [
+    "size",
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  },
+  {
+   "recenter_on_resize": false,
+   "locks": [
+    "type",
+    "pan"
+   ],
+   "before": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     1000,
+     750
+    ]
+   },
+   "after": {
+    "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "zoom": 20.0,
+    "zoom_type": 3,
+    "zoom_text": "2000%",
+    "position": [
+     -1417,
+     -1063
+    ],
+    "size": [
+     4000,
+     3000
+    ],
+    "canvas": [
+     800,
+     600
+    ]
+   }
+  }
+ ],
+ "resize_menu": {
+  "menu": [
+   {
+    "text": "resize to fit"
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "resize to 50%"
+   },
+   {
+    "text": "resize to 75%"
+   },
+   {
+    "text": "resize to 100%"
+   },
+   {
+    "text": "resize to 150%"
+   },
+   {
+    "text": "resize to 200%"
+   },
+   {
+    "separator": true
+   },
+   {
+    "text": "Right click any of the above to skip centering the media in the viewer window before zooming and/or resizing."
+   }
+  ],
+  "choices": [
+   {
+    "chose": "resize to fit",
+    "button": "left",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 20.0,
+     "zoom_type": 3,
+     "zoom_text": "2000%",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      4000,
+      3000
+     ],
+     "canvas": [
+      4000,
+      3000
+     ]
+    },
+    "geometry": [
+     2,
+     2,
+     4000,
+     3000
+    ]
+   },
+   {
+    "chose": "resize to fit",
+    "button": "right",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 20.0,
+     "zoom_type": 3,
+     "zoom_text": "2000%",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      4000,
+      3000
+     ],
+     "canvas": [
+      4000,
+      3000
+     ]
+    },
+    "geometry": [
+     2,
+     2,
+     4000,
+     3000
+    ]
+   },
+   {
+    "chose": "resize to 50%",
+    "button": "left",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.2,
+     "zoom_type": 0,
+     "zoom_text": "120%",
+     "position": [
+      0,
+      30
+     ],
+     "size": [
+      240,
+      180
+     ],
+     "canvas": [
+      240,
+      240
+     ]
+    },
+    "geometry": [
+     556,
+     441,
+     240,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 50%",
+    "button": "right",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.2,
+     "zoom_type": 0,
+     "zoom_text": "120%",
+     "position": [
+      0,
+      30
+     ],
+     "size": [
+      240,
+      180
+     ],
+     "canvas": [
+      240,
+      240
+     ]
+    },
+    "geometry": [
+     556,
+     441,
+     240,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 75%",
+    "button": "left",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.2,
+     "zoom_type": 0,
+     "zoom_text": "120%",
+     "position": [
+      0,
+      30
+     ],
+     "size": [
+      240,
+      180
+     ],
+     "canvas": [
+      240,
+      240
+     ]
+    },
+    "geometry": [
+     532,
+     423,
+     240,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 75%",
+    "button": "right",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.2,
+     "zoom_type": 0,
+     "zoom_text": "120%",
+     "position": [
+      0,
+      30
+     ],
+     "size": [
+      240,
+      180
+     ],
+     "canvas": [
+      240,
+      240
+     ]
+    },
+    "geometry": [
+     532,
+     423,
+     240,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 100%",
+    "button": "left",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.2,
+     "zoom_type": 0,
+     "zoom_text": "120%",
+     "position": [
+      0,
+      30
+     ],
+     "size": [
+      240,
+      180
+     ],
+     "canvas": [
+      240,
+      240
+     ]
+    },
+    "geometry": [
+     508,
+     405,
+     240,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 100%",
+    "button": "right",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.2,
+     "zoom_type": 0,
+     "zoom_text": "120%",
+     "position": [
+      0,
+      30
+     ],
+     "size": [
+      240,
+      180
+     ],
+     "canvas": [
+      240,
+      240
+     ]
+    },
+    "geometry": [
+     508,
+     405,
+     240,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 150%",
+    "button": "left",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.5,
+     "zoom_type": 0,
+     "zoom_text": "150%",
+     "position": [
+      0,
+      7
+     ],
+     "size": [
+      300,
+      225
+     ],
+     "canvas": [
+      300,
+      240
+     ]
+    },
+    "geometry": [
+     460,
+     369,
+     300,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 150%",
+    "button": "right",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 1.5,
+     "zoom_type": 0,
+     "zoom_text": "150%",
+     "position": [
+      0,
+      7
+     ],
+     "size": [
+      300,
+      225
+     ],
+     "canvas": [
+      300,
+      240
+     ]
+    },
+    "geometry": [
+     460,
+     369,
+     300,
+     240
+    ]
+   },
+   {
+    "chose": "resize to 200%",
+    "button": "left",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 2.0,
+     "zoom_type": 3,
+     "zoom_text": "200%",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      400,
+      300
+     ],
+     "canvas": [
+      400,
+      300
+     ]
+    },
+    "geometry": [
+     412,
+     333,
+     400,
+     300
+    ]
+   },
+   {
+    "chose": "resize to 200%",
+    "button": "right",
+    "before": {
+     "state": {
+      "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "zoom": 20.0,
+      "zoom_type": 3,
+      "zoom_text": "2000%",
+      "position": [
+       -1417,
+       -1063
+      ],
+      "size": [
+       4000,
+       3000
+      ],
+      "canvas": [
+       1000,
+       750
+      ]
+     },
+     "geometry": [
+      102,
+      102,
+      1000,
+      750
+     ]
+    },
+    "state": {
+     "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+     "zoom": 2.0,
+     "zoom_type": 3,
+     "zoom_text": "200%",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      400,
+      300
+     ],
+     "canvas": [
+      400,
+      300
+     ]
+    },
+    "geometry": [
+     412,
+     333,
+     400,
+     300
+    ]
+   }
+  ]
+ }
+}

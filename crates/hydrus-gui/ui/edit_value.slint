@@ -19,25 +19,38 @@ export component EditValueWindow inherits Window {
     in property <int> step-size: 1;
     callback apply();
     callback cancel();
-    VerticalLayout {
-        padding: 8px;
-        spacing: 6px;
-        SpinBox {
-            minimum: root.minimum;
-            maximum: root.maximum;
-            step-size: root.step-size;
-            value <=> root.value;
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                clicked => { root.apply(); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            SpinBox {
+                minimum: root.minimum;
+                maximum: root.maximum;
+                step-size: root.step-size;
+                value <=> root.value;
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

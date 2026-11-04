@@ -122,12 +122,6 @@ pub(crate) fn place_regular<C: slint::ComponentHandle + 'static>(component: &C) 
     }
 }
 
-/// The frame of a dialog the reference opens by a frame key of its own
-/// (`quick_select_dialog` and the like), where the client is running.
-pub(crate) fn dialog_frame(name: &'static str) -> Option<DialogFrame> {
-    Some(DialogFrame::new(&store()?, name))
-}
-
 /// What a window opening now can see of the main window and its display.
 fn surroundings(is_main: bool) -> Surroundings {
     use slint::ComponentHandle as _;
@@ -565,42 +559,6 @@ fn tell(store: &Store, message: String) {
     }
 }
 
-/// A dialog's frame, kept as the reference's `DialogThatResizes` keeps it:
-/// as it closes having been accepted (OK, apply), never when cancelled.
-#[derive(Clone)]
-pub(crate) struct DialogFrame {
-    name: &'static str,
-    store: std::sync::Arc<Store>,
-    accepted: std::rc::Rc<std::cell::Cell<bool>>,
-}
-
-impl DialogFrame {
-    pub(crate) fn new(store: &std::sync::Arc<Store>, name: &'static str) -> Self {
-        Self {
-            name,
-            store: store.clone(),
-            accepted: std::rc::Rc::default(),
-        }
-    }
-
-    /// Place the dialog about to open (as [`place_frame`]).
-    pub(crate) fn place<C: slint::ComponentHandle + 'static>(&self, component: &C) {
-        place_frame(component, &self.store, self.name);
-    }
-
-    /// It is being closed by its OK or apply.
-    pub(crate) fn accept(&self) {
-        self.accepted.set(true);
-    }
-
-    /// It is closing: kept, if accepted.
-    pub(crate) fn closing(&self, window: &slint::Window) {
-        if self.accepted.get() {
-            save_named(window, &self.store, self.name);
-        }
-    }
-}
-
 /// Give a window the size and place `target` says.
 fn apply(window: &slint::Window, target: Placement) {
     // (a window with no size yet keeps the one its toolkit gave it)
@@ -780,7 +738,7 @@ fn native_size(window: &slint::Window) -> Option<(i64, i64)> {
 /// Winit has monitor bounds, but no portable work-area origin. Keep that native
 /// fallback difference explicit rather than inventing taskbar/dock geometry.
 #[allow(clippy::cast_possible_truncation)]
-fn native_screens(window: &slint::Window) -> Option<Vec<Screen>> {
+pub(crate) fn native_screens(window: &slint::Window) -> Option<Vec<Screen>> {
     if let Some(screens) = SCREENS.with(|kept| kept.borrow().clone()) {
         return Some(screens);
     }

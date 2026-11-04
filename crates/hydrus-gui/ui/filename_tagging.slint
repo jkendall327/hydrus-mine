@@ -131,6 +131,9 @@ export component FilenameTaggingWindow inherits Window {
     callback misc-namespace(int, string);
     callback apply();
     callback cancel();
+    // (Escape, once nothing within it takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
 
     forward-focus: keys;
     keys := FocusScope {
@@ -139,7 +142,7 @@ export component FilenameTaggingWindow inherits Window {
             if event.text == Key.Escape {
                 if root.regex-panes.length > 0 { root.regex-dismissed(); return accept; }
                 if root.rule-child || root.rule-delete { root.rule-cancel(); }
-                else { root.cancel(); }
+                else { root.escape(); }
                 return accept;
             }
             reject

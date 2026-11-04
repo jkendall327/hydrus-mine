@@ -58,6 +58,9 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
             .any(|r| r.text == format!("parity:new ({selected_count})"))
     );
     w.invoke_cancel();
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    assert!(w.get_tag_menu_question() != "");
+    w.invoke_tag_menu_answered(true);
     ui.invoke_manage_tags_selected();
     let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     assert!(
@@ -93,6 +96,9 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     assert!(w.invoke_paste_requested(false));
     w.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    // (changes staged: it asks first, the paste question giving way)
+    assert!(w.get_tag_menu_question() != "" && w.get_question() == "");
+    w.invoke_tag_menu_answered(true);
     w.invoke_paste_answered(true);
     w.invoke_apply();
     assert!(bound.manage_tags.borrow().is_none());
@@ -900,6 +906,8 @@ fn selected_batches_stage_in_shared_dialogs_and_closed_owners_ignore_callbacks()
         );
     }
     manage.invoke_cancel();
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    manage.invoke_tag_menu_answered(true);
     manage.invoke_selection_clicked(0, false, false);
     manage.invoke_entered();
     manage.invoke_apply();
@@ -1290,6 +1298,8 @@ fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() 
     manage.invoke_paste_answered(false);
     assert_eq!(manage.get_text(), "parity:paste one\nparity:paste twodraft");
     manage.invoke_cancel();
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    manage.invoke_tag_menu_answered(true);
     ui.invoke_manage_tags_selected();
     let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     assert!(

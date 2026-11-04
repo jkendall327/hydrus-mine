@@ -66,3 +66,25 @@ pub fn undelete(store: &Arc<Store>, files: &[HashId], ask: AskYesNo<'_>, done: R
         Err(e) => eprintln!("could not ask where to undelete to: {e}"),
     }
 }
+
+/// Ask `question` in a yes/no dialog of its own (`GetYesNo`), for a window
+/// with no question of its own to ask it in; `then` runs on yes.
+pub(crate) fn ask_yes_no(question: &str, then: Rc<dyn Fn()>) {
+    let opened = crate::choice_buttons::open(
+        &crate::choice_buttons::Ask {
+            title: "",
+            message: question,
+            choices: vec!["yes".to_owned()],
+            no_label: "no",
+        },
+        move |choice| {
+            if choice == Some(0) {
+                then();
+            }
+        },
+    );
+    match opened {
+        Ok(window) => CHOOSER.with(|c| *c.borrow_mut() = window),
+        Err(e) => eprintln!("could not ask: {e}"),
+    }
+}

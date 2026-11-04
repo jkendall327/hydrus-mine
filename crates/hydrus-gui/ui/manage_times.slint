@@ -113,139 +113,153 @@ export component ManageTimesWindow inherits Window {
         }
     }
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        for row[i] in root.times: HorizontalLayout {
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.asking { root.cancelled(); return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
-            Text {
-                text: row.label;
-                color: Theme.text;
-                vertical-alignment: center;
-                min-width: 200px;
+            for row[i] in root.times: HorizontalLayout {
+                spacing: 6px;
+                Text {
+                    text: row.label;
+                    color: Theme.text;
+                    vertical-alignment: center;
+                    min-width: 200px;
+                }
+                Btn {
+                    text: row.text;
+                    horizontal-stretch: 1;
+                    enabled: row.enabled && !root.asking;
+                    clicked => { root.time-clicked(i); }
+                }
+                Btn {
+                    text: "copy";
+                    enabled: !root.asking;
+                    clicked => { root.time-copy(i); }
+                }
+                Btn {
+                    text: "paste";
+                    enabled: row.enabled && !root.asking;
+                    clicked => { root.time-paste(i); }
+                }
             }
-            Btn {
-                text: row.text;
-                horizontal-stretch: 1;
-                enabled: row.enabled && !root.asking;
-                clicked => { root.time-clicked(i); }
+            if root.warning != "": Text {
+                text: root.warning;
+                color: #c00000;
+                horizontal-alignment: center;
             }
-            Btn {
-                text: "copy";
-                enabled: !root.asking;
-                clicked => { root.time-copy(i); }
-            }
-            Btn {
-                text: "paste";
-                enabled: row.enabled && !root.asking;
-                clicked => { root.time-paste(i); }
-            }
-        }
-        if root.warning != "": Text {
-            text: root.warning;
-            color: #c00000;
-            horizontal-alignment: center;
-        }
-        TitledBox {
-            title: "web domain times";
-            vertical-stretch: 1;
-            Text {
-                text: "Select multiple domains to set the same time to all simultaneously.";
-                wrap: word-wrap;
-                color: Theme.text;
-            }
-            ListTable {
+            TitledBox {
+                title: "web domain times";
                 vertical-stretch: 1;
-                columns: [{ title: "domain", width: 200px, stretch: false }, { title: "time", width: 230px, stretch: true }];
-                rows: root.domains;
-                row-clicked(row, ctrl, shift) => { root.domain-clicked(row, ctrl, shift); }
-                row-activated(row) => { root.domain-activated(row); }
-                delete-pressed => { root.delete-domains(); }
+                Text {
+                    text: "Select multiple domains to set the same time to all simultaneously.";
+                    wrap: word-wrap;
+                    color: Theme.text;
+                }
+                ListTable {
+                    vertical-stretch: 1;
+                    columns: [{ title: "domain", width: 200px, stretch: false }, { title: "time", width: 230px, stretch: true }];
+                    rows: root.domains;
+                    row-clicked(row, ctrl, shift) => { root.domain-clicked(row, ctrl, shift); }
+                    row-activated(row) => { root.domain-activated(row); }
+                    delete-pressed => { root.delete-domains(); }
+                }
+                HorizontalLayout {
+                    alignment: end;
+                    spacing: 6px;
+                    Btn {
+                        text: "add";
+                        enabled: !root.asking;
+                        clicked => { root.add-domain(); }
+                    }
+                    Btn {
+                        text: "edit";
+                        enabled: root.domain-selected && !root.asking;
+                        clicked => { root.edit-domains(); }
+                    }
+                    Btn {
+                        text: "delete";
+                        enabled: root.domain-selected && !root.asking;
+                        clicked => { root.delete-domains(); }
+                    }
+                }
+            }
+            TitledBox {
+                title: "file services";
+                vertical-stretch: 1;
+                Text {
+                    text: "Select multiple services to set the same time to all simultaneously.";
+                    wrap: word-wrap;
+                    color: Theme.text;
+                }
+                ListTable {
+                    vertical-stretch: 1;
+                    columns: [{ title: "service", width: 200px, stretch: false }, { title: "type", width: 200px, stretch: false }, { title: "time", width: 230px, stretch: true }];
+                    rows: root.file-services;
+                    row-clicked(row, ctrl, shift) => { root.service-clicked(row, ctrl, shift); }
+                    row-activated(row) => { root.service-activated(row); }
+                }
+                HorizontalLayout {
+                    alignment: end;
+                    Btn {
+                        text: "edit";
+                        enabled: root.service-selected && !root.asking;
+                        clicked => { root.edit-services(); }
+                    }
+                }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                if root.notice != "": Text {
+                    text: root.notice;
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                copy-button := Btn {
+                    visible: root.can-copy;
+                    text: "copy";
+                    enabled: !root.asking;
+                    clicked => { copy-menu.show(); }
+                }
+                Btn {
+                    text: "paste";
+                    enabled: !root.asking;
+                    clicked => { root.paste(); }
+                }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                wants-text: root.asking-wants-text;
+                text <=> root.asking-text;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
             }
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
                 Btn {
-                    text: "add";
+                    text: "apply";
                     enabled: !root.asking;
-                    clicked => { root.add-domain(); }
+                    clicked => { root.apply(); }
                 }
                 Btn {
-                    text: "edit";
-                    enabled: root.domain-selected && !root.asking;
-                    clicked => { root.edit-domains(); }
+                    text: "cancel";
+                    clicked => { root.cancel(); }
                 }
-                Btn {
-                    text: "delete";
-                    enabled: root.domain-selected && !root.asking;
-                    clicked => { root.delete-domains(); }
-                }
-            }
-        }
-        TitledBox {
-            title: "file services";
-            vertical-stretch: 1;
-            Text {
-                text: "Select multiple services to set the same time to all simultaneously.";
-                wrap: word-wrap;
-                color: Theme.text;
-            }
-            ListTable {
-                vertical-stretch: 1;
-                columns: [{ title: "service", width: 200px, stretch: false }, { title: "type", width: 200px, stretch: false }, { title: "time", width: 230px, stretch: true }];
-                rows: root.file-services;
-                row-clicked(row, ctrl, shift) => { root.service-clicked(row, ctrl, shift); }
-                row-activated(row) => { root.service-activated(row); }
-            }
-            HorizontalLayout {
-                alignment: end;
-                Btn {
-                    text: "edit";
-                    enabled: root.service-selected && !root.asking;
-                    clicked => { root.edit-services(); }
-                }
-            }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            if root.notice != "": Text {
-                text: root.notice;
-                vertical-alignment: center;
-                color: Theme.text;
-            }
-            copy-button := Btn {
-                visible: root.can-copy;
-                text: "copy";
-                enabled: !root.asking;
-                clicked => { copy-menu.show(); }
-            }
-            Btn {
-                text: "paste";
-                enabled: !root.asking;
-                clicked => { root.paste(); }
-            }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            wants-text: root.asking-wants-text;
-            text <=> root.asking-text;
-            chosen(index) => { root.chosen(index); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                enabled: !root.asking;
-                clicked => { root.apply(); }
-            }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
             }
         }
     }

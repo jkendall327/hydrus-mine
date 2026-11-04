@@ -149,22 +149,20 @@ pub(crate) fn open(
             }
         })
     };
-    let frame = crate::windows::DialogFrame::new(store, "manage_notes_dialog");
-    let close = {
-        let frame = frame.clone();
+    // (placed by its own frame, and kept by it when applied)
+    let dialog = crate::dialog::Dialog::named(&window, store, "manage_notes_dialog");
+    dialog.on_closed({
         let active = active.clone();
         let slot = slot.clone();
-        let weak = window.as_weak();
-        Rc::new(move || {
-            if !active.replace(false) {
-                return;
-            }
-            if let Some(window) = weak.upgrade() {
-                frame.closing(window.window());
-                let _ = window.hide();
-            }
+        move || {
+            active.set(false);
             slot.borrow_mut().take();
-        })
+        }
+    });
+    // (cancelled once the user has said to discard the changes)
+    let close = {
+        let dialog = dialog.clone();
+        Rc::new(move || dialog.cancel_confirmed())
     };
     let ask = {
         let active = active.clone();
@@ -460,9 +458,9 @@ pub(crate) fn open(
     window.on_apply({
         let active = active.clone();
         let state = state.clone();
+        let refresh = refresh.clone();
         let store = store.clone();
-        let close = close.clone();
-        let frame = frame.clone();
+        let dialog = dialog.clone();
         move || {
             if !active.get() {
                 return;
@@ -471,65 +469,53 @@ pub(crate) fn open(
                 return;
             }
             let (notes, deletees) = state.borrow().editor.value();
-            let written = store.write_content(move |w| {
-                for (name, note) in &notes {
-                    w.set_note(file, name, note)?;
-                }
-                for name in &deletees {
-                    w.delete_note(file, name)?;
-                }
-                Ok(())
-            });
-            match written {
-                Ok(()) => {
-                    applied();
-                    frame.accept();
-                    close();
-                }
-                Err(e) => eprintln!("could not write the notes: {e}"),
-            }
+            let write = || {
+                store.write_content(move |w| {
+                    for (name, note) in &notes {
+                        w.set_note(file, name, note)?;
+                    }
+                    for name in &deletees {
+                        w.delete_note(file, name)?;
+                    }
+                    Ok(())
+                })
+            };
+            // (`DialogManage`: written, then its frame kept; a write that
+            // fails leaves it open, saying so)
+            dialog.apply(
+                || match write() {
+                    Ok(()) => {
+                        applied();
+                        true
+                    }
+                    Err(e) => {
+                        state.borrow_mut().notice = format!("could not write the notes: {e}");
+                        refresh();
+                        false
+                    }
+                },
+                || {},
+            );
         }
     });
-    let cancel = {
-        let active = active.clone();
+    // (`UserIsOKToCancel`: with changes, it asks first, and stays open)
+    dialog.refuse_cancel({
         let state = state.clone();
-        let close = close.clone();
         let ask = ask.clone();
-        Rc::new(move || {
-            if !active.get() {
-                return;
-            }
+        move || {
             if state.borrow().asking.is_some() {
                 state.borrow_mut().asking = None;
             }
             if state.borrow().editor.changed() {
                 ask(Question::Cancel, String::new());
+                false
             } else {
-                close();
+                true
             }
-        })
-    };
-    window.on_cancel({
-        let cancel = cancel.clone();
-        move || cancel()
-    });
-    // (closing the window is cancelling)
-    window.window().on_close_requested({
-        let active = active.clone();
-        let state = state.clone();
-        let close = close.clone();
-        let cancel = cancel.clone();
-        move || {
-            if !active.get() {
-                return slint::CloseRequestResponse::HideWindow;
-            }
-            if state.borrow().editor.changed() {
-                cancel();
-                return slint::CloseRequestResponse::KeepWindowShown;
-            }
-            close();
-            slint::CloseRequestResponse::HideWindow
         }
+    });
+    window.on_cancel(move || {
+        dialog.cancel();
     });
     window.on_cog_opened({
         let active = active.clone();
@@ -597,7 +583,6 @@ pub(crate) fn open(
     show_preferences(&window, &preferences);
     show(&window, &state.borrow());
     focus_current(&window, &state.borrow());
-    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

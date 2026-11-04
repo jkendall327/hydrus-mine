@@ -44,58 +44,71 @@ export component AboutWindow inherits Window {
     callback open-site();
     callback close-clicked();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        Text {
-            text: root.name;
-            font-weight: 700;
-            horizontal-alignment: center;
-            color: Theme.text;
-        }
-        Text {
-            text: root.version;
-            horizontal-alignment: center;
-            color: Theme.text;
-        }
-        Text {
-            text: root.site;
-            horizontal-alignment: center;
-            color: Theme.highlight;
-            TouchArea {
-                mouse-cursor: pointer;
-                clicked => { root.open-site(); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                root.escape();
+                return accept;
             }
+            reject
         }
-        HorizontalLayout {
-            spacing: 0px;
-            alignment: start;
-            for tab[i] in root.tabs: Tab {
-                text: tab;
-                current: i == root.tab-index;
-                clicked => { root.tab-index = i; }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            Text {
+                text: root.name;
+                font-weight: 700;
+                horizontal-alignment: center;
+                color: Theme.text;
             }
-        }
-        // (the description and libraries centred, as the reference's
-        // labels; the credits and license in read-only boxes)
-        if root.tab-index < 2: Text {
-            vertical-stretch: 1;
-            text: root.texts[root.tab-index];
-            wrap: word-wrap;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-            color: Theme.text;
-        }
-        if root.tab-index >= 2: TextEdit {
-            vertical-stretch: 1;
-            read-only: true;
-            text: root.texts[root.tab-index];
-        }
-        HorizontalLayout {
-            alignment: end;
-            Btn {
-                text: "close";
-                clicked => { root.close-clicked(); }
+            Text {
+                text: root.version;
+                horizontal-alignment: center;
+                color: Theme.text;
+            }
+            Text {
+                text: root.site;
+                horizontal-alignment: center;
+                color: Theme.highlight;
+                TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => { root.open-site(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 0px;
+                alignment: start;
+                for tab[i] in root.tabs: Tab {
+                    text: tab;
+                    current: i == root.tab-index;
+                    clicked => { root.tab-index = i; }
+                }
+            }
+            // (the description and libraries centred, as the reference's
+            // labels; the credits and license in read-only boxes)
+            if root.tab-index < 2: Text {
+                vertical-stretch: 1;
+                text: root.texts[root.tab-index];
+                wrap: word-wrap;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                color: Theme.text;
+            }
+            if root.tab-index >= 2: TextEdit {
+                vertical-stretch: 1;
+                read-only: true;
+                text: root.texts[root.tab-index];
+            }
+            HorizontalLayout {
+                alignment: end;
+                Btn {
+                    text: "close";
+                    clicked => { root.close-clicked(); }
+                }
             }
         }
     }

@@ -2,7 +2,8 @@
 //! the reference's do, replayed from `oracle/record_regular_dialog.py`: a
 //! dialog (`DialogEdit`: "choose distance", "edit multiple location",
 //! "force filetypes") keeps its
-//! size and place when applied and nothing when cancelled or closed by its
+//! size and place when applied and nothing when cancelled (its cancel or
+//! Escape) or closed by its
 //! window; a frame (`FrameThatTakesScrollablePanel`: help > about) keeps
 //! them a moment after it is resized, and nothing more as it closes; and a
 //! window whose remembered place is off the screens is fitted back onto
@@ -261,10 +262,11 @@ fn ordinary_dialogs_keep_their_frame_when_applied_and_not_when_cancelled() {
         .iter()
         .filter(|c| {
             c["kind"] == "edit"
-                && ["apply", "cancel", "window_close"].contains(&c["action"].as_str().unwrap())
+                && ["apply", "cancel", "escape", "window_close"]
+                    .contains(&c["action"].as_str().unwrap())
         })
         .collect();
-    assert_eq!(cases.len(), 3);
+    assert_eq!(cases.len(), 4);
     let _windows = headless::init();
     let client = client();
     for dialog in ordinary() {
@@ -287,6 +289,8 @@ fn ordinary_dialogs_keep_their_frame_when_applied_and_not_when_cancelled() {
             match action {
                 "apply" => shown.apply(),
                 "cancel" => shown.cancel(),
+                // (a real key press, to the widget that has the keyboard)
+                "escape" => crate::common::widgets::key(window, slint::platform::Key::Escape),
                 _ => window.dispatch_event(slint::platform::WindowEvent::CloseRequested),
             }
             assert_eq!(
@@ -362,6 +366,20 @@ fn an_ordinary_frame_keeps_its_frame_as_it_is_resized_and_nothing_as_it_closes()
             _ => window.dispatch_event(slint::platform::WindowEvent::CloseRequested),
         }
         assert!(!window.is_visible(), "{action}: closed");
+        drop(about);
+        // (and Escape closes it as its close button does, as
+        // `FrameThatTakesScrollablePanel.keyPressEvent`: not recorded)
+        crate::common::main_menu::choose(&client.ui, &["help"], "about");
+        let about = client
+            .bound
+            .about
+            .borrow()
+            .as_ref()
+            .map(ComponentHandle::clone_strong)
+            .expect("about opens again");
+        assert!(about.window().is_visible());
+        crate::common::widgets::key(about.window(), slint::platform::Key::Escape);
+        assert!(!about.window().is_visible(), "{action}: Escape closes it");
         spin(Duration::from_millis(700));
         assert_eq!(
             client.frame(),
@@ -522,4 +540,285 @@ fn the_command_palette_is_not_fitted_as_an_ordinary_dialog() {
     }
     assert!(windows::fitted_at(shown.win()).is_some());
     shown.cancel();
+}
+
+/// Escape cancels the dialogs with frames of their own (all of which end
+/// through the helper), as the reference's `keyPressEvent`: closed, their
+/// frame not kept (as the recording's escaped `DialogEdit`).
+#[test]
+fn escape_cancels_a_named_dialog_and_keeps_nothing() {
+    let _windows = headless::init();
+    for (key, open, _) in crate::frame_geometry::windows()
+        .into_iter()
+        .filter(|(key, _, _)| {
+            [
+                "manage_subscriptions_dialog",
+                "edit_subscription_dialog",
+                "manage_tags_dialog",
+                "manage_urls_dialog",
+                "manage_times_dialog",
+                "manage_notes_dialog",
+                "local_import_filename_tagging",
+            ]
+            .contains(key)
+        })
+    {
+        let client = crate::frame_geometry::Client::new();
+        let frame = |c: &crate::frame_geometry::Client| {
+            c.store
+                .read(hydrus_store::settings::get::<WindowSettings>)
+                .unwrap()
+                .frame(key)
+                .unwrap()
+                .clone()
+        };
+        let before = frame(&client);
+        let shown = open(&client);
+        let window = shown.win();
+        assert!(window.is_visible(), "{key}: opened");
+        window.set_size(slint::LogicalSize::new(612.0, 478.0));
+        crate::common::widgets::key(window, slint::platform::Key::Escape);
+        assert!(!window.is_visible(), "{key}: Escape closes it");
+        assert_eq!(frame(&client), before, "{key}: nothing kept");
+    }
+    // the viewer's manage tags, a frame of its own: Escape closes it, and it
+    // is kept as it closes (as `frame_geometry.rs` has it)
+    let (_, open, _) = crate::frame_geometry::windows()
+        .into_iter()
+        .find(|(key, _, _)| *key == "manage_tags_frame")
+        .unwrap();
+    let client = crate::frame_geometry::Client::new();
+    client.keep(
+        "manage_tags_frame",
+        FrameLocation {
+            remember_size: true,
+            maximised: false,
+            fullscreen: false,
+            ..client.frame("manage_tags_frame")
+        },
+    );
+    let shown = open(&client);
+    let window = shown.win();
+    window.set_size(slint::LogicalSize::new(612.0, 478.0));
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    assert!(
+        !window.is_visible(),
+        "the viewer's manage tags: Escape closes it"
+    );
+    drop(shown);
+    assert_eq!(
+        client.frame("manage_tags_frame").last_size,
+        Some((612, 478)),
+        "kept as it closed"
+    );
+    // with a note changed, Escape asks first (`UserIsOKToCancel`) and the
+    // dialog stays open; Escape again dismisses the question; yes closes it
+    let (_, open, _) = crate::frame_geometry::windows()
+        .into_iter()
+        .find(|(key, _, _)| *key == "manage_notes_dialog")
+        .unwrap();
+    let client = crate::frame_geometry::Client::new();
+    drop(open(&client));
+    let notes = client
+        .bound
+        .manage_notes
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("manage notes opens");
+    if notes.get_asking() {
+        // (a file with no notes asks for the first note's name)
+        notes.set_asking_text("a note".into());
+        notes.invoke_chosen(0);
+    }
+    notes.set_text("changed".into());
+    notes.invoke_text_edited();
+    let window = notes.window();
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    assert!(window.is_visible(), "a changed dialog stays open");
+    assert!(notes.get_asking(), "and asks");
+    assert_eq!(notes.get_asking_title(), "Are you sure?");
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    assert!(
+        !notes.get_asking() && window.is_visible(),
+        "the question dismissed"
+    );
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    notes.invoke_chosen(0);
+    assert!(!window.is_visible(), "yes: closed");
+}
+
+/// Make the store refuse writes to `table` from now on.
+fn refuse_writes(store: &Store, trigger: &'static str) {
+    store
+        .write(move |ctx| {
+            ctx.conn().execute_batch(trigger)?;
+            Ok(())
+        })
+        .unwrap();
+}
+
+/// A dialog whose changes can't be written stays open and says so, keeping
+/// nothing of its frame: its write is its apply's check.
+#[test]
+fn a_dialog_whose_write_fails_stays_open_and_says_why() {
+    let _windows = headless::init();
+    let opener = |key: &str| {
+        crate::frame_geometry::windows()
+            .into_iter()
+            .find(|(k, _, _)| *k == key)
+            .unwrap()
+            .1
+    };
+    // manage notes
+    let client = crate::frame_geometry::Client::new();
+    let before = client.frame("manage_notes_dialog");
+    drop(opener("manage_notes_dialog")(&client));
+    let notes = client
+        .bound
+        .manage_notes
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .unwrap();
+    if notes.get_asking() {
+        notes.set_asking_text("a note".into());
+        notes.invoke_chosen(0);
+    }
+    notes.set_text("written".into());
+    notes.invoke_text_edited();
+    refuse_writes(
+        &client.store,
+        "CREATE TRIGGER refuse_notes BEFORE INSERT ON file_notes BEGIN SELECT RAISE(ABORT, 'injected notes failure'); END;",
+    );
+    notes.invoke_apply();
+    assert!(notes.window().is_visible(), "notes: still open");
+    assert!(
+        notes.get_notice().contains("could not write the notes")
+            && notes.get_notice().contains("injected notes failure"),
+        "notes: {}",
+        notes.get_notice()
+    );
+    assert_eq!(
+        client.frame("manage_notes_dialog"),
+        before,
+        "notes: nothing kept"
+    );
+
+    // manage urls
+    let client = crate::frame_geometry::Client::new();
+    drop(opener("manage_urls_dialog")(&client));
+    let urls = client
+        .bound
+        .manage_urls
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .unwrap();
+    urls.set_input("https://example.com/injected".into());
+    urls.invoke_entered();
+    refuse_writes(
+        &client.store,
+        "CREATE TRIGGER refuse_urls BEFORE INSERT ON file_urls BEGIN SELECT RAISE(ABORT, 'injected urls failure'); END;",
+    );
+    urls.invoke_apply();
+    assert!(urls.window().is_visible(), "urls: still open");
+    assert!(
+        urls.get_notice().contains("injected urls failure"),
+        "urls: {}",
+        urls.get_notice()
+    );
+
+    // manage times: the file's modified time
+    let client = crate::frame_geometry::Client::new();
+    drop(opener("manage_times_dialog")(&client));
+    let times = client
+        .bound
+        .manage_times
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .unwrap();
+    times.invoke_time_clicked(0);
+    let edit = client
+        .bound
+        .datetime_editor
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("the date-time editor opens");
+    // (while it is open, Escape doesn't cancel the dialog under it)
+    crate::common::widgets::key(times.window(), slint::platform::Key::Escape);
+    assert!(
+        times.window().is_visible(),
+        "times: not cancelled under its editor"
+    );
+    edit.set_date("2020-01-02".into());
+    edit.invoke_edited();
+    edit.invoke_apply();
+    refuse_writes(
+        &client.store,
+        "CREATE TRIGGER refuse_times BEFORE UPDATE ON files BEGIN SELECT RAISE(ABORT, 'injected times failure'); END;",
+    );
+    times.invoke_apply();
+    assert!(times.window().is_visible(), "times: still open");
+    assert!(
+        times.get_notice().contains("injected times failure"),
+        "times: {}",
+        times.get_notice()
+    );
+}
+
+/// Escape in manage tags never drops staged changes unasked, as the
+/// reference's: typed text is cleared first (`_HandleEscape`), the paste
+/// question takes it next, and with changes staged the dialog asks
+/// (`UserIsOKToCancel`) before closing.
+#[test]
+fn escape_in_manage_tags_clears_typing_answers_questions_and_asks_before_discarding() {
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let pasted = fixture["paste"][0]["text"].as_str().unwrap().to_owned();
+    hydrus_gui::set_paster(move || pasted.clone());
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let tags = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let window = tags.window();
+    let escape = || crate::common::widgets::key(window, slint::platform::Key::Escape);
+    // typed text: cleared, the dialog stays
+    tags.set_text("half typed".into());
+    tags.invoke_text_edited("half typed".into());
+    escape();
+    assert!(window.is_visible(), "typing cleared, not cancelled");
+    assert_eq!(tags.get_text(), "");
+    // the paste question: answered "no" by Escape
+    assert!(tags.invoke_paste_requested(false));
+    assert!(tags.get_question() != "");
+    escape();
+    assert_eq!(tags.get_question(), "", "the question dismissed");
+    assert!(window.is_visible());
+    // a tag staged: Escape asks first
+    tags.set_text("escape kept me".into());
+    tags.invoke_text_edited("escape kept me".into());
+    tags.invoke_entered();
+    escape();
+    assert!(window.is_visible(), "changes staged: not closed unasked");
+    assert_eq!(
+        tags.get_tag_menu_question(),
+        "Are you sure you want to cancel? You have uncommitted changes that will be lost."
+    );
+    escape();
+    assert_eq!(tags.get_tag_menu_question(), "", "the question dismissed");
+    assert!(window.is_visible());
+    // cancel asks the same; yes discards
+    tags.invoke_cancel();
+    assert!(tags.get_tag_menu_question() != "");
+    tags.invoke_tag_menu_answered(true);
+    assert!(!window.is_visible(), "yes: closed");
+    assert!(bound.manage_tags.borrow().is_none());
 }

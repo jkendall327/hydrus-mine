@@ -29,7 +29,13 @@ enum Pending {
     Choose(hydrus_gui_model::manage_tags::Prompt),
     /// "Are you sure you want to remove these tags?"
     Remove(Vec<String>),
+    /// "Are you sure you want to cancel?" (changes not yet applied).
+    Cancel,
 }
+
+/// `UserIsOKToCancel`'s question, with changes not yet applied.
+const CANCEL_QUESTION: &str =
+    "Are you sure you want to cancel? You have uncommitted changes that will be lost.";
 
 /// Show a prompt on the overlay: the choices as its two buttons.
 fn ask(
@@ -842,14 +848,13 @@ pub(crate) fn open(
         "manage_tags_dialog"
     };
     let frame_store = model.borrow().store().clone();
-    let dialog_frame = link
-        .is_none()
-        .then(|| crate::windows::DialogFrame::new(&frame_store, "manage_tags_dialog"));
-    let close = {
-        let frame_store = frame_store.clone();
-        let dialog_frame = dialog_frame.clone();
+    let ended = if link.is_some() {
+        crate::dialog::Dialog::named_frame(&window, &frame_store, frame)
+    } else {
+        crate::dialog::Dialog::named(&window, &frame_store, frame)
+    };
+    ended.on_closed({
         let incremental_slot = incremental_slot.clone();
-        let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
         let incremental_open = incremental_open.clone();
@@ -861,9 +866,7 @@ pub(crate) fn open(
         let related_worker = related_worker.clone();
         let link = link.clone();
         move || {
-            if !active.replace(false) {
-                return;
-            }
+            active.set(false);
             if let Some(link) = &link {
                 link.follow.borrow_mut().take();
             }
@@ -875,16 +878,15 @@ pub(crate) fn open(
             if let Some(worker) = &related_worker {
                 worker.close();
             }
-            if let Some(window) = weak.upgrade() {
-                match &dialog_frame {
-                    Some(dialog) => dialog.closing(window.window()),
-                    None => crate::windows::save_named(window.window(), &frame_store, frame),
-                }
-                let _ = window.hide();
-            }
             tag_menu.close();
             pending_paste.borrow_mut().take();
             slot.borrow_mut().take();
+        }
+    });
+    let close = {
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
         }
     };
     window.on_incremental_tags({
@@ -990,19 +992,11 @@ pub(crate) fn open(
     let apply = {
         let model = model.clone();
         let weak = window.as_weak();
-        let close = close.clone();
         let active = active.clone();
         let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
-        let accept = {
-            let dialog_frame = dialog_frame.clone();
-            move || {
-                if let Some(dialog) = &dialog_frame {
-                    dialog.accept();
-                }
-            }
-        };
+        let ended = ended.clone();
         move || {
             if !active.get()
                 || incremental_open.get()
@@ -1013,19 +1007,22 @@ pub(crate) fn open(
             }
             // (the viewer's dialog has written every change already)
             if model.borrow().is_immediate() {
-                accept();
-                close();
+                ended.accept();
                 return;
             }
-            if let Err(e) = model.borrow().apply() {
-                if let Some(window) = weak.upgrade() {
-                    window.set_error(format!("could not apply the changes: {e}").into());
-                }
-                return;
-            }
-            applied();
-            accept();
-            close();
+            // (a change that can't be written leaves it open, saying so)
+            ended.apply(
+                || match model.borrow().apply() {
+                    Ok(()) => true,
+                    Err(e) => {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_error(format!("could not apply the changes: {e}").into());
+                        }
+                        false
+                    }
+                },
+                || applied(),
+            );
         }
     };
     window.on_flip_show_deleted({
@@ -1689,6 +1686,7 @@ pub(crate) fn open(
     // (the overlay carries the prompts of entry and removal too)
     window.on_tag_menu_answered({
         let weak = window.as_weak();
+        let ended = ended.clone();
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
@@ -1699,7 +1697,12 @@ pub(crate) fn open(
                 let mut waiting = pending.borrow_mut();
                 if matches!(
                     waiting.as_ref(),
-                    Some(Pending::Choose(_) | Pending::Remove(_) | Pending::ClearRecent)
+                    Some(
+                        Pending::Choose(_)
+                            | Pending::Remove(_)
+                            | Pending::ClearRecent
+                            | Pending::Cancel
+                    )
                 ) {
                     waiting.take()
                 } else {
@@ -1728,6 +1731,10 @@ pub(crate) fn open(
                 }
                 Pending::Remove(tags) if yes => model.borrow_mut().confirm_removal(&tags),
                 Pending::ClearRecent if yes => model.borrow().clear_recent_tags(),
+                Pending::Cancel if yes => {
+                    ended.cancel_confirmed();
+                    return;
+                }
                 _ => Ok(()),
             };
             if let (Some(w), Err(e)) = (weak.upgrade(), result) {
@@ -1745,7 +1752,12 @@ pub(crate) fn open(
                 let mut waiting = pending.borrow_mut();
                 if matches!(
                     waiting.as_ref(),
-                    Some(Pending::Choose(_) | Pending::Remove(_) | Pending::ClearRecent)
+                    Some(
+                        Pending::Choose(_)
+                            | Pending::Remove(_)
+                            | Pending::ClearRecent
+                            | Pending::Cancel
+                    )
                 ) {
                     waiting.take()
                 } else {
@@ -1845,13 +1857,35 @@ pub(crate) fn open(
         }
     });
     window.on_apply(apply);
-    window.on_cancel(close.clone());
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (`UserIsOKToCancel`: with changes not yet applied, it asks first,
+    // and stays open)
+    ended.refuse_cancel({
+        let weak = window.as_weak();
+        let model = model.clone();
+        let pending = pending_paste.clone();
+        move || {
+            let changed = {
+                let model = model.borrow();
+                !model.is_immediate() && model.has_changes()
+            };
+            if !changed {
+                return true;
+            }
+            // (a question already asked gives way to this one, as the old
+            // cancel dropped it: its late answer is ignored)
+            if let Some(w) = weak.upgrade() {
+                w.set_question("".into());
+                w.set_tag_menu_question_title("".into());
+                w.set_tag_menu_question(CANCEL_QUESTION.into());
+                w.set_tag_menu_yes_label("yes".into());
+                w.set_tag_menu_no_label("no".into());
+                *pending.borrow_mut() = Some(Pending::Cancel);
+            }
+            false
+        }
     });
+    window.on_cancel(close);
     refresh();
-    crate::windows::place_frame(&window, &frame_store, frame);
     window.show()?;
     Ok(window)
 }

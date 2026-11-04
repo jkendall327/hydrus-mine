@@ -1603,10 +1603,19 @@ from the trash, delete it completely), undelete it (one deleted from any of
 your local file domains), each shown as the reference shows it, and show
 its embedded metadata (the tooltip says what it has). On the right: the
 zoom ("266.67%"), zoom in, out and switch, the zoom options menu (recenter,
-the zoom types, the current one checked, and recentering on window
-resize), the volume control (where libmpv is available: a click mutes and
+the zoom types, the current one checked; "try to lock current size", "lock
+current zoom type" (the two exclusive) and "lock current pan", which keep
+the zoom, the zoom type or the place going to another file, and the size
+and zoom type as the window resizes; "set default zoom type from this
+menu", which makes a zoom type chosen there every viewer's default; and
+recentering on window resize; `oracle/record_viewer_zoom_locks.py`), the
+volume control (where libmpv is available: a click mutes and
 unmutes everything; over it, the viewer's own mute and the volume), the
-shortcuts and view options menus, a button to drag the window by, fullscreen,
+shortcuts and view options menus, a button to drag the window by (a right
+click offers to resize the window to fit the file, or to zoom it to 50% to
+200% and fit the window to it, moving the window to where the file was;
+with the left button the file is zoomed about the window's middle, with the
+right as your zoom centre option says), fullscreen,
 open externally, a button showing the file, selected, in your file browser
 (in the place of the reference's button to drag the file out to other
 programs, which Slint can't do; a right click shows the page the viewer
@@ -1703,8 +1712,18 @@ in the search page's selection tags box (clicks, ctrl and shift, the keys,
 middle-click for a new search page in the viewer's file domain, and
 hydrus's right-click tag menu without counts, search or select); a
 double-click or enter opens manage tags for the file, as the reference's
-hover does. Near its top, the
-file's info line, as in the media viewer. Images are shown
+hover does. Near its top, the reference's top hover frame
+(`oracle/record_viewer_top_hover.py`): back, the file's place ("2/4") and
+skip; archive (which keeps the file, as F7 does), send to trash (which
+deletes it, as the delete key does), undelete (a file deleted from one of
+your local file domains and still in another: asked, as the media viewer
+asks) and the file's embedded metadata; and
+on the right the media viewer's zoom, zoom buttons, zoom options (its
+locks too), volume control, shortcuts and view options menus, move button
+and resize menu, fullscreen, open externally, show in the file browser (a
+right click shows the page the filter came from with the file selected) and
+close (which asks to commit, with files decided); under them the file's
+info line, as in the media viewer. Images are shown
 whole. Ugoiras and animated WebP play with the client's own player, as
 the reference's defaults have it: frames are decoded on a thread of their
 own into a buffer sized from speed and memory's "Memory for video buffer"
@@ -1735,7 +1754,15 @@ viewer's own control or anywhere else (`tests/gui/viewer_playback.rs`).
 A duplicates page (a migrated session's, with its search, pair sort and
 group mode) says how many potential pairs its search finds, and launches
 the duplicate filter: its own window, showing one file of a pair at a time
-(left and right, or the mouse wheel, switch to the other) beside the
+(left and right, or the mouse wheel, switch to the other; near the
+window's top, the reference's top hover frame: go back a pair, previous,
+the place ("File One - 1/6 - no decisions yet"), next and show a different
+pair, then the file's archive and metadata buttons and the media viewer's
+zoom and window buttons as in the archive/delete filter, its zoom options
+menu saying that the media size and pan are locked, and the file's info
+line; `oracle/record_viewer_top_hover.py`; as the window resizes, the
+file's zoom follows "recenter media on window resize" and the zoom locks,
+as in the media viewer) beside the
 reference's comparison statements and score (`hydrus-duplicates`'s port,
 the slow ones, jpeg quality and visual duplicates, made off the UI thread)
 and the decisions: this is better (deleting the other or not), same
@@ -5693,10 +5720,17 @@ except the choice dialogs with choices, which open by `quick_select_dialog`
 choice is made, never when cancelled; a message with no choices takes neither.
 The ordinary dialogs that end through the shared dialog helper (so far
 "choose distance", "edit multiple location" and "force filetypes") keep `regular_dialog` as the
-reference's do: when applied, never when cancelled or closed by their window;
-and the ordinary frames on it (so far help > about) keep it a moment after
-each move or resize, nothing more as they close (`tests/gui/regular_dialog.rs`,
-replaying `regular_dialog.json`). Those windows are
+reference's do: when applied, never when cancelled (cancel, Escape) or
+closed by their window; and the ordinary frames on it (so far help > about)
+keep it a moment after each move or resize, nothing more as they close, and
+close on Escape (`tests/gui/regular_dialog.rs`, replaying
+`regular_dialog.json`). The dialogs with frames of their own (manage
+subscriptions, edit subscription, manage tags, URLs, times and notes, the
+import's filename tagging, the choice dialogs) end the same way by their own
+frames, Escape cancelling them; manage notes and manage tags with changes
+ask before Escape or cancel discards them, and a write that fails leaves the
+dialog open, saying why. In a tag input, Escape first clears the results'
+selection, then any typed text, before it reaches the dialog. Those windows are
 fitted to the screens once shown: a remembered place, or a default place by a
 main window that is itself off the screens, is rescued to where it can be
 seen, the user told by a popup message (not for a place by the mouse), and a
