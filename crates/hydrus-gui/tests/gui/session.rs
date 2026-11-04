@@ -1712,7 +1712,7 @@ fn tab_reordering_keeps_nested_notebooks_and_shown_leaf() {
 }
 
 #[test]
-fn historical_session_append_restores_independent_tree_files_and_selection() {
+fn historical_session_append_restores_independent_tree_and_files_without_selection() {
     let (_dirs, store) = store();
     let leaf = page(
         "original",
@@ -1738,7 +1738,10 @@ fn historical_session_append_restores_independent_tree_files_and_selection() {
         })
         .unwrap();
     let mut pages = Pages::open(store.clone()).unwrap();
-    assert_eq!(pages.current().borrow().selected_files(), [HashId(2)]);
+    // (the client opens with no selection, as the reference's session keeps
+    // none; one made now is not kept with a backup either)
+    assert!(pages.current().borrow().selected_files().is_empty());
+    pages.current().borrow_mut().select_files(&[HashId(2)]);
     pages.save_session("work", 100).unwrap();
     pages.rename_shown("changed");
     pages.current().borrow_mut().select_none();
@@ -1762,7 +1765,7 @@ fn historical_session_append_restores_independent_tree_files_and_selection() {
     assert_ne!(restored, old);
     assert_ne!(restored, leaf.key);
     assert_eq!(pages.current().borrow().files(), [HashId(1), HashId(2)]);
-    assert_eq!(pages.current().borrow().selected_files(), [HashId(2)]);
+    assert!(pages.current().borrow().selected_files().is_empty());
     store
         .write(|ctx| sessions::delete(ctx.conn(), "work"))
         .unwrap();
@@ -1771,7 +1774,7 @@ fn historical_session_append_restores_independent_tree_files_and_selection() {
     pages.sync(300).unwrap();
     let mut reopened = Pages::open(store).unwrap();
     assert_eq!(reopened.shown().key, restored);
-    assert_eq!(reopened.current().borrow().selected_files(), [HashId(2)]);
+    assert!(reopened.current().borrow().selected_files().is_empty());
 }
 
 #[test]

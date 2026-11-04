@@ -14,6 +14,7 @@
 //! with the `DIFFERENCES.md` entry that explains it; one that no longer
 //! differs fails the flow too, so the list stays true.
 
+mod client_api;
 mod download;
 mod duplicates;
 mod export;
@@ -21,6 +22,8 @@ mod gallery;
 mod import_folder;
 mod manage_tags;
 mod manual_import;
+mod ratings_filter;
+mod session;
 mod subscription;
 mod tag_relationships;
 mod watcher;
@@ -105,7 +108,28 @@ pub const PORTS: &[(&str, u16)] = &[
     ("flow_duplicates.json", 46015),
     ("flow_import_folder.json", 46013),
     ("flow_watcher.json", 46031),
+    ("flow_session.json", 46016),
+    ("flow_client_api.json", 46017),
 ];
+
+/// The port each flow that calls the Client API serves it on (the
+/// daemon's listener, as `hydrus serve` runs it), apart from every site's.
+pub const API_PORTS: &[(&str, u16)] = &[
+    ("flow_client_api.json", 46018),
+    ("flow_session.json", 46019),
+];
+
+/// The port `recording`'s flow serves the Client API on.
+pub fn api_port(recording: &str) -> u16 {
+    API_PORTS
+        .iter()
+        .find(|(name, _)| *name == recording)
+        .unwrap_or_else(|| panic!("{recording} has no port in flows::API_PORTS"))
+        .1
+}
+
+/// The oracle's Client API access key, with every permission.
+const API_KEY: &str = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
 /// Whether a request to `http://127.0.0.1` goes straight there, whatever
 /// proxies the environment names (the daemon's HTTP client, like the
@@ -261,6 +285,13 @@ pub struct Daemon {
     failed: Arc<Mutex<Option<String>>>,
     /// An import folder pass is running.
     folders_working: Arc<std::sync::atomic::AtomicBool>,
+    /// The Client API's listener, once [`Daemon::serve_api`] starts it: its
+    /// port, what stops it, and its task.
+    api: Option<(
+        u16,
+        tokio::sync::oneshot::Sender<()>,
+        tokio::task::JoinHandle<std::io::Result<()>>,
+    )>,
 }
 
 impl Daemon {
@@ -357,7 +388,81 @@ impl Daemon {
             store: Arc::clone(store),
             failed,
             folders_working,
+            api: None,
         }
+    }
+
+    /// Serve the Client API on `port` of 127.0.0.1, as `hydrus serve`
+    /// does, until the daemon stops (gracefully: calls under way finish).
+    pub fn serve_api(&mut self, port: u16) {
+        let runtime = self.runtime.as_ref().unwrap();
+        let options = hydrus_api::server::ServerOptions {
+            addr: std::net::SocketAddr::from(([127, 0, 0, 1], port)),
+            cors: false,
+            log_requests: false,
+            tls: None,
+        };
+        let listener = runtime
+            .block_on(hydrus_api::server::bind(&options))
+            .unwrap_or_else(|e| panic!("the Client API could not listen on {port}: {e}"));
+        let (stop, stopped) = tokio::sync::oneshot::channel::<()>();
+        let state = Arc::clone(&self.state);
+        let task = runtime.spawn(async move {
+            hydrus_api::server::serve_on(listener, state, &options, async {
+                let _ = stopped.await;
+            })
+            .await
+        });
+        self.api = Some((port, stop, task));
+    }
+
+    /// A Client API call over HTTP to the listener [`Daemon::serve_api`]
+    /// started (the oracle's full access key): its status and its answer
+    /// (JSON, or the body as text when it is not).
+    pub fn api(&self, method: &str, path: &str, body: Option<&Json>) -> (u16, Json) {
+        use std::io::{Read as _, Write as _};
+        let port = self.api.as_ref().expect("serve_api first").0;
+        let body = body.map(Json::to_string).unwrap_or_default();
+        let mut request = format!(
+            "{method} {path} HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\n\
+             Hydrus-Client-API-Access-Key: {API_KEY}\r\nConnection: close\r\n\
+             Content-Length: {}\r\n",
+            body.len()
+        );
+        if !body.is_empty() {
+            request.push_str("Content-Type: application/json\r\n");
+        }
+        request.push_str("\r\n");
+        request.push_str(&body);
+        // (straight to the listener, whatever proxies the environment names)
+        let mut stream = std::net::TcpStream::connect(("127.0.0.1", port)).unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(60)))
+            .unwrap();
+        stream.write_all(request.as_bytes()).unwrap();
+        let mut response = Vec::new();
+        stream.read_to_end(&mut response).unwrap();
+        let split = response
+            .windows(4)
+            .position(|w| w == b"\r\n\r\n")
+            .expect("an HTTP response");
+        let head = String::from_utf8_lossy(&response[..split]).into_owned();
+        let mut bytes = response[split + 4..].to_vec();
+        let status: u16 = head
+            .split_whitespace()
+            .nth(1)
+            .and_then(|s| s.parse().ok())
+            .expect("a status");
+        let chunked = head.lines().any(|line| {
+            let line = line.to_ascii_lowercase();
+            line.starts_with("transfer-encoding:") && line.contains("chunked")
+        });
+        if chunked {
+            bytes = dechunk(&bytes);
+        }
+        let answer = serde_json::from_slice(&bytes)
+            .unwrap_or_else(|_| Json::String(String::from_utf8_lossy(&bytes).into_owned()));
+        (status, answer)
     }
 
     /// Fail the flow if the daemon's own tasks failed.
@@ -424,6 +529,10 @@ impl Drop for Daemon {
     fn drop(&mut self) {
         if let Some(runtime) = self.runtime.take() {
             let entered = runtime.enter();
+            if let Some((_, stop, task)) = self.api.take() {
+                let _ = stop.send(());
+                let _ = runtime.block_on(tokio::time::timeout(Duration::from_secs(10), task));
+            }
             if let Some(runner) = &self.state.subscriptions {
                 runner.shutdown();
                 let _ = runtime.block_on(tokio::time::timeout(
@@ -434,6 +543,36 @@ impl Drop for Daemon {
             drop(entered);
             runtime.shutdown_timeout(Duration::from_secs(5));
         }
+    }
+}
+
+/// The tabs the window shows, for each notebook on the way to the page
+/// shown: each tab's page name, and which is selected.
+pub fn tab_strip(ui: &hydrus_gui::MainWindow) -> Vec<(Vec<String>, usize)> {
+    use slint::Model as _;
+    ui.get_tab_rows()
+        .iter()
+        .map(|row| {
+            let names = row.full_names.iter().map(|n| n.to_string()).collect();
+            (names, usize::try_from(row.selected).unwrap())
+        })
+        .collect()
+}
+
+/// An HTTP/1.1 chunked body's bytes.
+fn dechunk(mut bytes: &[u8]) -> Vec<u8> {
+    let mut out = Vec::new();
+    loop {
+        let Some(end) = bytes.windows(2).position(|w| w == b"\r\n") else {
+            return out;
+        };
+        let size = String::from_utf8_lossy(&bytes[..end]);
+        let size = usize::from_str_radix(size.split(';').next().unwrap().trim(), 16).unwrap();
+        if size == 0 {
+            return out;
+        }
+        out.extend_from_slice(&bytes[end + 2..end + 2 + size]);
+        bytes = &bytes[end + 2 + size + 2..];
     }
 }
 
@@ -797,6 +936,9 @@ fn each_flow_has_its_own_port_as_its_recording_names_it() {
         assert!(ports.insert(port), "two flows on port {port}");
         let recording = hydrus_testkit::fixture_json(name);
         assert_eq!(recording["site"]["port"], json!(port), "{name}");
+    }
+    for (_, port) in API_PORTS {
+        assert!(ports.insert(port), "two flows on port {port}");
     }
     let fixtures = std::fs::read_dir(hydrus_testkit::fixture_path("")).unwrap();
     for entry in fixtures {

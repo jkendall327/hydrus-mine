@@ -748,6 +748,69 @@ pub fn set_page_closed(conn: &Connection, id: i64, closed: bool) -> Result<()> {
     nudge(conn, id)
 }
 
+/// What a URL queue made for a page that is not open yet keeps as its
+/// extra: whether its page is to be shown when the client takes it up.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct WaitingUrlQueue {
+    pub show: bool,
+}
+
+/// Make a URL queue for a page the open client is to make
+/// (`/add_urls/add_url` with no page to send the URL to, as the reference's
+/// `GetOrMakeURLImportPage` makes one): it has no page key until the client
+/// takes it up ([`waits_for_url_page`], [`take_up_url_queue`]).
+pub fn create_waiting_url_queue(
+    conn: &Connection,
+    name: &str,
+    options: &ImportOptionsSlice,
+    show: bool,
+    now: i64,
+) -> Result<i64> {
+    let id = create_queue(conn, QueueKind::Urls, name, None, options, now)?;
+    let extra = serde_json::to_value(WaitingUrlQueue { show }).expect("plain data serialises");
+    set_queue_extra(conn, id, &extra)?;
+    Ok(id)
+}
+
+/// Have a waiting URL queue's page shown when the client takes it up (a
+/// later call asked to show the page a first one made).
+pub fn show_waiting_url_queue(conn: &Connection, id: i64) -> Result<()> {
+    let extra =
+        serde_json::to_value(WaitingUrlQueue { show: true }).expect("plain data serialises");
+    set_queue_extra(conn, id, &extra)
+}
+
+/// Whether a queue is a URL queue waiting for the client to make its page:
+/// no page key, and not a closed page's.
+pub fn waits_for_url_page(queue: &Queue) -> bool {
+    queue.kind == QueueKind::Urls && queue.page_key.is_none() && !queue.page_closed
+}
+
+/// The URL queues waiting for the client to make their pages, oldest
+/// first, and whether each page is to be shown.
+pub fn waiting_url_queues(conn: &Connection) -> Result<Vec<(Queue, bool)>> {
+    Ok(queues(conn, Some(QueueKind::Urls))?
+        .into_iter()
+        .filter(waits_for_url_page)
+        .map(|q| {
+            let show = serde_json::from_value::<WaitingUrlQueue>(q.extra.clone())
+                .unwrap_or_default()
+                .show;
+            (q, show)
+        })
+        .collect())
+}
+
+/// A page has taken up a waiting URL queue: it has the page's key now.
+pub fn take_up_url_queue(conn: &Connection, id: i64, page_key: &[u8]) -> Result<()> {
+    conn.execute(
+        "UPDATE import_queues SET page_key = ?, extra = '{}' WHERE queue_id = ?",
+        params![page_key, id],
+    )?;
+    Ok(())
+}
+
 /// Delete the queues of pages closed and not reopened (as the reference's
 /// closed pages go once the client closes): how many there were.
 pub fn delete_closed_queues(conn: &Connection) -> Result<usize> {

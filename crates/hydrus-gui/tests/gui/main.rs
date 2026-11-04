@@ -11,6 +11,7 @@ mod active_predicates;
 mod animation;
 mod animation_start;
 mod api_update_toasts;
+mod api_url_pages;
 mod archive_delete;
 mod archive_delete_playback;
 mod archive_delete_reinbox;

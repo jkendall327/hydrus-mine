@@ -196,6 +196,16 @@ search.
 - **The client opens on the page it showed last**, or the one
   `focus_page` asked for while it was closed. The reference opens each
   notebook on its first page.
+- **`/add_urls/add_url` can answer up to about half a second before
+  `/manage_pages` shows a new page for it.** The daemon makes the page's
+  queue and starts on the URL at once; the open client takes the queue up
+  as a page on its next pass (twice a second), as the reference's call
+  makes the page before it answers.
+- **URL queues an older hydrus-rs made for `/add_urls/add_url` with the
+  caller's `destination_page_key`, before any page had that key, are left
+  alone.** They had no page then and no page takes them up now (the store
+  cannot tell them from a saved session's queues), so they go on downloading
+  but show nowhere; later calls go to a page as the reference chooses one.
 - **A page's selected files are listed in the page's order**
   (`hash_ids_selected`); the reference's order is its selection set's.
 - **A page's state is always "normal"** (`page_state` 0): our searches
@@ -1037,8 +1047,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   every minute and on stopping).
 - **Watchers are grouped by page name only.** A watchable URL sent by
   `/add_urls/add_url` starts a watcher on the named watcher "page" (by
-  default "watcher") as the reference's does, but there are no pages to
-  show yet, and a check that errors pauses the watcher without the
+  default "watcher") as the reference's does, but the open client does not
+  show it as a page yet (a post or gallery URL's named page it does show:
+  see GUI.md), and a check that errors pauses the watcher without the
   reference's five-second status display.
 - **A pause switched from the command line takes up to half a minute** to
   reach a running `hydrus serve` (it looks again that often while paused);

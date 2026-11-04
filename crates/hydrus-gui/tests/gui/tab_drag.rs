@@ -447,7 +447,6 @@ fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_
         .write(move |ctx| {
             sessions::save(ctx.conn(), &saved, 1)?;
             sessions::set_page_files(ctx.conn(), &gamma, &save_files)?;
-            sessions::set_page_selected(ctx.conn(), &gamma, &save_files[1..2])?;
             settings::set(
                 ctx.conn(),
                 &hydrus_core::pages::PageNameSettings {
@@ -461,6 +460,14 @@ fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // (selected in this run: the client opens with none selected)
+    bound
+        .pages
+        .borrow_mut()
+        .page(&gamma)
+        .unwrap()
+        .borrow_mut()
+        .select_files(&ordered[1..2]);
     let rects = geometry(&ui);
     ui.show().unwrap();
     let native = windows.get(0).unwrap();

@@ -35,6 +35,58 @@ use crate::{Downloader, WorkError, now};
 /// The default name of a new URL queue (the reference's page name).
 pub const DEFAULT_URL_QUEUE_NAME: &str = "url import";
 
+/// The URL queue an open page (or a queue waiting to become one) has that
+/// [`hydrus_core::pages::choose_url_page`] chooses, and that page's key:
+/// among the open session's URL downloader pages (closed pages are not
+/// open) and the queues no page has taken up yet.
+fn choose_url_queue(
+    conn: &rusqlite::Connection,
+    name: Option<&str>,
+    key: Option<&hydrus_core::pages::PageKey>,
+    options: Option<&ImportOptionsSlice>,
+) -> Result<Option<(Queue, Option<hydrus_core::pages::PageKey>)>, StoreError> {
+    use hydrus_core::pages::{self as pages, PageContent, PageKey, UrlPageChoice};
+    use hydrus_store::sessions;
+    let session = sessions::load(conn, sessions::LAST_SESSION)?;
+    let shown = sessions::shown(conn, sessions::LAST_SESSION)?;
+    let all = queues::queues(conn, Some(QueueKind::Urls))?;
+    let open = session
+        .as_ref()
+        .map(|s| s.pages.as_slice())
+        .unwrap_or_default();
+    let current = pages::current_page(open, shown.as_ref());
+    let by_id: HashMap<i64, &Queue> = all.iter().map(|q| (q.id, q)).collect();
+    // (each open page's first queue, then the queues waiting for a page)
+    let mut targets: Vec<(Option<PageKey>, &str, &Queue)> = Vec::new();
+    for page in pages::url_pages(open) {
+        if let PageContent::Downloader { queues, .. } = &page.content
+            && let Some(queue) = queues.first().and_then(|id| by_id.get(id))
+        {
+            targets.push((Some(page.key), page.name.as_str(), queue));
+        }
+    }
+    let held: std::collections::HashSet<i64> = targets.iter().map(|t| t.2.id).collect();
+    for queue in all
+        .iter()
+        .filter(|q| queues::waits_for_url_page(q) && !held.contains(&q.id))
+    {
+        targets.push((None, queue.name.as_str(), queue));
+    }
+    let choices: Vec<UrlPageChoice<'_>> = targets
+        .iter()
+        .map(|&(page, name, queue)| UrlPageChoice {
+            key: page,
+            name,
+            current: page.is_some() && page == current,
+            fits: options.is_none_or(|o| queue.options == *o),
+        })
+        .collect();
+    Ok(pages::choose_url_page(&choices, name, key).map(|i| {
+        let (page, _, queue) = targets[i];
+        (queue.clone(), page)
+    }))
+}
+
 /// What a URL queue is doing.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct UrlQueueStatus {
@@ -370,47 +422,54 @@ impl QueueRunner {
         out
     }
 
-    /// The URL queue a URL should go to (`GetOrMakeURLImportPage`): the one
-    /// with this page key, else those with this name, else any, preferring
-    /// ones with the same import options; a new one if none fits.
+    /// The URL queue a URL should go to: [`Self::url_page_for`]'s.
     pub fn url_queue_for(
         &self,
         name: Option<&str>,
         page_key: Option<&[u8]>,
         options: Option<&ImportOptionsSlice>,
     ) -> Result<Queue, StoreError> {
-        let store = &self.downloader.store;
-        let all = store.read(|conn| queues::queues(conn, Some(QueueKind::Urls)))?;
-        let mut candidates: Vec<Queue> = if let Some(key) =
-            page_key.filter(|k| all.iter().any(|q| q.page_key.as_deref() == Some(*k)))
-        {
-            all.into_iter()
-                .filter(|q| q.page_key.as_deref() == Some(key))
-                .collect()
-        } else if let Some(name) = name {
-            all.into_iter().filter(|q| q.name == name).collect()
-        } else {
-            all
-        };
-        if let Some(options) = options {
-            candidates.retain(|q| q.options == *options);
-        }
-        if let Some(queue) = candidates.into_iter().next() {
-            return Ok(queue);
-        }
-        let name = name.unwrap_or(DEFAULT_URL_QUEUE_NAME).to_owned();
-        let options = options.cloned().unwrap_or_default();
-        let key = page_key.map(<[u8]>::to_vec);
-        store.write(move |ctx| {
-            let id = queues::create_queue(
-                ctx.conn(),
-                QueueKind::Urls,
-                &name,
-                key.as_deref(),
-                &options,
-                now(),
-            )?;
-            queues::queue(ctx.conn(), id).map(|q| q.expect("just made"))
+        self.url_page_for(name, page_key, options, false)
+            .map(|(queue, _)| queue)
+    }
+
+    /// The URL queue a URL should go to, and the open page that shows it
+    /// (`GetOrMakeURLImportPage`): among the open session's URL downloader
+    /// pages (closed pages are not open) and the queues made here that no
+    /// page has taken up yet, the one [`hydrus_core::pages::choose_url_page`]
+    /// chooses (by page key, else page name, else any; the page shown
+    /// first). If none, a new queue named `name` (or "url import") that the
+    /// open client takes up as a page ([`queues::waiting_url_queues`]),
+    /// shown if `show`; like the reference's new page, it has a new key,
+    /// not `page_key`.
+    pub fn url_page_for(
+        &self,
+        name: Option<&str>,
+        page_key: Option<&[u8]>,
+        options: Option<&ImportOptionsSlice>,
+        show: bool,
+    ) -> Result<(Queue, Option<hydrus_core::pages::PageKey>), StoreError> {
+        use hydrus_core::pages::PageKey;
+        let name = name.map(str::to_owned);
+        let key = page_key.and_then(|k| <[u8; 32]>::try_from(k).ok().map(PageKey));
+        let options = options.cloned();
+        // (chosen and made in one write, so calls side by side, which the
+        // reference makes one at a time on its Qt thread, find one page)
+        self.downloader.store.write(move |ctx| {
+            let conn = ctx.conn();
+            if let Some((queue, page)) =
+                choose_url_queue(conn, name.as_deref(), key.as_ref(), options.as_ref())?
+            {
+                if show && page.is_none() {
+                    queues::show_waiting_url_queue(conn, queue.id)?;
+                }
+                return Ok((queue, page));
+            }
+            let name = name.as_deref().unwrap_or(DEFAULT_URL_QUEUE_NAME);
+            let options = options.unwrap_or_default();
+            let id = queues::create_waiting_url_queue(conn, name, &options, show, now())?;
+            let queue = queues::queue(conn, id)?.expect("just made");
+            Ok((queue, None))
         })
     }
 

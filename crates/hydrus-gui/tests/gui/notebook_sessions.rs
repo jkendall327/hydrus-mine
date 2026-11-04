@@ -325,10 +325,9 @@ fn notebook_session_copies_preserve_media_and_independent_importer_state() {
         pages.current().borrow().files(),
         [hydrus_core::HashId(2), hydrus_core::HashId(1)]
     );
-    assert_eq!(
-        pages.current().borrow().selected_files(),
-        [hydrus_core::HashId(1)]
-    );
+    // (no selection: the client opened with none, and a session keeps
+    // none, as the reference's)
+    assert!(pages.current().borrow().selected_files().is_empty());
     let PageContent::Pages(children) = &pages.session().pages.last().unwrap().content else {
         panic!("copy notebook")
     };

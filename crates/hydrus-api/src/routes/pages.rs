@@ -504,7 +504,7 @@ fn logs(app: &AppState, queue: i64, simple: bool) -> ApiResult<(Json, Json)> {
 
 /// Ask a page to do something: of the client, while it is open; otherwise
 /// done to the session it opens with.
-fn ask(app: &AppState, page: PageKey, command: PageCommand) -> ApiResult<()> {
+pub(crate) fn ask(app: &AppState, page: PageKey, command: PageCommand) -> ApiResult<()> {
     let open = hydrus_store::store::gui_open(app.store.dir());
     app.store.write(move |ctx| {
         if open {

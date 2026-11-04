@@ -192,7 +192,7 @@ fn startup_dropdown_cancels_invalid_choice_and_applies_frozen_named_session_sele
 
 // leaf: audit-options-gui-sessions-sessions-default-session-on-startup
 #[test]
-fn named_startup_restores_ordered_media_selection_and_independent_importer_snapshot() {
+fn named_startup_restores_ordered_media_without_selection_and_independent_importer_snapshot() {
     let (_dirs, store) = store();
     let pages = Pages::open(store.clone()).unwrap();
     let original = pages.shown().key;
@@ -261,11 +261,12 @@ fn named_startup_restores_ordered_media_selection_and_independent_importer_snaps
             .unwrap(),
         [hydrus_core::HashId(2), hydrus_core::HashId(1)]
     );
-    assert_eq!(
+    // (no selection: the reference's sessions keep none)
+    assert!(
         store
             .read(|conn| sessions::page_selected(conn, &first))
-            .unwrap(),
-        [hydrus_core::HashId(1)]
+            .unwrap()
+            .is_empty()
     );
     let importer = boot
         .session()

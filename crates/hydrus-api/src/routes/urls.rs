@@ -211,6 +211,10 @@ pub async fn add_url(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiRe
     }
     let page_name = req.params.optional::<String>("destination_page_name")?;
     let page_key = req.params.optional::<Vec<u8>>("destination_page_key")?;
+    let show_page = req
+        .params
+        .optional::<bool>("show_destination_page")?
+        .unwrap_or(false);
     let destinations = match crate::location::parse(&snapshot, &req.params, false)? {
         Some(domains) => {
             for &d in &domains.current {
@@ -304,9 +308,18 @@ pub async fn add_url(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiRe
                 )
                 .map_err(|e| ApiError::server(e.to_string()))?;
         } else {
-            let queue = downloads
-                .url_queue_for(page_name.as_deref(), page_key.as_deref(), slice.as_ref())
+            // (a new page is shown when the client takes up its queue)
+            let (queue, page) = downloads
+                .url_page_for(
+                    page_name.as_deref(),
+                    page_key.as_deref(),
+                    slice.as_ref(),
+                    show_page,
+                )
                 .map_err(|e| ApiError::server(e.to_string()))?;
+            if show_page && let Some(page) = page {
+                crate::routes::pages::ask(app, page, hydrus_store::sessions::PageCommand::Focus)?;
+            }
             downloads
                 .pend_urls(queue.id, &[url], &filterable_tags, &additional_tags)
                 .map_err(|e| ApiError::server(e.to_string()))?;
