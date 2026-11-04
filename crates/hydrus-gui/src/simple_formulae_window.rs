@@ -85,6 +85,26 @@ pub fn open(
 ) -> Result<SimpleFormulaeWindow, slint::PlatformError> {
     let w = crate::app_title::new::<crate::SimpleFormulaeWindow>()?;
     let ended = crate::dialog::Dialog::new(&w);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if w.get_naming() {
+                w.invoke_name_cancelled();
+                return true;
+            }
+            if !w.get_question().is_empty() {
+                w.invoke_cancelled();
+                return true;
+            }
+            false
+        }
+    });
     let mut values = store
         .read(settings::get::<SimpleDownloaderFormulae>)
         .unwrap_or_default();

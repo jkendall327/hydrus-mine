@@ -157,6 +157,33 @@ pub fn open(store: &Arc<Store>, slots: &Slots) -> Result<LoginDomainsWindow, Str
     let window = crate::app_title::new::<crate::LoginDomainsWindow>().map_err(|e| e.to_string())?;
     // (an ordinary dialog: kept by `regular_dialog` when applied)
     let ended = crate::dialog::Dialog::new(&window);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_action(
+                    if w.get_confirming_delete() {
+                        "back-delete"
+                    } else if w.get_confirming_reset() {
+                        "back-reset"
+                    } else if w.get_confirming_login() {
+                        "back-login"
+                    } else {
+                        "leave-inactive"
+                    }
+                    .into(),
+                );
+                return true;
+            }
+            false
+        }
+    });
     let editor = Rc::new(RefCell::new(DomainsEditor::new(
         store
             .read(hydrus_store::logins::load)

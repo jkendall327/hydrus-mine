@@ -259,6 +259,9 @@ pub fn open(store: &Arc<Store>, slots: &Slots, headers: bool) -> Result<NetworkD
     };
     open_data(store, slots, &slot, data)
 }
+/// What a session's cookies ask before a cancel discards their changes.
+const DISCARD_COOKIES: &str = "You have made changes. Sure you are ok to cancel?";
+
 fn open_data(
     store: &Arc<Store>,
     slots: &Slots,
@@ -284,6 +287,22 @@ fn open_data(
     } else {
         crate::dialog::Dialog::frame(&window)
     };
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_answered(false);
+                return true;
+            }
+            false
+        }
+    });
     let state = Rc::new(RefCell::new(State {
         store: store.clone(),
         data,
@@ -575,11 +594,35 @@ fn open_data(
             }
         }
     });
+    // (a session's cookies changed: a cancel, Escape or the window's close
+    // asks before discarding them; the reference's frame edits the jar at
+    // once, so there is nothing for it to lose)
+    let discarding = Rc::new(Cell::new(false));
+    ended.refuse_cancel({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let discarding = discarding.clone();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return true;
+            };
+            let changed = matches!(&state.borrow().data, Data::Cookies(d) if d.changed());
+            if !changed {
+                return true;
+            }
+            if w.get_question().is_empty() {
+                discarding.set(true);
+                w.set_question(DISCARD_COOKIES.into());
+            }
+            false
+        }
+    });
     window.on_answered({
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
         let active = active.clone();
+        let ended = ended.clone();
         move |yes| {
             let Some(w) = weak.upgrade() else {
                 return;
@@ -588,6 +631,12 @@ fn open_data(
                 return;
             }
             w.set_question("".into());
+            if discarding.replace(false) {
+                if yes {
+                    ended.cancel_confirmed();
+                }
+                return;
+            }
             if !yes {
                 return;
             }

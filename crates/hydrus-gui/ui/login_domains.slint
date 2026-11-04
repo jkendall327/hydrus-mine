@@ -34,7 +34,6 @@ export component LoginDomainsWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.question != "" { root.action(root.confirming-delete ? "back-delete" : root.confirming-reset ? "back-reset" : root.confirming-login ? "back-login" : "leave-inactive"); return accept; }
                 root.escape();
                 return accept;
             }

@@ -27,6 +27,12 @@ export component RegexFavouritesWindow inherits Window {
     callback action(string);
     callback closed();
     in property <[MenuPane]> favourite-panes;
+    // (once its favourites menu closes, however it closes, the window's
+    // keys take the focus back from it, so Escape reaches it again)
+    property <bool> menu-open: root.favourite-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { escape-keys.focus(); }
+    }
     callback favourite-menu(length,length);
     callback favourite-dismissed();
     callback favourite-placed(int,length,length,length);
@@ -39,7 +45,6 @@ export component RegexFavouritesWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.editing { root.action("cancel-row"); return accept; } if root.deleting { root.action("cancel-delete"); return accept; }
                 root.escape();
                 return accept;
             }

@@ -122,6 +122,12 @@ export component EditSubscriptionWindow inherits Window {
     in property <bool> can-quality;
     in property <bool> quality-working;
     in property <[MenuPane]> quality-panes;
+    // (once its menu closes, however it closes, the window's keys take the
+    // focus back from it, so Escape reaches it again)
+    property <bool> menu-open: root.quality-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { keys.focus(); }
+    }
     callback quality-menu(length, length);
     callback quality-line-hovered(int,int,length,length,length);
     callback quality-line-clicked(int,int,length,length,length);

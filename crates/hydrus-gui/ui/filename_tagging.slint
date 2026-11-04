@@ -105,6 +105,12 @@ export component FilenameTaggingWindow inherits Window {
     in property <bool> rule-delete;
     in property <string> rule-message;
     in property <[MenuPane]> regex-panes;
+    // (once its menu closes, however it closes, the window's keys take the
+    // focus back from it, so Escape reaches it again)
+    property <bool> menu-open: root.regex-panes.length > 0;
+    changed menu-open => {
+        if !self.menu-open { keys.focus(); }
+    }
     in property <bool> regex-child-open;
     callback regex-menu(float, float);
     callback regex-placed(int, float, float, float);
@@ -140,7 +146,6 @@ export component FilenameTaggingWindow inherits Window {
         capture-key-pressed(event) => {
             if root.regex-child-open || root.tags-child-open { return accept; }
             if event.text == Key.Escape {
-                if root.regex-panes.length > 0 { root.regex-dismissed(); return accept; }
                 if root.rule-child || root.rule-delete { root.rule-cancel(); }
                 else { root.escape(); }
                 return accept;

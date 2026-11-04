@@ -41,7 +41,6 @@ export component ParserListWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.question != "" { root.answered(false); return accept; }
                 root.escape();
                 return accept;
             }

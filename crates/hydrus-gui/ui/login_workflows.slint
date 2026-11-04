@@ -28,7 +28,6 @@ export component LoginScriptsWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.deleting { root.action("back"); return accept; }
                 root.escape();
                 return accept;
             }

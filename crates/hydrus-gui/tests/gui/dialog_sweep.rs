@@ -1957,3 +1957,199 @@ fn escape_answers_the_downloader_login_and_api_dialogs_sub_states_first() {
     domains.invoke_action("cancel".into());
     assert!(!domains.window().is_visible() && !credentials.window().is_visible());
 }
+
+/// The window's own close answers a question or closes an inline editor up
+/// within it first, as Escape does (the reference's are modal dialogs of
+/// their own, which the parent's close can't pass), and only the next close
+/// ends the window.
+#[test]
+fn a_windows_close_answers_its_question_or_inline_editor_first() {
+    let _windows = headless::init();
+    let (_dirs, store) = crate::subscriptions::store();
+    let (ui, bound) = client(&store);
+    let close = |w: &slint::Window| w.dispatch_event(slint::platform::WindowEvent::CloseRequested);
+
+    // review vacuum data: its "vacuum" question
+    crate::common::main_menu::choose(
+        &ui,
+        &["database", "db maintenance"],
+        "review vacuum data\u{2026}",
+    );
+    let vacuum = bound.vacuum_review().expect("vacuum review");
+    vacuum.invoke_clicked(0, false, false);
+    vacuum.invoke_vacuum_clicked();
+    assert!(!vacuum.get_question().is_empty());
+    close(vacuum.window());
+    assert!(
+        vacuum.get_question().is_empty(),
+        "vacuum: its close answers no"
+    );
+    assert!(vacuum.window().is_visible(), "vacuum: still open");
+    close(vacuum.window());
+    assert!(!vacuum.window().is_visible(), "vacuum: then closed");
+
+    // manage url classes: applied after a change, nothing is asked; a
+    // cancel with a class added asks, and the close answers that no
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "url classes\u{2026}");
+    let list = take(&bound.downloader_definitions.classes, "url classes");
+    list.invoke_action("add".into());
+    take(&bound.downloader_definitions.class_edit, "edit url class").invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    assert!(!list.window().is_visible(), "url classes: apply never asks");
+    crate::common::main_menu::choose(&ui, &["network", "downloaders"], "url classes\u{2026}");
+    let list = take(&bound.downloader_definitions.classes, "url classes");
+    list.invoke_action("add".into());
+    take(&bound.downloader_definitions.class_edit, "edit url class").invoke_action("apply".into());
+    list.invoke_action("cancel".into());
+    assert!(!list.get_question().is_empty(), "url classes: cancel asks");
+    close(list.window());
+    assert!(
+        list.get_question().is_empty(),
+        "url classes: its close answers no"
+    );
+    assert!(list.window().is_visible());
+    list.invoke_action("cancel".into());
+    list.invoke_answered(true);
+    assert!(!list.window().is_visible());
+
+    // manage gallery url generators: a generator added, its cancel doesn't
+    // ask (the reference's `EditGUGsPanel` has no `UserIsOKToCancel`); the
+    // nested editor's members chooser (or its "No remaining gugs" notice)
+    // is closed by Escape and by the window's close first
+    crate::common::main_menu::choose(
+        &ui,
+        &["network", "downloaders"],
+        "gallery url generators\u{2026}",
+    );
+    let gugs = take(&bound.downloader_definitions.gugs, "gallery url generators");
+    gugs.invoke_tab_chosen(1);
+    gugs.invoke_action("add".into());
+    let nested = take(&bound.downloader_definitions.gug_edit, "a nested generator");
+    let chooser_or_notice = |w: &hydrus_gui::DownloaderDefinitionEditWindow| {
+        !w.get_chooser_title().is_empty() || !w.get_notice().is_empty()
+    };
+    nested.invoke_member_action("add".into());
+    assert!(
+        chooser_or_notice(&nested),
+        "nested: the chooser or its notice"
+    );
+    escape(nested.window());
+    assert!(
+        !chooser_or_notice(&nested),
+        "nested: Escape closes it first"
+    );
+    assert!(nested.window().is_visible(), "nested: still open");
+    nested.invoke_member_action("add".into());
+    assert!(chooser_or_notice(&nested));
+    close(nested.window());
+    assert!(
+        !chooser_or_notice(&nested),
+        "nested: its close closes it first"
+    );
+    assert!(nested.window().is_visible(), "nested: still open");
+    nested.invoke_action("cancel".into());
+    gugs.invoke_action("add".into());
+    take(&bound.downloader_definitions.gug_edit, "a generator").invoke_action("apply".into());
+    gugs.invoke_action("cancel".into());
+    assert!(!gugs.window().is_visible(), "gugs: a cancel never asks");
+
+    // a session's cookies: changed, a cancel, Escape or the close asks
+    // before discarding them, Escape answering no
+    crate::common::main_menu::choose(&ui, &["network", "data"], "review session cookies");
+    let browser = take(&bound.network_sessions.browser, "session cookies");
+    browser.invoke_add_clicked();
+    let edit = hydrus_gui::network_sessions_window::last_edit_opened().unwrap();
+    edit.set_domain("example.com".into());
+    edit.invoke_apply_clicked();
+    browser.invoke_row_clicked(0, false, false);
+    browser.invoke_edit_clicked();
+    let cookies = take(&bound.network_sessions.cookies, "network session");
+    cookies.invoke_add_clicked();
+    let cookie = hydrus_gui::network_sessions_window::last_edit_opened().unwrap();
+    cookie.set_name("sid".into());
+    cookie.set_value("token".into());
+    cookie.invoke_apply_clicked();
+    escape(cookies.window());
+    assert!(!cookies.get_question().is_empty(), "cookies: Escape asks");
+    escape(cookies.window());
+    assert!(cookies.get_question().is_empty(), "cookies: answered no");
+    close(cookies.window());
+    assert!(
+        !cookies.get_question().is_empty(),
+        "cookies: its close asks"
+    );
+    cookies.invoke_answered(true);
+    assert!(
+        !cookies.window().is_visible(),
+        "cookies: discarded and closed"
+    );
+
+    // manage logins' credentials: the "values are invalid" warning
+    let (_ldir, lstore, _) = crate::login_workflows::store();
+    let (lui, lbound) = client(&lstore);
+    crate::common::main_menu::choose(&lui, &["network", "logins"], "logins\u{2026}");
+    let domains = take(&lbound.login_workflows.domains.domains, "manage logins");
+    domains.invoke_row_clicked(0, false, false);
+    domains.invoke_action("credentials".into());
+    let credentials = take(&lbound.login_workflows.domains.credentials, "edit login");
+    credentials.invoke_edited(0, "1?!".into());
+    credentials.invoke_action("apply".into());
+    assert!(
+        !credentials.get_question().is_empty(),
+        "credentials: warned"
+    );
+    close(credentials.window());
+    assert!(
+        credentials.get_question().is_empty(),
+        "credentials: its close goes back"
+    );
+    assert!(credentials.window().is_visible());
+    credentials.invoke_action("cancel".into());
+    // and manage logins' delete question
+    domains.invoke_row_clicked(0, false, false);
+    domains.invoke_action("delete".into());
+    assert!(
+        !domains.get_question().is_empty(),
+        "manage logins: asks to delete"
+    );
+    close(domains.window());
+    assert!(
+        domains.get_question().is_empty(),
+        "manage logins: its close answers no"
+    );
+    assert!(domains.window().is_visible());
+    domains.invoke_action("cancel".into());
+
+    // manage regex favourites: after its favourites menu is dismissed by a
+    // click, Escape still reaches the row editor
+    let (_odirs, ostore) = crate::options_window::store();
+    let (oui, obound) = client(&ostore);
+    let options = options_page(&oui, &obound, "regex favourites");
+    options.invoke_regex_favourites_clicked();
+    let regex = hydrus_gui::regex_favourites_window::last_opened().expect("regex favourites");
+    widgets::lay_out(regex.window(), 700.0, 500.0);
+    regex.invoke_action("add".into());
+    widgets::click(regex.window(), "favourites \u{25be}");
+    assert!(
+        regex.get_favourite_panes().row_count() > 0,
+        "regex: its menu opens"
+    );
+    widgets::click_at(
+        regex.window(),
+        slint::LogicalPosition::new(5.0, 495.0),
+        slint::platform::PointerEventButton::Left,
+    );
+    assert_eq!(
+        regex.get_favourite_panes().row_count(),
+        0,
+        "regex: the menu dismissed"
+    );
+    escape(regex.window());
+    assert!(
+        !regex.get_editing(),
+        "regex: Escape cancels the row after the menu"
+    );
+    assert!(regex.window().is_visible());
+    close(regex.window());
+    assert!(!regex.window().is_visible());
+}

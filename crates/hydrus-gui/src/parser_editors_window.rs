@@ -1286,6 +1286,22 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
     let w = crate::app_title::new::<crate::ParserListWindow>().map_err(|e| e.to_string())?;
     // (an ordinary dialog: kept by `regular_dialog` when applied)
     let ended = crate::dialog::Dialog::new(&w);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = w.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_question().is_empty() {
+                w.invoke_answered(false);
+                return true;
+            }
+            false
+        }
+    });
     w.set_links(links);
     w.set_columns(ModelRc::new(VecModel::from(
         (if links {

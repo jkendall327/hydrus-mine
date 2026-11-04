@@ -24,7 +24,7 @@ export component ShortcutSetWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.child-open { return accept; } if root.remove-question { root.remove-chosen(false); return accept; }
+                if root.child-open { return accept; }
                 root.escape();
                 return accept;
             }

@@ -1,6 +1,6 @@
 //! Slint downloader definition windows, owning isolated typed drafts until Apply.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -227,6 +227,10 @@ pub fn open(
         }
     });
     let pending_question: Rc<RefCell<Option<Pending>>> = Rc::default();
+    // (whether a class was added, edited, imported or deleted: the
+    // reference's url classes ask before a cancel discards any of that,
+    // `_changes_made or HasDoneDeletes`, whatever the list now holds)
+    let touched = Rc::new(Cell::new(false));
     window.on_row_clicked({
         let exchange = exchange.clone();
         let draft = draft.clone();
@@ -292,6 +296,7 @@ pub fn open(
         }
     });
     window.on_answered({
+        let touched = touched.clone();
         let draft_rc = draft.clone();
         let draft = draft.clone();
         let refresh = refresh.clone();
@@ -312,6 +317,7 @@ pub fn open(
                         draft.kind = kind;
                         draft.selection.select_many(&items);
                         if kind == Kind::Classes {
+                            touched.set(true);
                             draft.delete_selected();
                             draft.kind = shown_kind;
                             drop(draft);
@@ -338,6 +344,7 @@ pub fn open(
         }
     });
     window.on_action({
+        let touched = touched.clone();
         let draft = draft.clone();
         let refresh = refresh.clone();
         let ended = ended.clone();
@@ -386,8 +393,10 @@ pub fn open(
                     let applied = Rc::new({
                         let draft = draft.clone();
                         let refresh = refresh.clone();
+                        let touched = touched.clone();
                         move |definitions| {
                             draft.borrow_mut().import(definitions)?;
+                            touched.set(true);
                             refresh();
                             Ok(())
                         }
@@ -408,8 +417,17 @@ pub fn open(
                     }
                 }
                 "add" | "edit" | "duplicate" => {
+                    // (an editor applied is a change made)
+                    let refresh: Rc<dyn Fn()> = Rc::new({
+                        let refresh = refresh.clone();
+                        let touched = touched.clone();
+                        move || {
+                            touched.set(true);
+                            refresh();
+                        }
+                    });
                     if let Err(e) =
-                        open_definition(&store, &draft, &slots, action.as_str(), refresh.clone())
+                        open_definition(&store, &draft, &slots, action.as_str(), refresh)
                     {
                         w.set_error(e.into());
                     }
@@ -418,17 +436,17 @@ pub fn open(
             }
         }
     });
-    // (with changes, a cancel, Escape or its window's close asks first, as
-    // the reference's `UserIsOKToCancel`)
+    // (url classes with changes made: a cancel, Escape or its window's
+    // close asks first, as the reference's `UserIsOKToCancel`; its gallery
+    // url generators never ask)
     ended.refuse_cancel({
-        let draft = draft.clone();
         let pending = pending_question.clone();
         let weak = window.as_weak();
         move || {
             if pending.borrow().is_some() {
                 return false;
             }
-            if !draft.borrow().changed() {
+            if !classes || !touched.get() {
                 return true;
             }
             *pending.borrow_mut() = Some(Pending::Cancel);
@@ -1268,15 +1286,25 @@ fn open_editor(
         let blocked = blocked.clone();
         move || blocked()
     });
-    // (a question up is answered no by Escape)
+    // (the members chooser, the reference's `SelectMultipleFromList`, is
+    // cancelled and its "No remaining gugs available!" notice dismissed by
+    // Escape or the window's close, and a question up is answered no)
     ended.escape_first({
         let weak = window.as_weak();
-        move || match weak.upgrade() {
-            Some(w) if !w.get_question().is_empty() => {
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !w.get_chooser_title().is_empty() {
+                w.invoke_chooser_answered(false);
+            } else if !w.get_notice().is_empty() {
+                w.invoke_notice_dismissed();
+            } else if !w.get_question().is_empty() {
                 w.invoke_answered(false);
-                true
+            } else {
+                return false;
             }
-            _ => false,
+            true
         }
     });
     // (whatever ends it, through the dialog helper)

@@ -97,7 +97,6 @@ export component EditApiPermissionsWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.changing-key { root.cancel-key(); return accept; }
                 root.escape();
                 return accept;
             }

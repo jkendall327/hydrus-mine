@@ -2866,7 +2866,20 @@ the dialog's own window close ends it (manage times under its date-time
 editor, merge options under its tag filter, the OR editor under a nested
 one, simple formulae under an export, and the rest in `dialog_sweep.rs`); its
 own cancel button still ends it and the child together, which Qt's
-modality would not let the user press. No migrated dialog yet has a panel check that refuses an apply
+modality would not let the user press. A question or inline editor up
+within a window (a yes/no, a row being edited, a chooser, a notice) is the
+reference's own modal dialog: Escape and the window's close both answer it
+no or close it first, and only the next one ends the window. The url
+classes list asks before a cancel discards anything added, edited,
+imported or deleted, as the reference's `UserIsOKToCancel` (whatever the
+list then holds); the gallery url generators never ask, as there. A
+session's cookies, which hydrus-rs edits as a draft until applied, ask
+before a cancel, Escape or the window's close discards changes; the
+reference's frame edits the cookie jar at once, so has nothing to ask
+about. The API request wait is cancelled when the Client API keys window
+it was opened from closes (that window isn't on the helper yet); in the
+reference the wait is modal over it, so it can't be closed under the
+wait. No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
 vetoed apply does). Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.

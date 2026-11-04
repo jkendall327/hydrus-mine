@@ -120,7 +120,6 @@ export component ManageTimesWindow inherits Window {
     escape-keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.asking { root.cancelled(); return accept; }
                 root.escape();
                 return accept;
             }

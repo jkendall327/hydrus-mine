@@ -286,6 +286,22 @@ pub fn open(
 ) -> Result<TagFilterWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::TagFilterWindow>()?;
     let ended = crate::dialog::Dialog::new(&window);
+    // (a question or inline editor up within it takes Escape, and the
+    // window's close, first: answered no or closed, as its own modal
+    // dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || {
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if w.get_asking() {
+                w.invoke_cancelled();
+                return true;
+            }
+            false
+        }
+    });
     window.set_window_title(title.into());
     window.set_message(message.into());
     window.set_instructions(INSTRUCTIONS.into());
