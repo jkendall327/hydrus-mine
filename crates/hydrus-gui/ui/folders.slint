@@ -128,6 +128,9 @@ component Footer inherits VerticalLayout {
 
 // the manage import folders and manage export folders lists
 export component FoldersWindow inherits Window {
+    // (Escape goes to the dialog helper: cancelled, as the reference's
+    // `keyPressEvent`)
+    callback escape();
     in property <bool> waiting;
     in property <string> wait-message;
     in property <string> window-title;
@@ -163,11 +166,8 @@ export component FoldersWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                if (root.asking) {
-                    root.cancelled();
-                } else {
-                    root.cancel();
-                }
+                // (a question up is cancelled first, by the dialog helper)
+                root.escape();
                 return accept;
             }
             reject
@@ -232,6 +232,9 @@ export struct FolderActionRow {
 }
 
 export component ImportFolderWindow inherits Window {
+    // (Escape goes to the dialog helper: cancelled, as the reference's
+    // `keyPressEvent`)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -293,11 +296,8 @@ export component ImportFolderWindow inherits Window {
         capture-key-pressed(event) => {
             if root.file-log-open { return accept; }
             if (event.text == Key.Escape) {
-                if (root.asking) {
-                    root.cancelled();
-                } else {
-                    root.cancel();
-                }
+                // (a question up is cancelled first, by the dialog helper)
+                root.escape();
                 return accept;
             }
             reject
@@ -477,6 +477,9 @@ export component ImportFolderWindow inherits Window {
 }
 
 export component ExportFolderWindow inherits Window {
+    // (Escape goes to the dialog helper: cancelled, as the reference's
+    // `keyPressEvent`)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -533,11 +536,8 @@ export component ExportFolderWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                if (root.asking) {
-                    root.cancelled();
-                } else {
-                    root.cancel();
-                }
+                // (a question up is cancelled first, by the dialog helper)
+                root.escape();
                 return accept;
             }
             reject

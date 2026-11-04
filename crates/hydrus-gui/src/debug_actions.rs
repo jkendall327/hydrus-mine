@@ -159,6 +159,16 @@ pub(crate) fn messages(messages: Vec<(String, String)>) {
 
 /// A message with an "ok" button; `then` runs once it is dismissed.
 pub(crate) fn message_then(title: &str, text: &str, then: Box<dyn FnOnce()>) {
+    let _ = open_message(title, text, then);
+}
+
+/// [`message_then`], giving back the message window (for a dialog to wait
+/// on it).
+pub(crate) fn open_message(
+    title: &str,
+    text: &str,
+    then: Box<dyn FnOnce()>,
+) -> Option<ChoiceButtonsWindow> {
     let ask = crate::choice_buttons::Ask {
         title,
         message: text,
@@ -166,8 +176,15 @@ pub(crate) fn message_then(title: &str, text: &str, then: Box<dyn FnOnce()>) {
         no_label: "ok",
     };
     match crate::choice_buttons::open(&ask, move |_| then()) {
-        Ok(window) => MESSAGE.with(|m| *m.borrow_mut() = window),
-        Err(e) => eprintln!("could not show the message: {e}"),
+        Ok(window) => {
+            MESSAGE
+                .with(|m| *m.borrow_mut() = window.as_ref().map(ChoiceButtonsWindow::clone_strong));
+            window
+        }
+        Err(e) => {
+            eprintln!("could not show the message: {e}");
+            None
+        }
     }
 }
 

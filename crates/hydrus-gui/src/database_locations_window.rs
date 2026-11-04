@@ -25,6 +25,25 @@ pub(crate) struct Slot {
     granularity: crate::granularity_window::Slots,
     /// Waits for a "move files now" job to end, to open the window again.
     job: Option<slint::Timer>,
+    /// How the window ends (the dialog helper's), while it is open.
+    dialog: Option<crate::dialog::Dialog<DatabaseLocationsWindow>>,
+}
+
+/// A warning of the dialog's own (`ShowWarning`), which it waits on.
+fn warn(slots: &Slots, text: &str) {
+    let dialog = slots.borrow().dialog.clone();
+    match dialog {
+        Some(dialog) => dialog.message("Warning", text),
+        None => crate::debug_actions::message("Warning", text),
+    }
+}
+
+/// A yes/no question of the dialog's own (`GetYesNo`), which it waits on.
+fn ask(slots: &Slots, question: &str, yes: impl FnOnce() + 'static) {
+    let dialog = slots.borrow().dialog.clone();
+    if let Some(dialog) = dialog {
+        dialog.ask(question, yes);
+    }
 }
 
 pub(crate) type Slots = Rc<RefCell<Slot>>;
@@ -248,6 +267,9 @@ pub(crate) fn open(
         return window.show();
     }
     let window = crate::app_title::new::<crate::DatabaseLocationsWindow>()?;
+    // (a `DialogNullipotent`: its close button is its OK, keeping
+    // `regular_dialog`; Escape and its window's close cancel it)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(model::TITLE.into());
     window.set_warning(model::WARNING.into());
     let mut state = State {
@@ -307,35 +329,69 @@ pub(crate) fn open(
         move |action| act(&state, &refresh, &slots, action.as_str())
     });
     window.on_close_window({
-        let slots = slots.clone();
-        move || close(&slots)
+        let ended = ended.clone();
+        move || ended.accept()
     });
-    window.window().on_close_requested({
+    // (its max size, run time and custom time windows are modal children)
+    ended.modal_child({
         let slots = slots.clone();
         move || {
-            close(&slots);
-            slint::CloseRequestResponse::HideWindow
+            let slot = slots.borrow();
+            slot.max_size
+                .as_ref()
+                .is_some_and(|w| w.window().is_visible())
+                || slot
+                    .runtime
+                    .as_ref()
+                    .is_some_and(|w| w.window().is_visible())
+                || slot
+                    .custom
+                    .as_ref()
+                    .is_some_and(|w| w.window().is_visible())
         }
+    });
+    // (and "manage granularity", a `DialogNullipotent` it opens)
+    ended.modal_child({
+        let slots = slots.clone();
+        move || crate::granularity_window::is_open(&slots.borrow().granularity)
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
+        let slots = slots.clone();
+        move || close(&slots)
     });
     show(&window, &state.borrow());
     window.show()?;
     OPENED.with(|w| *w.borrow_mut() = window.as_weak());
+    slots.borrow_mut().dialog = Some(ended);
     slots.borrow_mut().window = Some(window);
     Ok(())
 }
 
 fn close(slots: &Slots) {
-    let mut slot = slots.borrow_mut();
-    if let Some(w) = slot.max_size.take() {
+    let (max_size, runtime, custom, window, granularity) = {
+        let mut slot = slots.borrow_mut();
+        slot.dialog = None;
+        (
+            slot.max_size.take(),
+            slot.runtime.take(),
+            slot.custom.take(),
+            slot.window.take(),
+            slot.granularity.clone(),
+        )
+    };
+    // (its children cancelled with it, through their helpers)
+    if let Some(w) = max_size {
+        w.invoke_cancel();
+    }
+    if let Some(w) = runtime {
         let _ = w.hide();
     }
-    if let Some(w) = slot.runtime.take() {
-        let _ = w.hide();
+    if let Some(w) = custom {
+        w.invoke_cancel();
     }
-    if let Some(w) = slot.custom.take() {
-        let _ = w.hide();
-    }
-    if let Some(w) = slot.window.take() {
+    crate::granularity_window::close(&granularity);
+    if let Some(w) = window {
         let _ = w.hide();
     }
 }
@@ -353,11 +409,11 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
             let mut s = state.borrow_mut();
             if let Some(l) = s.review.locations.iter().find(|l| l.path == path) {
                 if l.thumbnail_override {
-                    crate::debug_actions::message("Warning", model::IS_THUMBNAIL_LOCATION);
+                    warn(slots, model::IS_THUMBNAIL_LOCATION);
                     return;
                 }
                 if l.weight > 0 {
-                    crate::debug_actions::message("Warning", model::ALREADY_ENTERED);
+                    warn(slots, model::ALREADY_ENTERED);
                     return;
                 }
             }
@@ -380,13 +436,13 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                 s.write(move |conn| storage::adjust_weight(conn, &path, -1));
             } else {
                 drop(s);
-                return remove(state, refresh, &l);
+                return remove(state, refresh, slots, &l);
             }
         }
         "remove" => {
             let l = state.borrow().selected().cloned();
             if let Some(l) = l {
-                return remove(state, refresh, &l);
+                return remove(state, refresh, slots, &l);
             }
         }
         "max" => {
@@ -403,6 +459,8 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
             let Ok(window) = crate::app_title::new::<crate::LocationMaxSizeWindow>() else {
                 return;
             };
+            // (an ordinary dialog: kept by `regular_dialog` when applied)
+            let ended = crate::dialog::Dialog::new(&window);
             window.set_window_title(model::MAX_SIZE_TITLE.into());
             window.set_message(model::MAX_SIZE_MESSAGE.into());
             let (amount, unit) = split_bytes(l.max_bytes.unwrap_or(model::MAX_SIZE_DEFAULT));
@@ -413,6 +471,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                 let weak = window.as_weak();
                 let (state, refresh) = (state.clone(), refresh.clone());
                 let path = l.path.clone();
+                let ended = ended.clone();
                 move || {
                     let Some(w) = weak.upgrade() else {
                         return;
@@ -421,7 +480,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                         i64::from(w.get_amount())
                             * 1024_i64.pow(u32::try_from(w.get_unit()).unwrap_or(0))
                     });
-                    let _ = w.hide();
+                    ended.accept();
                     let path = path.clone();
                     state
                         .borrow_mut()
@@ -429,13 +488,8 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                     refresh();
                 }
             });
-            window.on_cancel({
-                let weak = window.as_weak();
-                move || {
-                    if let Some(w) = weak.upgrade() {
-                        let _ = w.hide();
-                    }
-                }
+            window.on_cancel(move || {
+                ended.cancel();
             });
             if window.show().is_ok() {
                 MAX_SIZE.with(|w| *w.borrow_mut() = window.as_weak());
@@ -455,23 +509,19 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                 .iter()
                 .any(|l| l.path == path && l.weight > 0)
             {
-                crate::debug_actions::message("Warning", model::IS_FILE_LOCATION);
+                warn(slots, model::IS_FILE_LOCATION);
                 return;
             }
             s.write(move |conn| storage::set_thumbnail_override(conn, Some(&path)));
         }
         "clear thumbnails" => {
-            let ask = state.borrow().ask.clone();
             let (state, refresh) = (state.clone(), refresh.clone());
-            ask(
-                model::CLEAR_THUMBNAILS.into(),
-                Rc::new(move || {
-                    state
-                        .borrow_mut()
-                        .write(|conn| storage::set_thumbnail_override(conn, None));
-                    refresh();
-                }),
-            );
+            ask(slots, model::CLEAR_THUMBNAILS, move || {
+                state
+                    .borrow_mut()
+                    .write(|conn| storage::set_thumbnail_override(conn, None));
+                refresh();
+            });
             return;
         }
         "rebalance" => return rebalance(state, slots),
@@ -505,34 +555,36 @@ fn split_bytes(bytes: i64) -> (i32, i32) {
 }
 
 /// "remove location" (`_RemoveBaseLocation`): warned or asked first.
-fn remove(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, l: &storage::Location) {
-    let (ask, weighted) = {
-        let s = state.borrow();
-        (
-            s.ask.clone(),
-            s.review.locations.iter().filter(|l| l.weight > 0).count(),
-        )
-    };
+fn remove(
+    state: &Rc<RefCell<State>>,
+    refresh: &Rc<dyn Fn()>,
+    slots: &Slots,
+    l: &storage::Location,
+) {
+    let weighted = state
+        .borrow()
+        .review
+        .locations
+        .iter()
+        .filter(|l| l.weight > 0)
+        .count();
     if l.weight == 0 {
-        crate::debug_actions::message("Warning", model::SELECT_WITH_WEIGHT);
+        warn(slots, model::SELECT_WITH_WEIGHT);
         return;
     }
     if weighted == 1 {
-        crate::debug_actions::message("Warning", model::CANNOT_EMPTY_ALL);
+        warn(slots, model::CANNOT_EMPTY_ALL);
         return;
     }
     let question = model::remove_question(l.path.is_dir(), l.files_share > 0.0);
     let (state, refresh, path) = (state.clone(), refresh.clone(), l.path.clone());
-    ask(
-        question.into(),
-        Rc::new(move || {
-            let path = path.clone();
-            state
-                .borrow_mut()
-                .write(move |conn| storage::remove_location(conn, &path));
-            refresh();
-        }),
-    );
+    ask(slots, question, move || {
+        let path = path.clone();
+        state
+            .borrow_mut()
+            .write(move |conn| storage::remove_location(conn, &path));
+        refresh();
+    });
 }
 
 /// "move files now" (`_Rebalance`): every location must be there; then a
@@ -552,7 +604,7 @@ fn rebalance(state: &Rc<RefCell<State>>, slots: &Slots) {
             })
     };
     if let Some(path) = missing {
-        crate::debug_actions::message("Warning", &model::missing_path_warning(&path));
+        warn(slots, &model::missing_path_warning(&path));
         return;
     }
     let (state_after, slots_after) = (state.clone(), slots.clone());
@@ -590,27 +642,25 @@ fn custom_runtime(state: &Rc<RefCell<State>>, slots: &Slots) {
     let Ok(window) = crate::app_title::new::<crate::EditValueWindow>() else {
         return;
     };
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title("set time to run (minutes)".into());
     window.set_minimum(1);
     window.set_value(120);
     window.on_apply({
         let weak = window.as_weak();
         let (state, slots) = (state.clone(), slots.clone());
+        let ended = ended.clone();
         move || {
             if let Some(w) = weak.upgrade() {
                 let minutes = i64::from(w.get_value());
-                let _ = w.hide();
+                ended.accept();
                 start(&state, &slots, Some(minutes * 60));
             }
         }
     });
-    window.on_cancel({
-        let weak = window.as_weak();
-        move || {
-            if let Some(w) = weak.upgrade() {
-                let _ = w.hide();
-            }
-        }
+    window.on_cancel(move || {
+        ended.cancel();
     });
     if window.show().is_ok() {
         CUSTOM.with(|w| *w.borrow_mut() = window.as_weak());
@@ -682,8 +732,13 @@ fn start(state: &Rc<RefCell<State>>, slots: &Slots, seconds: Option<i64>) {
             watch(&shown);
         }
     });
-    // (the reference closes the dialog once the job is started; the popup shows the rest)
-    close(slots);
+    // (the reference's `_OKParent` once the job is started, keeping its
+    // frame as an OK; the popup shows the rest)
+    let dialog = slots.borrow().dialog.clone();
+    match dialog {
+        Some(dialog) => dialog.accept(),
+        None => close(slots),
+    }
     // ... and opens it again once the job is done (`DoFileStorageRebalance`)
     let timer = slint::Timer::default();
     timer.start(

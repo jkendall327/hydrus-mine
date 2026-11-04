@@ -225,6 +225,8 @@ pub(crate) fn edit_entry(
         move || {
             let window =
                 crate::app_title::new::<ExternalProgramEntryWindow>().map_err(|e| e.to_string())?;
+            // (an ordinary dialog: kept by `regular_dialog` when accepted)
+            let ended = crate::dialog::Dialog::new(&window);
             window.set_window_title(model::EDIT_TITLE.into());
             window.set_programs(ModelRc::new(VecModel::from(
                 choices
@@ -271,16 +273,20 @@ pub(crate) fn edit_entry(
             });
             window.on_accepted({
                 let finish = finish.clone();
-                move || finish(true)
+                let ended = ended.clone();
+                move || {
+                    let finish = finish.clone();
+                    ended.apply(|| true, move || finish(true));
+                }
             });
             window.on_cancelled({
-                let finish = finish.clone();
-                move || finish(false)
+                let ended = ended.clone();
+                move || {
+                    ended.cancel();
+                }
             });
-            window.window().on_close_requested(move || {
-                finish(false);
-                slint::CloseRequestResponse::HideWindow
-            });
+            // (whatever else ends it, through the dialog helper: cancelled)
+            ended.on_closed(move || finish(false));
             window.show().map_err(|e| e.to_string())?;
             *programs.entry.borrow_mut() = Some(window);
             Ok(())

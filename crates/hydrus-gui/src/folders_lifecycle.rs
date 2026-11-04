@@ -11,7 +11,10 @@ use slint::ComponentHandle as _;
 
 use crate::FoldersWindow;
 
-type Ready = Rc<dyn Fn(FoldersWindow, Edit) -> Result<(), String>>;
+/// The manager made ready: its window, how it ends (the dialog helper's,
+/// made as it opened), and its lease.
+type Ready =
+    Rc<dyn Fn(FoldersWindow, crate::dialog::Dialog<FoldersWindow>, Edit) -> Result<(), String>>;
 
 /// Request the transient pause before reading any manager draft. Poll the
 /// worker's OS lease on the UI timer; Cancel releases the request immediately.
@@ -28,8 +31,11 @@ pub(crate) fn open(
         return Err(format!("Another {} manager is already open.", kind.title()));
     };
     let window = crate::app_title::new::<crate::FoldersWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied; while it
+    // waits, only cancelled)
+    let ended = crate::dialog::Dialog::new(&window);
     if edit.try_ready().map_err(|e| e.to_string())? {
-        return ready(window, edit);
+        return ready(window, ended, edit);
     }
     window.set_window_title(kind.title().into());
     window.set_waiting(true);
@@ -56,15 +62,16 @@ pub(crate) fn open(
         }
     });
     window.on_cancel({
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
+    });
+    // (whatever ends it while it waits, through the dialog helper; once
+    // ready, this does nothing)
+    ended.on_closed({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     let poll = slint::Timer::default();
     poll.start(slint::TimerMode::Repeated, Duration::from_millis(100), {
@@ -93,7 +100,12 @@ pub(crate) fn open(
                     // acquired manager, whose bindings now own the lease.
                     closed.set(true);
                     window.set_waiting(false);
-                    if let Err(error) = ready(window.clone_strong(), edit) {
+                    let made = ready(window.clone_strong(), ended.clone(), edit);
+                    // (the waiting window, now the list, is fitted again)
+                    if made.is_ok() {
+                        ended.refit();
+                    }
+                    if let Err(error) = made {
                         window.invoke_cancel();
                         closed.set(false);
                         close();

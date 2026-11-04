@@ -186,6 +186,9 @@ component DefaultsButton inherits Rectangle {
 }
 
 export component PredicateEditorWindow inherits Window {
+    // (Escape goes to the dialog helper: cancelled, as the reference's
+    // `keyPressEvent`)
+    callback escape();
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
@@ -263,11 +266,8 @@ export component PredicateEditorWindow inherits Window {
         key-pressed(event) => {
             if root.notice-open { return accept; }
             if (event.text == Key.Escape) {
-                if (root.question != "") {
-                    root.answer(false);
-                    return accept;
-                }
-                root.cancel();
+                // (a question up is answered no first, by the dialog helper)
+                root.escape();
                 return accept;
             }
             if event.text == Key.Return && root.radio-default-panel >= 0 && root.question == "" {

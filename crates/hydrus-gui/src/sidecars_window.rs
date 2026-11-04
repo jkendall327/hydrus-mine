@@ -368,6 +368,8 @@ pub fn open_node(
     slots.strings.set_store(store);
     let slot = &slots.node;
     let window = crate::app_title::new::<crate::SidecarNodeWindow>()?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     let active = Rc::new(Cell::new(true));
     let snapshot = store.snapshot();
     let services = &snapshot.services;
@@ -742,7 +744,7 @@ pub fn open_node(
         let weak = window.as_weak();
         let state = state.clone();
         let refresh = refresh.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         let object_name = slots.object_name.clone();
         move || {
@@ -762,7 +764,7 @@ pub fn open_node(
             };
             match value {
                 Ok(node) => {
-                    close();
+                    ended.accept();
                     done(node);
                 }
                 Err(error) => {
@@ -773,13 +775,32 @@ pub fn open_node(
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
     });
+    // (its object name entry, string processor and formula editor are modal children)
+    ended.modal_child({
+        let object_name = slots.object_name.clone();
+        let strings = slots.strings.clone();
+        let formula = slots.formula.formula.clone();
+        move || object_name.borrow().is_some() || strings.has_open() || formula.borrow().is_some()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(close);
     window.show()?;
     Ok(window)
 }
@@ -857,6 +878,8 @@ pub fn open_router(
     done: Rc<dyn Fn(Router)>,
 ) -> Result<SidecarRouterWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::SidecarRouterWindow>()?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     let active = Rc::new(Cell::new(true));
     window.set_window_title(editors::ROUTER_TITLE.into());
     let state = Rc::new(RefCell::new(RouterState {
@@ -1106,7 +1129,7 @@ pub fn open_router(
     let ok = {
         let state = state.clone();
         let refresh = refresh.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let active = active.clone();
         Rc::new(move |mut left: Vec<&'static str>| {
             if !active.get() {
@@ -1114,7 +1137,7 @@ pub fn open_router(
             }
             if left.is_empty() {
                 let router = state.borrow().router.clone();
-                close();
+                ended.accept();
                 done(router);
                 return;
             }
@@ -1185,13 +1208,31 @@ pub fn open_router(
     });
     window.on_cancelled(move || answer(None));
     window.on_cancel({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
     });
+    // (its source and destination editors and string processor are modal children)
+    ended.modal_child({
+        let node = slots.node.clone();
+        let strings = slots.strings.clone();
+        move || node.borrow().is_some() || strings.has_open()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(close);
     window.show()?;
     Ok(window)
 }
@@ -1242,6 +1283,8 @@ pub fn open_routers(
         ..slots.clone()
     };
     let window = crate::app_title::new::<crate::SidecarRoutersWindow>()?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_window_title(editors::ROUTERS_TITLE.into());
     let active = Rc::new(std::cell::Cell::new(true));
     let state = Rc::new(RefCell::new(RoutersState {
@@ -1611,25 +1654,44 @@ pub fn open_routers(
     });
     window.on_apply({
         let state = state.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let blocked = blocked.clone();
         move || {
             if blocked() {
                 return;
             }
             let routers = state.borrow().routers.clone();
-            close();
+            ended.accept();
             applied(routers);
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        move || close()
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    // (a question up within it takes Escape, and the window's close,
+    // first: cancelled, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if w.get_asking() => {
+                w.invoke_cancelled();
+                !w.get_asking()
+            }
+            _ => false,
+        }
     });
+    // (its router editor and import/export windows are modal children)
+    ended.modal_child({
+        let router = slots.router.clone();
+        let node = slots.node.clone();
+        let exchange = slots.exchange.clone();
+        move || router.borrow().is_some() || node.borrow().is_some() || exchange.has_open()
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed(move || close());
     refresh();
     window.show()?;
     Ok(window)

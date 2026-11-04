@@ -383,6 +383,8 @@ pub(crate) fn open_with_or(
     editor.apply_defaults(&defaults, &context);
     let window =
         crate::app_title::new::<crate::PredicateEditorWindow>().map_err(|e| e.to_string())?;
+    // (an ordinary dialog: kept by `regular_dialog` when applied)
+    let ended = crate::dialog::Dialog::new(&window);
     window.set_editing_existing(editor.supplied.is_some());
     window.set_batch_mode(editor.batch.is_some());
     if let Some(batch) = &editor.batch {
@@ -580,7 +582,7 @@ pub(crate) fn open_with_or(
     let done = Rc::new(Cell::new(false));
     let finish = {
         let valid = valid.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let done = done.clone();
         let store = Arc::clone(store);
         let weak = window.as_weak();
@@ -597,7 +599,7 @@ pub(crate) fn open_with_or(
             if done.replace(true) {
                 return;
             }
-            close();
+            ended.accept();
             if owner.as_ref().is_some_and(|owner| !owner()) {
                 return;
             }
@@ -1084,19 +1086,35 @@ pub(crate) fn open_with_or(
         }
     });
     window.on_cancel({
-        let close = close.clone();
-        let or_slot = or_slot.clone();
+        let ended = ended.clone();
         move || {
-            crate::search_or_window::cancel(&or_slot);
-            close();
+            ended.cancel();
         }
     });
-    window.window().on_close_requested({
+    // (a question up takes Escape, and the window's close, first: answered
+    // no, as its own modal dialog in the reference)
+    ended.escape_first({
+        let weak = window.as_weak();
+        move || match weak.upgrade() {
+            Some(w) if !w.get_question().is_empty() => {
+                w.invoke_answer(false);
+                w.get_question().is_empty()
+            }
+            _ => false,
+        }
+    });
+    // (its OR editor, and a notice up, are modal: the window waits on them)
+    ended.modal_child({
+        let weak = window.as_weak();
+        let or_slot = or_slot.clone();
+        move || or_slot.borrow().is_some() || weak.upgrade().is_some_and(|w| w.get_notice_open())
+    });
+    // (whatever ends it, through the dialog helper)
+    ended.on_closed({
         let or_slot = or_slot.clone();
         move || {
             crate::search_or_window::cancel(&or_slot);
             close();
-            slint::CloseRequestResponse::HideWindow
         }
     });
     window.show().map_err(|e| e.to_string())?;

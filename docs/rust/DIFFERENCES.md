@@ -2818,9 +2818,15 @@ downloader formulae, manage tag display and search, manage downloader
 display, manage url classes and gallery url generators with their
 definition editors, manage parsers, regex favourites, manage logins with
 its credentials editor, manage login scripts, manage http headers with
-its value editor, edit api access permissions and the API request wait
-(dialogs: kept when applied; the request wait's close is its OK, as a
-`DialogNullipotent`'s), and help > about, tag display sync, detailed file
+its value editor, edit api access permissions, the API request wait, edit
+import and export folders with their folder editors, a file or search log
+opened from a dialog or as a folder's copy, edit import options with its
+external program entry, the metadata migration routers, router and
+source/destination editors, database locations with its max size and run
+time editors, a rating's "edit value", edit rules with a rule's and a
+comparator's editors, and the predicate editor (dialogs: kept when
+applied; the request wait's, a dialog's log's and database locations'
+close is their OK, as a `DialogNullipotent`'s), and help > about, tag display sync, detailed file
 metadata, migrate tags, the auto-resolution review, the login test
 result, file maintenance, bandwidth, network jobs, the vacuum review,
 review files to import, "what is this object?", review session cookies
@@ -2828,9 +2834,15 @@ and a session's cookies (frames: kept a moment after a move or resize;
 a session's cookies keep hydrus-rs's own apply, which saves them and
 closes the frame, keeping nothing more). Each of these is driven as a
 user opens it in `tests/gui/dialog_sweep.rs`, which each later batch
-extends: a dialog ended by a real Escape, its cancel and its apply, a frame
-resized and then ended by its close button, its window's close and a real
-Escape; there too, a
+extends: a dialog ended by a real Escape, its cancel and its apply (a
+`DialogNullipotent` replaying the recording's own cases: its close button
+its OK, its window's close and Escape keeping nothing), a frame resized
+and then ended by its close button, its window's close and a real Escape.
+Three are not swept there: a log opened from a page keeps its own frame
+(`frame_geometry.rs`); "set time to run" is swept only for Escape and its
+cancel, since its apply starts a real rebalance
+(`database_locations_menu.rs` drives that); and "manage granularity",
+which isn't on the helper yet. There too, a
 question or inline editor within a dialog takes Escape first and a modal
 child (the reference's) holds it, the dialog staying open (in a frame: the
 questions of migrate tags, the vacuum review, bandwidth, file maintenance
@@ -2879,7 +2891,14 @@ reference's frame edits the cookie jar at once, so has nothing to ask
 about. The API request wait is cancelled when the Client API keys window
 it was opened from closes (that window isn't on the helper yet); in the
 reference the wait is modal over it, so it can't be closed under the
-wait. No migrated dialog yet has a panel check that refuses an apply
+wait. A dialog's own messages and questions (the reference's
+`ShowWarning`, `ShowInformation` and `GetYesNo` over it: database
+locations' warnings and its "remove" and "clear thumbnails" questions,
+the rules editors' import and export messages) open as message or
+question windows it waits on, as on the reference's modal ones; other
+dialogs' are still opened apart from them. Manage ratings isn't on the
+helper yet, so it can be applied with its "edit value" editor open (the
+reference's editor is modal over it). No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
 vetoed apply does). Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.

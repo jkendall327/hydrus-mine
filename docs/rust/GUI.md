@@ -5725,8 +5725,10 @@ choice is made, never when cancelled; a message with no choices takes neither.
 The ordinary dialogs that end through the shared dialog helper (so far
 "choose distance", "edit multiple location", "force filetypes", manage
 services, tag siblings and parents, favourite searches, manage url
-classes, parsers, logins, login scripts and http headers, and the other
-editors listed in DIFFERENCES.md) keep `regular_dialog` as the
+classes, parsers, logins, login scripts and http headers, import and
+export folders, import options, sidecars, database locations,
+auto-resolution rules, the predicate editors, and the other editors
+listed in DIFFERENCES.md) keep `regular_dialog` as the
 reference's do: when applied, never when cancelled (cancel, Escape) or
 closed by their window; and the ordinary frames on it (help > about, tag
 display sync, detailed file metadata, migrate tags, the auto-resolution

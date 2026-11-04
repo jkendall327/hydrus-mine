@@ -317,3 +317,26 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
     );
     slots.borrow_mut().timer = Some(timer);
 }
+
+/// Whether its window is open (for an owner to wait on).
+pub(crate) fn is_open(slots: &Slots) -> bool {
+    slots
+        .borrow()
+        .window
+        .as_ref()
+        .is_some_and(|w| w.window().is_visible())
+}
+
+/// Close it with its owner, as its own close does.
+pub(crate) fn close(slots: &Slots) {
+    let (window, question) = {
+        let mut slot = slots.borrow_mut();
+        (slot.window.take(), slot.question.take())
+    };
+    if let Some(q) = question {
+        let _ = q.hide();
+    }
+    if let Some(w) = window {
+        let _ = w.hide();
+    }
+}

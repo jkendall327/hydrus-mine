@@ -78,12 +78,23 @@ impl Rig {
     fn pick(&self, path: &Path) {
         *self.next.borrow_mut() = vec![path.to_path_buf()];
     }
-    /// Answer the main window's question.
-    fn answer(&self, yes: bool) -> String {
-        let question = self.ui.get_question().to_string();
-        assert!(!question.is_empty(), "a question is asked");
-        self.ui.invoke_answer(yes);
-        question
+}
+
+/// Answer the dialog's own question (`GetYesNo`, over the dialog), saying
+/// what it asked.
+fn answered(yes: bool) -> String {
+    let window = hydrus_gui::dialog_question().expect("a question is asked");
+    let question = window.get_message().to_string();
+    answer(&window, yes);
+    question
+}
+
+/// Answer a yes/no question window: "yes", or "no".
+fn answer(window: &hydrus_gui::ChoiceButtonsWindow, yes: bool) {
+    if yes {
+        window.invoke_chosen(0);
+    } else {
+        window.invoke_cancelled();
     }
 }
 
@@ -207,17 +218,16 @@ fn replay_locations_panel(
                     }
                     None => diff(format!("no warning {:?}", wanted(1))),
                 },
-                "question" => {
-                    let question = rig.ui.get_question().to_string();
-                    if question.is_empty() {
-                        diff(format!("no question {:?}", wanted(1)));
-                    } else {
+                "question" => match hydrus_gui::dialog_question() {
+                    None => diff(format!("no question {:?}", wanted(1))),
+                    Some(window) => {
+                        let question = window.get_message().to_string();
                         if names.norm(&question) != wanted(1) {
                             diff(format!("question {question:?}, not {:?}", wanted(1)));
                         }
-                        rig.ui.invoke_answer(yesno.next().unwrap());
+                        answer(&window, yesno.next().unwrap());
                     }
-                }
+                },
                 "choice" => match runtime_question() {
                     Some(q) if q.window().is_visible() => {
                         if q.get_message() != wanted(1).as_str() {
@@ -513,7 +523,7 @@ fn locations_lists_weights_and_adds_changes_and_removes_them_with_the_reference_
     assert_eq!(rig.weight_of(other.path()), Some(1));
     window.invoke_action("decrease".into());
     assert_eq!(
-        rig.answer(false),
+        answered(false),
         model::remove_question(
             true,
             rig.review()
@@ -524,7 +534,7 @@ fn locations_lists_weights_and_adds_changes_and_removes_them_with_the_reference_
     );
     assert_eq!(rig.weight_of(other.path()), Some(1));
     window.invoke_action("remove".into());
-    rig.answer(true);
+    answered(true);
     assert!(
         rig.weight_of(other.path()).is_none_or(|w| w == 0),
         "removed from the weighted locations"
@@ -691,10 +701,10 @@ fn the_thumbnail_location_override_is_set_and_cleared() {
 
     // clearing asks first
     window.invoke_action("clear thumbnails".into());
-    assert_eq!(rig.answer(false), model::CLEAR_THUMBNAILS);
+    assert_eq!(answered(false), model::CLEAR_THUMBNAILS);
     assert_eq!(overridden(&rig.store).len(), 1);
     window.invoke_action("clear thumbnails".into());
-    rig.answer(true);
+    answered(true);
     assert!(overridden(&rig.store).is_empty());
     assert_eq!(window.get_thumbnail_location(), "none set");
     assert!(!window.get_can_clear_thumbnails());
@@ -753,7 +763,7 @@ fn moving_files_now_puts_the_thumbnail_folders_at_the_thumbnail_location() {
     // clearing it sends them back
     let window = rig.open();
     window.invoke_action("clear thumbnails".into());
-    rig.answer(true);
+    answered(true);
     finish(&window);
     assert!(thumb.is_file());
     assert!(!at(thumbs.path()).exists());
